@@ -28,7 +28,7 @@ styles = {
         "justify-content": "left",
     },
     "div": {
-        "max-width": "32rem",
+        "max-width": "50rem",
     },
     "img": {
         "padding-right": "14px",
@@ -36,6 +36,9 @@ styles = {
     "span": {
         "color": "black",
         "padding": "14px",
+    },
+    "hover": {
+        "background-color": "rgba(255, 255, 255, 0.35)",
     },
     "active": {
         "color": "var(--text-color)",
