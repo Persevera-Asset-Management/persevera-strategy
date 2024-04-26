@@ -61,6 +61,7 @@ def format_chart(figure, title, connectgaps=False):
 
 
 def show_reuniao_estrategia():
+    print(PROJECT_PATH)
     st.header("Reunião de Estratégia")
     st.write(
         """
