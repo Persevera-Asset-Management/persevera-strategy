@@ -13,7 +13,7 @@ PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'da
 
 
 def get_fund_peers(fund_name):
-    peers = pd.read_excel(PROJECT_PATH + r"\peers.xlsx", sheet_name=fund_name, index_col=0)
+    peers = pd.read_excel(PROJECT_PATH + "/peers.xlsx", sheet_name=fund_name, index_col=0)
     peers = peers["short_name"].to_dict()
     return peers
 
@@ -24,7 +24,7 @@ def get_fund_data(fund_name, start_date, selected_peers, relative=False):
     filtered_peers = {k: v for k, v in listed_peers.items() if v in selected_peers}
 
     df = (
-        pl.scan_parquet(source=PROJECT_PATH + fr"\cvm-cotas_fundos-{fund_name.lower()}.parquet")
+        pl.scan_parquet(source=PROJECT_PATH + f"/cvm-cotas_fundos-{fund_name.lower()}.parquet")
         .drop("fund_value")
         .filter(pl.col("fund_cnpj").is_in(filtered_peers.keys()))
         .filter(pl.col("date") >= start_date)
@@ -37,7 +37,7 @@ def get_fund_data(fund_name, start_date, selected_peers, relative=False):
 
     logging.info("Importing CDI...")
     cdi = pd.read_parquet(
-        path=PROJECT_PATH + r"\macro_data.parquet",
+        path=PROJECT_PATH + "/macro_data.parquet",
         filters=[('code', '==', 'br_cdi_index')]
     ).pivot_table(index='date', columns='code', values='value')
 

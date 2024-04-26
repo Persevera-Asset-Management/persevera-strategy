@@ -10,7 +10,7 @@ PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'da
 
 def get_data(df: pd.DataFrame, fields: list):
     logging.info(f'Importing data from {fields}')
-    # df = pd.read_parquet(PROJECT_PATH + r"\macro_data.parquet")
+    # df = pd.read_parquet(PROJECT_PATH + "/macro_data.parquet")
     df = df.query('code == @fields')
     df = df.pivot_table(index='date', columns='code', values='value')
     return df
@@ -18,7 +18,7 @@ def get_data(df: pd.DataFrame, fields: list):
 
 def get_yield_curve(contract):
     df = pd.read_parquet(
-        PROJECT_PATH + r"\futures_curve.parquet",
+        PROJECT_PATH + "/futures_curve.parquet",
         filters=[('contract', '==', contract)]
     )
 
@@ -61,7 +61,6 @@ def format_chart(figure, title, connectgaps=False):
 
 
 def show_reuniao_estrategia():
-    print(PROJECT_PATH)
     st.header("Reunião de Estratégia")
     st.write(
         """
@@ -70,7 +69,7 @@ def show_reuniao_estrategia():
         """
     )
 
-    df = pd.read_parquet(PROJECT_PATH + r"\macro_data.parquet")
+    df = pd.read_parquet(PROJECT_PATH + "/macro_data.parquet")
 
     # Taxas Corporativas
     # TODO: Substituir por subplots (mais eficiente)
