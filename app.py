@@ -1,7 +1,10 @@
 import os, logging
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
+import warnings
 import pages as pg
+
+warnings.simplefilter("ignore", category=FutureWarning)
 
 logging.basicConfig(
     level=logging.INFO,
