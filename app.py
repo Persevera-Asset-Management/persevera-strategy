@@ -27,6 +27,9 @@ styles = {
         "background-color": "lightgrey",
         "justify-content": "left",
     },
+    "div": {
+        "max-width": "32rem",
+    },
     "img": {
         "padding-right": "14px",
     },
