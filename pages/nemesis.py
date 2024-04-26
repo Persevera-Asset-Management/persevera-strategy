@@ -101,7 +101,6 @@ def show_nemesis():
                                    value=datetime(2022, 2, 25),
                                    min_value=datetime(2022, 2, 25),
                                    format="YYYY-MM-DD")
-        st.write("Start date:", start_date)
 
     with col2:
         peers_list = get_fund_peers(fund_name).values()
