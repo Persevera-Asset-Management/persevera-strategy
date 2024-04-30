@@ -37,13 +37,13 @@ def get_fund_data(fund_name, start_date, selected_peers, relative=False):
 
     logging.info("Importing IBOV...")
     cdi = pd.read_parquet(
-        path=PROJECT_PATH + "/macro_data.parquet",
-        filters=[('code', '==', 'ibovespa')]
+        path=PROJECT_PATH + "/indicators-equity.parquet",
+        filters=[('code', '==', 'br_ibovespa')]
     ).pivot_table(index='date', columns='code', values='value')
 
     logging.info("Including IBOV to DataFrame...")
     df = pd.merge(left=df, right=cdi, left_index=True, right_index=True, how='left')
-    df = df.rename(columns={"ibovespa": "IBOV"})
+    df = df.rename(columns={"br_ibovespa": "IBOV"})
 
     if relative:
         df = df.pct_change()

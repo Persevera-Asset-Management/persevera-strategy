@@ -67,8 +67,6 @@ def show_reuniao_estrategia():
         """
     )
 
-    df = pd.read_parquet(PROJECT_PATH + "/macro_data.parquet")
-
     # Taxas Corporativas
     # TODO: Substituir por subplots (mais eficiente)
     with st.expander("Taxas Corporativas (US)"):
