@@ -37,7 +37,7 @@ def get_fund_data(fund_name, start_date, selected_peers, relative=False):
 
     logging.info("Importing CDI...")
     cdi = pd.read_parquet(
-        path=PROJECT_PATH + "/indicators-equity.parquet",
+        path=PROJECT_PATH + "/indicators-macro.parquet",
         filters=[('code', '==', 'br_cdi_index')]
     ).pivot_table(index='date', columns='code', values='value')
 
