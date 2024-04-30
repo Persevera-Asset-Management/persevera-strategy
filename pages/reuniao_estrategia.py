@@ -8,19 +8,17 @@ import plotly.express as px
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
 
-def get_data(df: pd.DataFrame, fields: list):
+def get_data(category: str, fields: list):
     logging.info(f'Importing data from {fields}')
-    # df = pd.read_parquet(PROJECT_PATH + "/macro_data.parquet")
+    df = pd.read_parquet(PROJECT_PATH + f"/indicators-{category}.parquet")
     df = df.query('code == @fields')
     df = df.pivot_table(index='date', columns='code', values='value')
     return df
 
 
 def get_yield_curve(contract):
-    df = pd.read_parquet(
-        PROJECT_PATH + "/futures_curve.parquet",
-        filters=[('contract', '==', contract)]
-    )
+    df = pd.read_parquet(PROJECT_PATH + "/indicators-futures_curve.parquet",
+                         filters=[('contract', '==', contract)])
 
     df = df.pivot_table(index='date_maturity', columns='date', values='yield')
     df = df.iloc[:, :-1]
@@ -75,10 +73,10 @@ def show_reuniao_estrategia():
     # TODO: Substituir por subplots (mais eficiente)
     with st.expander("Taxas Corporativas (US)"):
         fig_corporate = [
-            px.line(get_data(df=df, fields=['us_corporate_ig_5y_spread', 'us_corporate_ig_10y_spread'])),
-            px.line(get_data(df=df, fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield'])),
-            px.line(get_data(df=df, fields=['us_corporate_hy_5y_spread', 'us_corporate_hy_10y_spread'])),
-            px.line(get_data(df=df, fields=['us_corporate_hy_5y_yield', 'us_corporate_hy_10y_yield']))
+            px.line(get_data(category='macro', fields=['us_corporate_ig_5y_spread', 'us_corporate_ig_10y_spread'])),
+            px.line(get_data(category='macro', fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield'])),
+            px.line(get_data(category='macro', fields=['us_corporate_hy_5y_spread', 'us_corporate_hy_10y_spread'])),
+            px.line(get_data(category='macro', fields=['us_corporate_hy_5y_yield', 'us_corporate_hy_10y_yield']))
         ]
 
         col1, col2 = st.columns(2, gap='large')
@@ -94,9 +92,9 @@ def show_reuniao_estrategia():
     # Taxas de Juros
     with st.expander("Taxas de Juros (US)"):
         fig_rates_us = [
-            px.line(get_data(df=df, fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y'])),
-            px.line(get_data(df=df, fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness'])),
-            px.line(get_yield_curve('us_fed_funds_curve'), line_shape='spline')
+            px.line(get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y'])),
+            px.line(get_data(category='macro', fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness'])),
+            px.line(get_yield_curve(contract='us_fed_funds_curve'), line_shape='spline')
         ]
 
         col1, col2 = st.columns(2, gap='large')
@@ -111,10 +109,10 @@ def show_reuniao_estrategia():
     # Taxas Reais e Implícitas
     with st.expander("Taxas Reais e Implícitas (US)"):
         fig_rates_implicit = [
-            px.line(get_data(df=df, fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y'])),
-            px.line(get_data(df=df, fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
+            px.line(get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y'])),
+            px.line(get_data(category='macro', fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
                               'us_generic_inflation_30y'])),
-            px.line(get_data(df=df, fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y']))
+            px.line(get_data(category='macro', fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y']))
         ]
 
         col1, col2 = st.columns(2, gap='large')
@@ -132,9 +130,9 @@ def show_reuniao_estrategia():
     # Trajetória da Inflação
     with st.expander("Trajetória da Inflação"):
         fig_inflation_path = [
-            px.line(get_data(df=df, fields=['us_cpi_yoy'])).add_hline(y=2, line_width=2, line_dash="dash", line_color="black"),
-            px.line(get_data(df=df, fields=['us_core_cpi_yoy'])).add_hline(y=2, line_width=2, line_dash="dash", line_color="black"),
-            px.line(get_data(df=df, fields=['br_ipca_yoy'])).add_hline(y=3.5, line_width=2, line_dash="dash", line_color="black")
+            px.line(get_data(category='macro', fields=['us_cpi_yoy'])).add_hline(y=2, line_width=2, line_dash="dash", line_color="black"),
+            px.line(get_data(category='macro', fields=['us_core_cpi_yoy'])).add_hline(y=2, line_width=2, line_dash="dash", line_color="black"),
+            px.line(get_data(category='macro', fields=['br_ipca_yoy'])).add_hline(y=3.5, line_width=2, line_dash="dash", line_color="black")
         ]
 
         col1, col2 = st.columns(2, gap='large')
@@ -152,8 +150,8 @@ def show_reuniao_estrategia():
     # Trajetória do PIB
     with st.expander("Trajetória do PIB"):
         fig_gdp_path = [
-            px.line(get_data(df=df, fields=['us_gdp_yoy'])).add_hline(y=3, line_width=2, line_dash="dash", line_color="black"),
-            px.line(get_data(df=df, fields=['br_gdp_yoy'])).add_hline(y=3, line_width=2, line_dash="dash", line_color="black"),
+            px.line(get_data(category='macro', fields=['us_gdp_yoy'])).add_hline(y=3, line_width=2, line_dash="dash", line_color="black"),
+            px.line(get_data(category='macro', fields=['br_gdp_yoy'])).add_hline(y=3, line_width=2, line_dash="dash", line_color="black"),
         ]
 
         col1, col2 = st.columns(2, gap='large')
@@ -169,16 +167,16 @@ def show_reuniao_estrategia():
     # DM Rates
     with st.expander("DM Rates"):
         fig_rates_dm = [
-            px.line(get_data(df=df, fields=
+            px.line(get_data(category='macro', fields=
                 ['germany_generic_1y', 'spain_generic_1y', 'france_generic_1y', 'italy_generic_1y', 'japan_generic_1y',
                  'switzerland_generic_1y', 'sweden_generic_1y'])),
-            px.line(get_data(df=df, fields=
+            px.line(get_data(category='macro', fields=
                 ['germany_generic_5y', 'spain_generic_5y', 'france_generic_5y', 'italy_generic_5y', 'japan_generic_5y',
                  'switzerland_generic_5y', 'sweden_generic_5y'])),
-            px.line(get_data(df=df, fields=
+            px.line(get_data(category='macro', fields=
                 ['new_zealand_generic_1y', 'australia_generic_1y', 'canada_generic_1y', 'norway_generic_1y',
                  'us_generic_1y', 'uk_generic_1y'])),
-            px.line(get_data(df=df, fields=
+            px.line(get_data(category='macro', fields=
                 ['new_zealand_generic_5y', 'australia_generic_5y', 'canada_generic_5y', 'norway_generic_5y',
                  'us_generic_5y', 'uk_generic_5y'])),
         ]
@@ -200,13 +198,13 @@ def show_reuniao_estrategia():
     # EM Rates
     with st.expander("EM Rates"):
         fig_rates_em = [
-            px.line(get_data(df=df, fields=['china_generic_1y', 'chile_generic_1y', 'colombia_generic_1y', 'hungary_generic_1y',
+            px.line(get_data(category='macro', fields=['china_generic_1y', 'chile_generic_1y', 'colombia_generic_1y', 'hungary_generic_1y',
                               'poland_generic_1y', 'peru_generic_1y'])),
-            px.line(get_data(df=df, fields=['china_generic_5y', 'chile_generic_5y', 'colombia_generic_5y', 'hungary_generic_5y',
+            px.line(get_data(category='macro', fields=['china_generic_5y', 'chile_generic_5y', 'colombia_generic_5y', 'hungary_generic_5y',
                               'poland_generic_5y', 'peru_generic_5y'])),
-            px.line(get_data(df=df, fields=['south_africa_generic_1y', 'russia_generic_1y', 'br_generic_1y', 'mexico_generic_1y',
+            px.line(get_data(category='macro', fields=['south_africa_generic_1y', 'russia_generic_1y', 'br_generic_1y', 'mexico_generic_1y',
                               'india_generic_1y', 'indonesia_generic_1y', 'turkey_generic_1y'])),
-            px.line(get_data(df=df, fields=['south_africa_generic_5y', 'russia_generic_5y', 'br_generic_5y', 'mexico_generic_5y',
+            px.line(get_data(category='macro', fields=['south_africa_generic_5y', 'russia_generic_5y', 'br_generic_5y', 'mexico_generic_5y',
                               'india_generic_5y', 'indonesia_generic_5y', 'turkey_generic_1y'])),
         ]
 
@@ -226,7 +224,7 @@ def show_reuniao_estrategia():
 
     # Juros Históricos
     with st.expander("Juros Históricos"):
-        temp = get_data(df=df, fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y', 'br_ipca_1y',
+        temp = get_data(category='macro', fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y', 'br_ipca_1y',
                                        'br_ipca_2y', 'br_ipca_3y', 'br_ipca_5y', 'br_ipca_10y', 'br_ipca_35y'])
         for vertice in ['_1y', '_2y', '_3y', '_5y', '_10y']:
             cols = temp.filter(like=vertice).columns
@@ -256,7 +254,7 @@ def show_reuniao_estrategia():
     # CRB e Fretes
     with st.expander("CRB e Fretes"):
         # CRB
-        temp = get_data(df=df, fields=['crb_index', 'brl_usd'])
+        temp = get_data(category='macro', fields=['crb_index', 'brl_usd'])
         temp['crb_index_brl'] = temp['crb_index'] * temp['brl_usd']
 
         fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -266,7 +264,7 @@ def show_reuniao_estrategia():
         fig_crb_freight = [
             fig,
             px.line(temp['crb_index'].pct_change(252)),
-            px.line(get_data(df=df, fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])),
+            px.line(get_data(category='', fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])),
         ]
 
         col1, col2 = st.columns(2, gap='large')
