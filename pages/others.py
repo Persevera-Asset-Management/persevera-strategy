@@ -95,7 +95,7 @@ def show_others():
 
     display_chart_with_expander(
         "Taxas de Juros (US)",
-        ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
+        ["Treasuries", "Inclinações", "Fed Funds Futures"],
         [
             get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
             get_data(category='macro', fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness']),
@@ -103,4 +103,33 @@ def show_others():
         ]
     )
 
-    # Continue similar pattern for other sections...
+    display_chart_with_expander(
+        "Taxas Reais e Implícitas (US)",
+        ["Treasuries", "TIPS", "Breakevens"],
+        [
+            get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
+            get_data(category='macro',
+                     fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
+                             'us_generic_inflation_30y']),
+            get_data(category='macro', fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y'])
+        ]
+    )
+
+    display_chart_with_expander(
+        "Trajetória da Inflação",
+        ["CPI", "Core CPI", "IPCA"],
+        [
+            get_data(category='macro', fields=['us_cpi_yoy']),
+            get_data(category='macro', fields=['us_core_cpi_yoy']),
+            get_data(category='macro', fields=['br_ipca_yoy'])
+        ]
+    )
+
+    display_chart_with_expander(
+        "Trajetória do PIB",
+        ["PIB US", "PIB Brasil"],
+        [
+            get_data(category='macro', fields=['us_gdp_yoy']),
+            get_data(category='macro', fields=['br_gdp_yoy'])
+        ]
+    )
