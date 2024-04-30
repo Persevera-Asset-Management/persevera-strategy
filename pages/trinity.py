@@ -65,8 +65,8 @@ def get_performance_table(df, relative=False):
     }
     df = pd.DataFrame(time_frames)
     if relative:
-        df = df.sub(df.loc['IBOV'])
-        df = df.drop(index='IBOV')
+        df = df.div(df.loc['CDI'])
+        df = df.drop(index='CDI')
     return df
 
 
