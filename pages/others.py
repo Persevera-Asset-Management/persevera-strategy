@@ -54,9 +54,18 @@ def show_others():
 
     def display_chart_with_expander(expander_title, chart_titles, datasets):
         with st.expander(expander_title):
-            cols = st.columns(len(chart_titles))
-            for col, title, dataset in zip(cols, chart_titles, datasets):
-                col.plotly_chart(create_line_chart(dataset, title), use_container_width=True)
+            num_cols = 2
+            num_charts = len(chart_titles)
+            num_rows = (num_charts + num_cols - 1) // num_cols
+
+            for row in range(num_rows):
+                cols = st.columns(num_cols)
+                start_index = row * num_cols
+                end_index = min((row + 1) * num_cols, num_charts)
+
+                for col, title, dataset in zip(cols, chart_titles[start_index:end_index],
+                                               datasets[start_index:end_index]):
+                    col.plotly_chart(create_line_chart(dataset, title), use_container_width=True)
 
     display_chart_with_expander(
         "Taxas Corporativas (US)",
