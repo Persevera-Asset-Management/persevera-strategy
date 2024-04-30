@@ -27,7 +27,8 @@ def get_yield_curve(contract):
     df['30d_median'] = df.iloc[:, -31:-1].median(axis=1)
     df['30d_min'] = df.iloc[:, -31:-1].min(axis=1)
     df['30d_max'] = df.iloc[:, -31:-1].max(axis=1)
-    return df[df.columns[-4:]]
+    df = df[df.columns[-4:]]
+    return df
 
 
 def format_chart(figure, title, connectgaps=False):

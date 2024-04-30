@@ -14,6 +14,21 @@ def get_data(category: str, fields: list):
     return df
 
 
+def get_yield_curve(contract):
+    df = pd.read_parquet(DATA_PATH + "/indicators-futures_curve.parquet",
+                         filters=[('contract', '==', contract)])
+
+    df = df.pivot_table(index='date_maturity', columns='date', values='yield')
+    df = df.iloc[:, :-1]
+    df = df.dropna(subset=[df.columns[-1]])
+
+    df['30d_median'] = df.iloc[:, -31:-1].median(axis=1)
+    df['30d_min'] = df.iloc[:, -31:-1].min(axis=1)
+    df['30d_max'] = df.iloc[:, -31:-1].max(axis=1)
+    df = df[df.columns[-4:]]
+    return df
+
+
 def create_line_chart(data, title, connectgaps=False):
     fig = px.line(data)
     fig.update_layout(
@@ -59,7 +74,7 @@ def show_others():
             num_rows = (num_charts + num_cols - 1) // num_cols
 
             for row in range(num_rows):
-                cols = st.columns(num_cols)
+                cols = st.columns(num_cols, gap='large')
                 start_index = row * num_cols
                 end_index = min((row + 1) * num_cols, num_charts)
 
@@ -75,6 +90,16 @@ def show_others():
             get_data(category='macro', fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield']),
             get_data(category='macro', fields=['us_corporate_hy_5y_spread', 'us_corporate_hy_10y_spread']),
             get_data(category='macro', fields=['us_corporate_hy_5y_yield', 'us_corporate_hy_10y_yield'])
+        ]
+    )
+
+    display_chart_with_expander(
+        "Taxas de Juros (US)",
+        ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
+        [
+            get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
+            get_data(category='macro', fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness']),
+            get_yield_curve(contract='us_fed_funds_curve')
         ]
     )
 
