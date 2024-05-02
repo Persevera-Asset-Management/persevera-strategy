@@ -28,7 +28,7 @@ def get_yield_curve(contract):
     return df
 
 
-def create_line_chart(data, title, connectgaps=False):
+def create_line_chart(data, title, connect_gaps):
     fig = px.line(data)
     fig.update_layout(
         title=title,
@@ -57,14 +57,14 @@ def create_line_chart(data, title, connectgaps=False):
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
     )
-    fig.update_traces(connectgaps=connectgaps)
+    fig.update_traces(connectgaps=connect_gaps)
     return fig
 
 
 def show_others():
     st.header("Strategy Chartbook")
 
-    def display_chart_with_expander(expander_title, chart_titles, datasets):
+    def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False):
         with st.expander(expander_title):
             num_cols = 2
             num_charts = len(chart_titles)
@@ -77,7 +77,7 @@ def show_others():
 
                 for col, title, dataset in zip(cols, chart_titles[start_index:end_index],
                                                datasets[start_index:end_index]):
-                    col.plotly_chart(create_line_chart(dataset, title), use_container_width=True)
+                    col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
 
     display_chart_with_expander(
         "Taxas Corporativas (US)",
@@ -190,8 +190,9 @@ def show_others():
         ["Índice CRB", "Índice CRB (% 12 meses)", "DI Futures"],
         [
             get_data(category='commodity', fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index']),
-            get_data(category='commodity', fields=['crb_index']).pct_change(252),
+            get_data(category='commodity', fields=['crb_index']).pct_change(252).dropna(),
             get_data(category='commodity', fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])
-        ]
+        ],
+        connect_gaps=True
     )
 
