@@ -49,10 +49,10 @@ def create_line_chart(data, title, connectgaps=False):
             rangeslider=dict(visible=False),
             type="date",
             showspikes=True,
-            spikemode='across',
+            spikemode='across+toaxis',
             spikesnap='cursor',
+            spikedash='solid',
             showline=True,
-            showgrid=True,
         ),
         yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
@@ -65,12 +65,6 @@ def create_line_chart(data, title, connectgaps=False):
 
 def show_others():
     st.header("Reunião de Estratégia")
-    st.write(
-        """
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id diam 
-        pharetra, dapibus est fermentum, laoreet diam. Integer vitae consequat augue:
-        """
-    )
 
     def display_chart_with_expander(expander_title, chart_titles, datasets):
         with st.expander(expander_title):
