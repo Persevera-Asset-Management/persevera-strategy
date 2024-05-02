@@ -48,6 +48,7 @@ def create_line_chart(data, title, connectgaps=False):
             ),
             rangeslider=dict(visible=False),
             type="date",
+            showspikes=True,
         ),
         yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
