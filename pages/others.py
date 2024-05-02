@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 import streamlit as st
-import plotly.graph_objects as go
 import plotly.express as px
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
