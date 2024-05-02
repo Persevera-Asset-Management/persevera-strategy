@@ -52,7 +52,6 @@ def create_line_chart(data, title, connectgaps=False):
             spikemode='across+toaxis',
             spikesnap='cursor',
             spikedash='solid',
-            showline=True,
         ),
         yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
@@ -64,7 +63,7 @@ def create_line_chart(data, title, connectgaps=False):
 
 
 def show_others():
-    st.header("Reunião de Estratégia")
+    st.header("Strategy Chartbook")
 
     def display_chart_with_expander(expander_title, chart_titles, datasets):
         with st.expander(expander_title):
@@ -172,3 +171,28 @@ def show_others():
                              'india_generic_5y', 'indonesia_generic_5y', 'turkey_generic_1y']),
         ]
     )
+
+    display_chart_with_expander(
+        "Taxa de Juros (BR)",
+        ["Curva Pré", "Curva IPCA", "Curva Implícita", "DI Futures"],
+        [
+            get_data(category='macro', fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y']),
+            get_data(category='macro',
+                     fields=['br_ipca_1y', 'br_ipca_2y', 'br_ipca_3y', 'br_ipca_5y', 'br_ipca_10y', 'br_ipca_35y']),
+            get_data(category='macro',
+                     fields=['br_implicita_1y', 'br_implicita_2y', 'br_implicita_3y', 'br_implicita_5y',
+                             'br_implicita_10y']),
+            get_yield_curve('br_di_curve')
+        ]
+    )
+
+    display_chart_with_expander(
+        "CRB e Fretes",
+        ["Índice CRB", "Índice CRB (% 12 meses)", "DI Futures"],
+        [
+            get_data(category='commodity', fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index']),
+            get_data(category='commodity', fields=['crb_index']).pct_change(252),
+            get_data(category='commodity', fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])
+        ]
+    )
+
