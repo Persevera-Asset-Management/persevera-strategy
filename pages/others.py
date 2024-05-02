@@ -111,16 +111,16 @@ def show_others():
             get_data(category='macro',
                      fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
                              'us_generic_inflation_30y']),
-            get_data(category='macro', fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y'])
+            get_data(category='macro',
+                     fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y'])
         ]
     )
 
     display_chart_with_expander(
         "Trajetória da Inflação",
-        ["CPI", "Core CPI", "IPCA"],
+        ["Inflação US", "Inflação Brasil"],
         [
-            get_data(category='macro', fields=['us_cpi_yoy']),
-            get_data(category='macro', fields=['us_core_cpi_yoy']),
+            get_data(category='macro', fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
             get_data(category='macro', fields=['br_ipca_yoy'])
         ]
     )
@@ -131,5 +131,45 @@ def show_others():
         [
             get_data(category='macro', fields=['us_gdp_yoy']),
             get_data(category='macro', fields=['br_gdp_yoy'])
+        ]
+    )
+
+    display_chart_with_expander(
+        "DM Rates",
+        ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],
+        [
+            get_data(category='macro',
+                     fields=['germany_generic_1y', 'spain_generic_1y', 'france_generic_1y', 'italy_generic_1y',
+                             'japan_generic_1y',
+                             'switzerland_generic_1y', 'sweden_generic_1y']),
+            get_data(category='macro',
+                     fields=['germany_generic_5y', 'spain_generic_5y', 'france_generic_5y', 'italy_generic_5y',
+                             'japan_generic_5y',
+                             'switzerland_generic_5y', 'sweden_generic_5y']),
+            get_data(category='macro',
+                     fields=['new_zealand_generic_1y', 'australia_generic_1y', 'canada_generic_1y', 'norway_generic_1y',
+                             'us_generic_1y', 'uk_generic_1y']),
+            get_data(category='macro',
+                     fields=['new_zealand_generic_5y', 'australia_generic_5y', 'canada_generic_5y', 'norway_generic_5y',
+                             'us_generic_5y', 'uk_generic_5y']),
+        ]
+    )
+
+    display_chart_with_expander(
+        "EM Rates",
+        ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],
+        [
+            get_data(category='macro',
+                     fields=['china_generic_1y', 'chile_generic_1y', 'colombia_generic_1y', 'hungary_generic_1y',
+                             'poland_generic_1y', 'peru_generic_1y']),
+            get_data(category='macro',
+                     fields=['china_generic_5y', 'chile_generic_5y', 'colombia_generic_5y', 'hungary_generic_5y',
+                             'poland_generic_5y', 'peru_generic_5y']),
+            get_data(category='macro',
+                     fields=['south_africa_generic_1y', 'russia_generic_1y', 'br_generic_1y', 'mexico_generic_1y',
+                             'india_generic_1y', 'indonesia_generic_1y', 'turkey_generic_1y']),
+            get_data(category='macro',
+                     fields=['south_africa_generic_5y', 'russia_generic_5y', 'br_generic_5y', 'mexico_generic_5y',
+                             'india_generic_5y', 'indonesia_generic_5y', 'turkey_generic_1y']),
         ]
     )
