@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import streamlit as st
+from streamlit_option_menu import option_menu
 import plotly.express as px
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
@@ -62,7 +63,16 @@ def create_line_chart(data, title, connect_gaps):
 
 
 def show_others():
-    st.header("Strategy Chartbook")
+    st.header("Chartbook")
+
+    selected = option_menu(
+        menu_title=None,
+        options=["United States", "Brazil", "Global", "Commodities", "Markets"],
+        icons=['globe', 'table', "list-task", 'graph-up', 'graph-up'],
+        menu_icon="cast",
+        default_index=0,
+        orientation="horizontal"
+    )
 
     def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False):
         with st.expander(expander_title):
