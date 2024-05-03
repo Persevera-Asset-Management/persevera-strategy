@@ -5,3 +5,4 @@ polars~=0.20.22
 pillow~=10.2.0
 streamlit-navigation-bar
 openpyxl
+streamlit_option_menu
