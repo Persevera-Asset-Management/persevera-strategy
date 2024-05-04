@@ -70,7 +70,7 @@ def get_performance_table(df, relative=False):
     return df
 
 
-def format_chart(figure, connectgaps=False):
+def format_chart(figure, connect_gaps=False):
     figure.update_layout(
         xaxis=dict(
             rangeslider=dict(visible=False),
@@ -80,20 +80,15 @@ def format_chart(figure, connectgaps=False):
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash", tickformat=".1%"),
         legend=dict(title=None, yanchor="top", orientation="v"),
         showlegend=True,
+        hovermode="x unified",
     )
+    figure.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
     return figure
 
 
 def show_nemesis():
     st.header("Nêmesis")
     fund_name = "Nemesis"
-
-    st.write(
-        """
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id diam 
-        pharetra, dapibus est fermentum, laoreet diam. Integer vitae consequat augue:
-        """
-    )
 
     col1, col2 = st.columns(2, gap='large')
     with col1:
