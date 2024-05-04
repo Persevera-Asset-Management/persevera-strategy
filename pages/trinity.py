@@ -117,7 +117,7 @@ def show_trinity():
             data.iloc[0] = 0
             data = data.ffill()
             fig = px.line(data)
-            st.plotly_chart(format_chart(figure=fig, connectgaps=True), use_container_width=True)
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
         with col2:
             st.write("Data mais recente:", data.index.max())
@@ -145,7 +145,7 @@ def show_trinity():
             data.iloc[0] = 0
             data = data.ffill()
             fig = px.line(data)
-            st.plotly_chart(format_chart(figure=fig, connectgaps=True), use_container_width=True)
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
         with col2:
             table_data = get_fund_data(fund_name=fund_name, start_date=datetime(2022, 11, 10), selected_peers=selected_peers)
