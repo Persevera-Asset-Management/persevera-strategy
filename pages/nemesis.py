@@ -54,14 +54,15 @@ def get_fund_data(fund_name, start_date, selected_peers, relative=False):
     return df
 
 
-def get_performance_table(df, relative=False):
+def get_performance_table(df, custom_date, relative=False):
     time_frames = {
         'day': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change().iloc[-1],
         'mtd': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1],
         'ytd': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1],
-        '3m': df.pct_change(3 * 21).iloc[-1],
-        '6m': df.pct_change(6 * 21).iloc[-1],
-        '12m': df.pct_change(12 * 21).iloc[-1],
+        '3m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(3 * 21).iloc[-1],
+        '6m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(6 * 21).iloc[-1],
+        '12m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
+        'custom': df[custom_date:].iloc[-1] / df[custom_date:].iloc[0] - 1,
     }
     df = pd.DataFrame(time_frames)
     if relative:
@@ -122,7 +123,7 @@ def show_nemesis():
         with col2:
             st.write("Data mais recente:", data.index.max())
             table_data = get_fund_data(fund_name=fund_name, start_date=datetime(2022, 2, 25), selected_peers=selected_peers)
-            df = get_performance_table(table_data)
+            df = get_performance_table(table_data, custom_date=start_date)
 
             st.dataframe(df
                          .style
@@ -131,7 +132,8 @@ def show_nemesis():
                                   'ytd': '{:,.2%}'.format,
                                   '3m': '{:,.2%}'.format,
                                   '6m': '{:,.2%}'.format,
-                                  '12m': '{:,.2%}'.format}),
+                                  '12m': '{:,.2%}'.format,
+                                  'custom': '{:,.2%}'.format}),
                          use_container_width=True)
 
     # Retorno em excesso (CDI)
@@ -149,7 +151,7 @@ def show_nemesis():
 
         with col2:
             table_data = get_fund_data(fund_name=fund_name, start_date=datetime(2022, 2, 25), selected_peers=selected_peers)
-            df = get_performance_table(table_data, relative=True)
+            df = get_performance_table(table_data, custom_date=start_date, relative=True)
 
             st.dataframe(df
                          .style
@@ -158,5 +160,6 @@ def show_nemesis():
                                   'ytd': '{:,.2%}'.format,
                                   '3m': '{:,.2%}'.format,
                                   '6m': '{:,.2%}'.format,
-                                  '12m': '{:,.2%}'.format}),
+                                  '12m': '{:,.2%}'.format,
+                                  'custom': '{:,.2%}'.format}),
                          use_container_width=True)
