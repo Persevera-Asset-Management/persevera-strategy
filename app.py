@@ -18,7 +18,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-pages = ["Reunião de Estratégia", "Trinity", "Nemesis", "Risk Management", "Quant Screening", "Factor Tearsheet", "Others"]
+pages = ["Reunião de Estratégia", "Trinity", "Nemesis", "Risk Management", "Quant Screening", "Factor Tearsheet", "Chartbook"]
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(parent_dir, "logo.svg")
 
@@ -67,7 +67,7 @@ functions = {
     "Risk Management": pg.show_risk_management,
     "Quant Screening": pg.show_quant_screening,
     "Factor Tearsheet": pg.show_factor_tearsheet,
-    "Others": pg.show_others,
+    "Chartbook": pg.show_others,
 }
 go_to = functions.get(page)
 if go_to:
