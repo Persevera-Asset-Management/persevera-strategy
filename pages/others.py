@@ -54,9 +54,8 @@ def create_line_chart(data, title, connect_gaps):
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
         hovermode="x unified",
-        hovertemplate="%{code}%{value}"
     )
-    fig.update_traces(connectgaps=connect_gaps)
+    fig.update_traces(connectgaps=connect_gaps, hovertemplate="%{code}%{value}")
     return fig
 
 
