@@ -83,7 +83,7 @@ def format_chart(figure, connect_gaps=False):
         showlegend=True,
         hovermode="x unified",
     )
-    figure.update_traces(connect_gaps=connect_gaps, hovertemplate="%{y}")
+    figure.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
     return figure
 
 
