@@ -55,7 +55,7 @@ def create_line_chart(data, title, connect_gaps):
         showlegend=True,
         hovermode="x unified",
     )
-    fig.update_traces(connectgaps=connect_gaps)
+    fig.update_traces(connectgaps=connect_gaps, hoverinfo="text")
     return fig
 
 
