@@ -48,15 +48,12 @@ def create_line_chart(data, title, connect_gaps):
             ),
             rangeslider=dict(visible=False),
             type="date",
-            showspikes=True,
-            spikemode='across+toaxis',
-            spikesnap='cursor',
-            spikedash='solid',
         ),
         yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
+        hovermode="x unified",
     )
     fig.update_traces(connectgaps=connect_gaps)
     return fig
