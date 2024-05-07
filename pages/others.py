@@ -60,7 +60,7 @@ def create_line_chart(data, title, connect_gaps):
 
 
 def show_others():
-    st.header("Chartbook")
+    st.header("Indicators")
 
     def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False):
         with st.expander(expander_title):
@@ -79,7 +79,7 @@ def show_others():
 
     selected_category = option_menu(
         menu_title=None,
-        options=["United States", "Brazil", "Global", "Commodities", "Markets"],
+        options=["United States", "Brazil", "Rates", "Commodities", "Markets", "Positioning"],
         icons=['globe', 'table', "list-task", 'graph-up', 'graph-up'],
         orientation="horizontal"
     )
@@ -204,3 +204,54 @@ def show_others():
             connect_gaps=True
         )
 
+    elif selected_category == "Positioning":
+        display_chart_with_expander(
+            "Treasuries",
+            ["Treasury 2Y", "Treasury 5Y", "Treasury 10Y", "Treasury Bonds"],
+            [
+                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_2y']),
+                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_5y']),
+                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_10y']),
+                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_bonds']),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Commodities",
+            ["Copper", "Gold", "Silver", "Crude Oil"],
+            [
+                get_data(category='positions_cftc', fields=['cftc_cmx_copper']),
+                get_data(category='positions_cftc', fields=['cftc_cmx_gold']),
+                get_data(category='positions_cftc', fields=['cftc_cmx_silver']),
+                get_data(category='positions_cftc', fields=['cftc_nyme_crude_oil']),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Currencies",
+            ["AUD", "BRL", "CAD", "CHF", "EUR", "GBP", "JPY", "MXN", "NZD", "RUB", "ZAR"],
+            [
+                get_data(category='positions_cftc', fields=['cftc_cme_aud']),
+                get_data(category='positions_cftc', fields=['cftc_cme_brl']),
+                get_data(category='positions_cftc', fields=['cftc_cme_cad']),
+                get_data(category='positions_cftc', fields=['cftc_cme_chf']),
+                get_data(category='positions_cftc', fields=['cftc_cme_eur']),
+                get_data(category='positions_cftc', fields=['cftc_cme_gbp']),
+                get_data(category='positions_cftc', fields=['cftc_cme_jpy']),
+                get_data(category='positions_cftc', fields=['cftc_cme_mxn']),
+                get_data(category='positions_cftc', fields=['cftc_cme_nzd']),
+                get_data(category='positions_cftc', fields=['cftc_cme_rub']),
+                get_data(category='positions_cftc', fields=['cftc_cme_zar']),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Equities",
+            ["Nasdaq", "Nikkei", "Russell 2000", "S&P 500"],
+            [
+                get_data(category='positions_cftc', fields=['cftc_cme_nasdaq']),
+                get_data(category='positions_cftc', fields=['cftc_cme_nikkei']),
+                get_data(category='positions_cftc', fields=['cftc_cme_russel2000']),
+                get_data(category='positions_cftc', fields=['cftc_cme_sp500']),
+            ]
+        )
