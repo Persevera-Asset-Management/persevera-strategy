@@ -264,8 +264,8 @@ def show_chartbook():
             "P/E",
             ["Desenvolvidos", "Emergentes"],
             [
-                get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq100' 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd')
-                get_index_fundamentals(codes=['br_ibovespa' 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'], field='price_to_earnings_fwd')
+                get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq100' 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd'),
+                get_index_fundamentals(codes=['br_ibovespa' 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'], field='price_to_earnings_fwd'),
             ]
         )
 
