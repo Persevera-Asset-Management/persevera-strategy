@@ -61,13 +61,12 @@ page = st_navbar(
 
 functions = {
     "Home": pg.show_home,
-    "Reunião de Estratégia": pg.show_reuniao_estrategia,
+    "Chartbook": pg.show_others,
     "Trinity": pg.show_trinity,
     "Nemesis": pg.show_nemesis,
-    "Risk Management": pg.show_risk_management,
+    "Fund Analysis": pg.show_fund_analysis,
     "Quant Screening": pg.show_quant_screening,
     "Factor Tearsheet": pg.show_factor_tearsheet,
-    "Chartbook": pg.show_others,
 }
 go_to = functions.get(page)
 if go_to:
