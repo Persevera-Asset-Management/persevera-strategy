@@ -35,13 +35,13 @@ def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=Fal
     df = df.set_index('date')
 
     logging.info("Importing benchmark...")
-    cdi = pd.read_parquet(
+    df_benchmark = pd.read_parquet(
         path=PROJECT_PATH + "/consolidado-indicators.parquet",
-        filters=[('code', '==', benchmark)]
-    ).pivot_table(index='date', columns='code', values='value')
+        columns=[benchmark]
+    ).dropna()
 
     logging.info("Including benchmark to DataFrame...")
-    df = pd.merge(left=df, right=cdi, left_index=True, right_index=True, how='left')
+    df = pd.merge(left=df, right=df_benchmark, left_index=True, right_index=True, how='left')
 
     if relative:
         df = df.pct_change()
