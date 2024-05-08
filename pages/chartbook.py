@@ -16,6 +16,13 @@ def get_data(category: str, fields: list):
     return df
 
 
+def get_index_fundamentals(codes: list, field: str):
+    df = pd.read_parquet(os.path.join(DATA_PATH, f"index_fundamentals-equity.parquet"))
+    df = df.query('code == @codes')
+    df.pivot_table(index='date', columns='code', values=field)
+    return
+
+
 def get_yield_curve(contract):
     df = pd.read_parquet(DATA_PATH + "/indicators-futures_curve.parquet",
                          filters=[('contract', '==', contract)])
@@ -244,7 +251,23 @@ def show_chartbook():
         )
 
     elif selected_category == "Mercados":
-        pass
+        display_chart_with_expander(
+            "EPS",
+            ["S&P 500", "Ibovespa"],
+            [
+                get_index_fundamentals(codes=['us_sp500'], field='earnings_per_share_fwd')
+                get_index_fundamentals(codes=['br_ibovespa'], field='earnings_per_share_fwd')
+            ]
+        )
+
+        display_chart_with_expander(
+            "P/E",
+            ["Desenvolvidos", "Emergentes"],
+            [
+                get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq100' 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd')
+                get_index_fundamentals(codes=['br_ibovespa' 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'], field='price_to_earnings_fwd')
+            ]
+        )
 
     elif selected_category == "Posicionamento":
         display_chart_with_expander(
