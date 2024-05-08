@@ -17,7 +17,7 @@ def get_fund_peers(fund_name):
     return peers
 
 
-def get_fund_data(fund_name, start_date, selected_peers, relative=False):
+def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=False):
     logging.info(f'Loading data for {fund_name} and its peers since {start_date}...')
     listed_peers = get_fund_peers(fund_name)
     filtered_peers = {k: v for k, v in listed_peers.items() if v in selected_peers}
@@ -34,22 +34,24 @@ def get_fund_data(fund_name, start_date, selected_peers, relative=False):
     df = df.rename(columns=filtered_peers)
     df = df.set_index('date')
 
-    logging.info("Importing CDI...")
+    logging.info("Importing benchmark...")
     cdi = pd.read_parquet(
-        path=PROJECT_PATH + "/indicators-macro.parquet",
-        filters=[('code', '==', 'br_cdi_index')]
+        path=PROJECT_PATH + "/consolidado-indicators",
+        filters=[('code', '==', benchmark)]
     ).pivot_table(index='date', columns='code', values='value')
 
-    logging.info("Including CDI to DataFrame...")
+    logging.info("Including benchmark to DataFrame...")
     df = pd.merge(left=df, right=cdi, left_index=True, right_index=True, how='left')
-    df = df.rename(columns={"br_cdi_index": "CDI"})
 
     if relative:
         df = df.pct_change()
-        df = df.apply(lambda x: x - df['CDI'])
-        df = (1 + df.drop(columns='CDI')).cumprod()
+        df = df.apply(lambda x: x - df[benchmark])
+        df = (1 + df.drop(columns=benchmark)).cumprod()
         df.iloc[0] = 1
         df = df.ffill()
+
+    df = df.rename(columns={"br_cdi_index": "CDI"})
+    df = df.rename(columns={"br_ibovespa": "IBOV"})
     return df
 
 
@@ -97,8 +99,8 @@ def show_fund_analysis():
     )
 
     de_para = {
-        "Trinity": {"initial_date": datetime(2022, 11, 10), "fund_name": "Persevera Trinity FI RF Ref DI"},
-        "Nemesis": {"initial_date": datetime(2022, 2, 25), "fund_name": "Persevera Nemesis Total Return FIM"},
+        "Trinity": {"initial_date": datetime(2022, 11, 10), "fund_name": "Persevera Trinity FI RF Ref DI", "benchmark": "br_cdi"},
+        "Nemesis": {"initial_date": datetime(2022, 2, 25), "fund_name": "Persevera Nemesis Total Return FIM", "benchmark": "br_ibovespa"},
     }
 
 
@@ -125,7 +127,7 @@ def show_fund_analysis():
         col1, col2 = st.columns(2, gap='large')
 
         with col1:
-            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers)
+            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
             data = (1 + data.pct_change()).cumprod()
             data = data.sub(1)
             data.iloc[0] = 0
@@ -136,7 +138,7 @@ def show_fund_analysis():
         with col2:
             st.write("Data mais recente:", data.index.max())
             table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
-                                       selected_peers=selected_peers)
+                                       selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
             df = get_performance_table(table_data, custom_date=start_date)
 
             st.dataframe(df
@@ -150,13 +152,13 @@ def show_fund_analysis():
                                   'custom': '{:,.2%}'.format}),
                          use_container_width=True)
 
-    # Retorno em excesso (CDI)
+    # Retorno relativo
     with tab2:
         col1, col2 = st.columns(2, gap='large')
 
         with col1:
             data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers,
-                                 relative=True)
+                                 benchmark=de_para[selected_fund]["benchmark"], relative=True)
             data = (1 + data.pct_change()).cumprod()
             data = data.sub(1)
             data.iloc[0] = 0
@@ -166,7 +168,7 @@ def show_fund_analysis():
 
         with col2:
             table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
-                                       selected_peers=selected_peers)
+                                       selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
             df = get_performance_table(table_data, custom_date=start_date, relative=True)
 
             st.dataframe(df
