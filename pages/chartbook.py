@@ -95,23 +95,34 @@ def show_chartbook():
 
     if selected_category == "Estados Unidos":
         display_chart_with_expander(
-            "Taxas Corporativas (US)",
+            "PIB",
+            ["PIB"],
+            [
+                get_data(category='macro', fields=['us_gdp_index']),
+                get_data(category='macro', fields=['us_gdp_yoy']),
+                get_data(category='macro', fields=['us_gdp_qoq']),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Taxas",
+            ["Treasuries", "Inclinações", "Curva de Juros"],
+            [
+                get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
+                get_data(category='macro', fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness']),
+                get_yield_curve(contract='us_fed_funds_curve')
+            ],
+            connect_gaps=True
+        )
+
+        display_chart_with_expander(
+            "Taxas Corporativas",
             ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
             [
                 get_data(category='macro', fields=['us_corporate_ig_5y_spread', 'us_corporate_ig_10y_spread']),
                 get_data(category='macro', fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield']),
                 get_data(category='macro', fields=['us_corporate_hy_5y_spread', 'us_corporate_hy_10y_spread']),
                 get_data(category='macro', fields=['us_corporate_hy_5y_yield', 'us_corporate_hy_10y_yield'])
-            ]
-        )
-
-        display_chart_with_expander(
-            "Taxas de Juros (US)",
-            ["Treasuries", "Inclinações", "Fed Funds Futures"],
-            [
-                get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
-                get_data(category='macro', fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness']),
-                get_yield_curve(contract='us_fed_funds_curve')
             ]
         )
 
@@ -139,14 +150,31 @@ def show_chartbook():
 
     elif selected_category == "Brasil":
         display_chart_with_expander(
-            "Trajetória do PIB",
-            ["PIB US", "PIB Brasil"],
+            "PIB",
+            ["PIB Brasil"],
             [
-                get_data(category='macro', fields=['us_gdp_yoy']),
-                get_data(category='macro', fields=['br_gdp_yoy'])
+                get_data(category='macro', fields=['br_gdp_index']),
+                get_data(category='macro', fields=['br_gdp_yoy']),
+                get_data(category='macro', fields=['br_gdp_qoq']),
             ]
         )
 
+        display_chart_with_expander(
+            "Taxas",
+            ["Curva Pré", "Curva IPCA", "Curva Implícita", "Curva de Juros"],
+            [
+                get_data(category='macro', fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y']),
+                get_data(category='macro',
+                         fields=['br_ipca_1y', 'br_ipca_2y', 'br_ipca_3y', 'br_ipca_5y', 'br_ipca_10y', 'br_ipca_35y']),
+                get_data(category='macro',
+                         fields=['br_breakeven_1y', 'br_breakeven_2y', 'br_breakeven_3y', 'br_breakeven_5y',
+                                 'br_breakeven_10y']),
+                get_yield_curve('br_di_curve')
+            ],
+            connect_gaps=True
+        )
+
+    elif selected_category == "Rates":
         display_chart_with_expander(
             "DM Rates",
             ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],
@@ -160,10 +188,12 @@ def show_chartbook():
                                  'japan_generic_5y',
                                  'switzerland_generic_5y', 'sweden_generic_5y']),
                 get_data(category='macro',
-                         fields=['new_zealand_generic_1y', 'australia_generic_1y', 'canada_generic_1y', 'norway_generic_1y',
+                         fields=['new_zealand_generic_1y', 'australia_generic_1y', 'canada_generic_1y',
+                                 'norway_generic_1y',
                                  'us_generic_1y', 'uk_generic_1y']),
                 get_data(category='macro',
-                         fields=['new_zealand_generic_5y', 'australia_generic_5y', 'canada_generic_5y', 'norway_generic_5y',
+                         fields=['new_zealand_generic_5y', 'australia_generic_5y', 'canada_generic_5y',
+                                 'norway_generic_5y',
                                  'us_generic_5y', 'uk_generic_5y']),
             ]
         )
@@ -186,23 +216,6 @@ def show_chartbook():
                                  'india_generic_5y', 'indonesia_generic_5y', 'turkey_generic_1y']),
             ]
         )
-
-        display_chart_with_expander(
-            "Taxa de Juros (BR)",
-            ["Curva Pré", "Curva IPCA", "Curva Implícita", "DI Futures"],
-            [
-                get_data(category='macro', fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y']),
-                get_data(category='macro',
-                         fields=['br_ipca_1y', 'br_ipca_2y', 'br_ipca_3y', 'br_ipca_5y', 'br_ipca_10y', 'br_ipca_35y']),
-                get_data(category='macro',
-                         fields=['br_implicita_1y', 'br_implicita_2y', 'br_implicita_3y', 'br_implicita_5y',
-                                 'br_implicita_10y']),
-                get_yield_curve('br_di_curve')
-            ]
-        )
-
-    elif selected_category == "Rates":
-        pass
 
     elif selected_category == "Commodities":
         display_chart_with_expander(
@@ -229,10 +242,10 @@ def show_chartbook():
             ["Atacado", "Varejo"],
             [
                 get_data(category='commodity',
+                         fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline', 'usda_diesel']),
+                get_data(category='commodity',
                          fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail', 'br_anp_hydrated_ethanol_retail',
                                  'br_anp_lpg_retail']),
-                get_data(category='commodity',
-                         fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline', 'usda_diesel'])
             ],
             connect_gaps=True
         )
