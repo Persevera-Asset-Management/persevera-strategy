@@ -97,7 +97,7 @@ def show_chartbook():
     selected_category = option_menu(
         menu_title=None,
         options=["Estados Unidos", "Brasil", "Rates", "Commodities", "Mercados", "Posicionamento"],
-        icons=['globe', 'table', "list-task", 'graph-up', 'graph-up'],
+        icons=['globe', 'globe-americas', "clipboard2-pulse", 'tree', 'graph-up', 'pie-chart'],
         orientation="horizontal"
     )
 
