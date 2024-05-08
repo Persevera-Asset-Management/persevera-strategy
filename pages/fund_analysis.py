@@ -101,81 +101,86 @@ def show_fund_analysis():
         "Nemesis": {"initial_date": datetime(2022, 2, 25), "fund_name": "Persevera Nemesis Total Return FIM"},
     }
 
-    if selected_fund == "Trinity":
-        st.header(selected_fund)
 
+    st.header(selected_fund)
+
+    col1, col2 = st.columns(2, gap='large')
+    with col1:
+        start_date = st.date_input(label="Selecione a data inicial:",
+                                   value=de_para[selected_fund]["initial_date"],
+                                   min_value=de_para[selected_fund]["initial_date"],
+                                   format="YYYY-MM-DD")
+
+    with col2:
+        peers_list = get_fund_peers(selected_fund).values()
+        selected_peers = st.multiselect(label='Selecione os peers:',
+                                        options=peers_list,
+                                        default=[de_para[selected_fund]["fund_name"]])
+
+    st.subheader("Rentabilidade Acumulada")
+    tab1, tab2 = st.tabs(["Absoluto", "Relativo"])
+
+    # Tab1: Retorno absoluto
+    with tab1:
         col1, col2 = st.columns(2, gap='large')
+
         with col1:
-            start_date = st.date_input(label="Selecione a data inicial:",
-                                       value=de_para[selected_fund]["initial_date"],
-                                       min_value=de_para[selected_fund]["initial_date"],
-                                       format="YYYY-MM-DD")
+            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers)
+            data = (1 + data.pct_change()).cumprod()
+            data = data.sub(1)
+            data.iloc[0] = 0
+            data = data.ffill()
+            fig = px.line(data)
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
         with col2:
-            peers_list = get_fund_peers(selected_fund).values()
-            selected_peers = st.multiselect(label='Selecione os peers:',
-                                            options=peers_list,
-                                            default=[de_para[selected_fund]["fund_name"]])
+            st.write("Data mais recente:", data.index.max())
+            table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
+                                       selected_peers=selected_peers)
+            df = get_performance_table(table_data, custom_date=start_date)
 
-        st.subheader("Rentabilidade Acumulada")
-        tab1, tab2 = st.tabs(["Absoluto", "Relativo"])
+            st.dataframe(df
+                         .style
+                         .format({'day': '{:,.2%}'.format,
+                                  'mtd': '{:,.2%}'.format,
+                                  'ytd': '{:,.2%}'.format,
+                                  '3m': '{:,.2%}'.format,
+                                  '6m': '{:,.2%}'.format,
+                                  '12m': '{:,.2%}'.format,
+                                  'custom': '{:,.2%}'.format}),
+                         use_container_width=True)
 
-        # Tab1: Retorno absoluto
-        with tab1:
-            col1, col2 = st.columns(2, gap='large')
+    # Retorno em excesso (CDI)
+    with tab2:
+        col1, col2 = st.columns(2, gap='large')
 
-            with col1:
-                data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers)
-                data = (1 + data.pct_change()).cumprod()
-                data = data.sub(1)
-                data.iloc[0] = 0
-                data = data.ffill()
-                fig = px.line(data)
-                st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+        with col1:
+            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers,
+                                 relative=True)
+            data = (1 + data.pct_change()).cumprod()
+            data = data.sub(1)
+            data.iloc[0] = 0
+            data = data.ffill()
+            fig = px.line(data)
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
-            with col2:
-                st.write("Data mais recente:", data.index.max())
-                table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
-                                           selected_peers=selected_peers)
-                df = get_performance_table(table_data, custom_date=start_date)
+        with col2:
+            table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
+                                       selected_peers=selected_peers)
+            df = get_performance_table(table_data, custom_date=start_date, relative=True)
 
-                st.dataframe(df
-                             .style
-                             .format({'day': '{:,.2%}'.format,
-                                      'mtd': '{:,.2%}'.format,
-                                      'ytd': '{:,.2%}'.format,
-                                      '3m': '{:,.2%}'.format,
-                                      '6m': '{:,.2%}'.format,
-                                      '12m': '{:,.2%}'.format,
-                                      'custom': '{:,.2%}'.format}),
-                             use_container_width=True)
+            st.dataframe(df
+                         .style
+                         .format({'day': '{:,.2%}'.format,
+                                  'mtd': '{:,.2%}'.format,
+                                  'ytd': '{:,.2%}'.format,
+                                  '3m': '{:,.2%}'.format,
+                                  '6m': '{:,.2%}'.format,
+                                  '12m': '{:,.2%}'.format,
+                                  'custom': '{:,.2%}'.format}),
+                         use_container_width=True)
 
-        # Retorno em excesso (CDI)
-        with tab2:
-            col1, col2 = st.columns(2, gap='large')
-
-            with col1:
-                data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers,
-                                     relative=True)
-                data = (1 + data.pct_change()).cumprod()
-                data = data.sub(1)
-                data.iloc[0] = 0
-                data = data.ffill()
-                fig = px.line(data)
-                st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
-
-            with col2:
-                table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
-                                           selected_peers=selected_peers)
-                df = get_performance_table(table_data, custom_date=start_date, relative=True)
-
-                st.dataframe(df
-                             .style
-                             .format({'day': '{:,.2%}'.format,
-                                      'mtd': '{:,.2%}'.format,
-                                      'ytd': '{:,.2%}'.format,
-                                      '3m': '{:,.2%}'.format,
-                                      '6m': '{:,.2%}'.format,
-                                      '12m': '{:,.2%}'.format,
-                                      'custom': '{:,.2%}'.format}),
-                             use_container_width=True)
+    if selected_fund == "Trinity":
+        pass
+    elif selected_fund == "Nemesis":
+        pass

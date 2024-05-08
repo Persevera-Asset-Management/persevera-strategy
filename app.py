@@ -18,7 +18,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-pages = ["Chartbook", "Fund Analysis", "Trinity", "Nemesis", "Risk Management", "Quant Screening", "Factor Tearsheet"]
+pages = ["Home", "Chartbook", "Fund Analysis", "Quant Screening", "Factor Tearsheet"]
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(parent_dir, "logo.svg")
 
