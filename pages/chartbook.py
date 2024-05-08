@@ -105,12 +105,17 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Taxas",
-            ["Treasuries", "Inclinações", "Curva de Juros"],
+            "Taxas Referenciais",
+            ["Curva Pré (Treasuries)", "Curva Inflação (TIPS)", "Curva Implícita (Breakeven)", "Curva de Juros", "Inclinações"],
             [
                 get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
+                get_data(category='macro',
+                         fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
+                                 'us_generic_inflation_30y']),
+                get_data(category='macro',
+                         fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y']),
+                get_yield_curve(contract='us_fed_funds_curve'),
                 get_data(category='macro', fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness']),
-                get_yield_curve(contract='us_fed_funds_curve')
             ],
             connect_gaps=True
         )
@@ -123,19 +128,6 @@ def show_chartbook():
                 get_data(category='macro', fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield']),
                 get_data(category='macro', fields=['us_corporate_hy_5y_spread', 'us_corporate_hy_10y_spread']),
                 get_data(category='macro', fields=['us_corporate_hy_5y_yield', 'us_corporate_hy_10y_yield'])
-            ]
-        )
-
-        display_chart_with_expander(
-            "Taxas Reais e Implícitas (US)",
-            ["Treasuries", "TIPS", "Breakevens"],
-            [
-                get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
-                get_data(category='macro',
-                         fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
-                                 'us_generic_inflation_30y']),
-                get_data(category='macro',
-                         fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y'])
             ]
         )
 
@@ -160,7 +152,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Taxas",
+            "Taxas Referenciais",
             ["Curva Pré", "Curva IPCA", "Curva Implícita", "Curva de Juros"],
             [
                 get_data(category='macro', fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y']),
