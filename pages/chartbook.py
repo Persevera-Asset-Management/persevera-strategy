@@ -12,6 +12,7 @@ def get_data(category: str, fields: list):
     df = pd.read_parquet(os.path.join(DATA_PATH, f"indicators-{category}.parquet"))
     df = df.query('code == @fields')
     df = df.pivot_table(index='date', columns='code', values='value')
+    df = df.filter(fields)
     return df
 
 
@@ -241,6 +242,9 @@ def show_chartbook():
             ],
             connect_gaps=True
         )
+
+    elif selected_category == "Mercados":
+        pass
 
     elif selected_category == "Posicionamento":
         display_chart_with_expander(
