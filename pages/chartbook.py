@@ -20,6 +20,7 @@ def get_index_fundamentals(codes: list, field: str):
     df = pd.read_parquet(os.path.join(DATA_PATH, f"index_fundamentals-equity.parquet"))
     df = df.query('code == @codes')
     df = df.pivot_table(index='date', columns='code', values=field)
+    df = df.filter(codes)
     return df
 
 
@@ -80,7 +81,7 @@ def show_chartbook():
     st.header("Chartbook")
 
     def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False):
-        with st.expander(expander_title):
+        with st.expander(expander_title, expanded=False):
             num_cols = 2
             num_charts = len(chart_titles)
             num_rows = (num_charts + num_cols - 1) // num_cols
@@ -149,6 +150,8 @@ def show_chartbook():
         )
 
     elif selected_category == "Brasil":
+        st.empty()
+
         display_chart_with_expander(
             "PIB",
             ["PIB Brasil"],
@@ -251,6 +254,8 @@ def show_chartbook():
         )
 
     elif selected_category == "Mercados":
+        st.empty()
+
         display_chart_with_expander(
             "EPS",
             ["S&P 500", "Ibovespa"],
@@ -264,9 +269,10 @@ def show_chartbook():
             "P/E",
             ["Desenvolvidos", "Emergentes"],
             [
-                get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq100' 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd'),
-                get_index_fundamentals(codes=['br_ibovespa' 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'], field='price_to_earnings_fwd'),
-            ]
+                get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq_composite', 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd'),
+                get_index_fundamentals(codes=['br_ibovespa', 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'], field='price_to_earnings_fwd'),
+            ],
+            connect_gaps=True
         )
 
     elif selected_category == "Posicionamento":
