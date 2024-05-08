@@ -10,14 +10,12 @@ import plotly.express as px
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
-de_para = {
-    "Trinity": {"initial_date": datetime(2022, 11, 10),
-                "fund_name": "Persevera Trinity FI RF Ref DI",
-                "benchmark": "br_cdi_index"},
-    "Nemesis": {"initial_date": datetime(2022, 2, 25),
-                "fund_name": "Persevera Nemesis Total Return FIM",
-                "benchmark": "br_ibovespa"},
-}
+de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
+                       "fund_name": "Persevera Trinity FI RF Ref DI",
+                       "benchmark": "br_cdi_index"},
+           "Nemesis": {"initial_date": datetime(2022, 2, 25),
+                       "fund_name": "Persevera Nemesis Total Return FIM",
+                       "benchmark": "br_ibovespa"},}
 
 
 def get_fund_peers(fund_name):
@@ -76,13 +74,17 @@ def get_performance_table(df, custom_date, relative=False):
     }
     df = pd.DataFrame(time_frames)
     if relative:
-        df = df.div(df.loc['CDI'])
-        df = df.drop(index='CDI')
+        try:
+            df = df.div(df.loc['CDI'])
+            df = df.drop(index='CDI')
+        except:
+            df = df.div(df.loc['IBOV'])
+            df = df.drop(index='IBOV')
     return df
 
 
-def format_table(data):
-    df = data.style.format({'day': '{:,.2%}'.format,
+def format_table(df):
+    return df.style.format({'day': '{:,.2%}'.format,
                             'mtd': '{:,.2%}'.format,
                             'ytd': '{:,.2%}'.format,
                             '3m': '{:,.2%}'.format,
@@ -90,7 +92,6 @@ def format_table(data):
                             '12m': '{:,.2%}'.format,
                             'custom': '{:,.2%}'.format}
                            )
-    return df
 
 
 def format_chart(figure, connect_gaps=False):

@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 import streamlit as st
 from streamlit_option_menu import option_menu
@@ -22,9 +23,17 @@ def get_yield_curve(contract):
     df = df.iloc[:, :-1]
     df = df.dropna(subset=[df.columns[-1]])
 
-    df['30d_median'] = df.iloc[:, -31:-1].median(axis=1)
-    df['30d_min'] = df.iloc[:, -31:-1].min(axis=1)
-    df['30d_max'] = df.iloc[:, -31:-1].max(axis=1)
+    df['30d_count'] = df.iloc[:, -31:-1].count(axis=1)
+    df.loc[df['30d_count'] < 20] = np.nan
+    df = df.drop(columns='30d_count')
+
+    median = df.iloc[:, -31:-1].median(axis=1)
+    min = df.iloc[:, -31:-1].min(axis=1)
+    max = df.iloc[:, -31:-1].max(axis=1)
+
+    df['30d_median'] = median
+    df['30d_min'] = min
+    df['30d_max'] = max
     df = df[df.columns[-4:]]
     return df
 
@@ -59,8 +68,8 @@ def create_line_chart(data, title, connect_gaps):
     return fig
 
 
-def show_others():
-    st.header("Indicators")
+def show_chartbook():
+    st.header("Chartbook")
 
     def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False):
         with st.expander(expander_title):
@@ -79,12 +88,12 @@ def show_others():
 
     selected_category = option_menu(
         menu_title=None,
-        options=["United States", "Brazil", "Rates", "Commodities", "Markets", "Positioning"],
+        options=["Estados Unidos", "Brasil", "Rates", "Commodities", "Mercados", "Posicionamento"],
         icons=['globe', 'table', "list-task", 'graph-up', 'graph-up'],
         orientation="horizontal"
     )
 
-    if selected_category == "United States":
+    if selected_category == "Estados Unidos":
         display_chart_with_expander(
             "Taxas Corporativas (US)",
             ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
@@ -128,7 +137,7 @@ def show_others():
             ]
         )
 
-    elif selected_category == "Brazil":
+    elif selected_category == "Brasil":
         display_chart_with_expander(
             "Trajetória do PIB",
             ["PIB US", "PIB Brasil"],
@@ -192,19 +201,43 @@ def show_others():
             ]
         )
 
+    elif selected_category == "Rates":
+        pass
+
     elif selected_category == "Commodities":
         display_chart_with_expander(
-            "CRB e Fretes",
-            ["Índice CRB", "Índice CRB (% 12 meses)", "DI Futures"],
+            "Commodity Research Bureau (CRB)",
+            ["Índice CRB", "Índice CRB (% 12 meses)"],
             [
                 get_data(category='commodity', fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index']),
                 get_data(category='commodity', fields=['crb_index']).pct_change(252).dropna(),
+            ],
+            connect_gaps=True
+        )
+        
+        display_chart_with_expander(
+            "Fretes",
+            ["XXX"],
+            [
                 get_data(category='commodity', fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])
             ],
             connect_gaps=True
         )
 
-    elif selected_category == "Positioning":
+        display_chart_with_expander(
+            "Combustível",
+            ["Atacado", "Varejo"],
+            [
+                get_data(category='commodity',
+                         fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail', 'br_anp_hydrated_ethanol_retail',
+                                 'br_anp_lpg_retail']),
+                get_data(category='commodity',
+                         fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline', 'usda_diesel'])
+            ],
+            connect_gaps=True
+        )
+
+    elif selected_category == "Posicionamento":
         display_chart_with_expander(
             "Treasuries",
             ["Treasury 2Y", "Treasury 5Y", "Treasury 10Y", "Treasury Bonds"],

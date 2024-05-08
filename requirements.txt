@@ -6,3 +6,4 @@ pillow~=10.2.0
 streamlit-navigation-bar
 openpyxl
 streamlit_option_menu
+numpy~=1.26.4

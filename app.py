@@ -62,7 +62,7 @@ page = st_navbar(
 
 functions = {
     "Home": pg.show_home,
-    "Chartbook": pg.show_others,
+    "Chartbook": pg.show_chartbook,
     "Trinity": pg.show_trinity,
     "Nemesis": pg.show_nemesis,
     "Fund Analysis": pg.show_fund_analysis,
