@@ -255,8 +255,8 @@ def show_chartbook():
             "EPS",
             ["S&P 500", "Ibovespa"],
             [
-                get_index_fundamentals(codes=['us_sp500'], field='earnings_per_share_fwd')
-                get_index_fundamentals(codes=['br_ibovespa'], field='earnings_per_share_fwd')
+                get_index_fundamentals(codes=['us_sp500'], field='earnings_per_share_fwd'),
+                get_index_fundamentals(codes=['br_ibovespa'], field='earnings_per_share_fwd'),
             ]
         )
 
