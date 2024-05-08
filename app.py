@@ -12,15 +12,16 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
+pages = ["Home", "Chartbook", "Fund Analysis", "Quant Screening", "Factor Tearsheet"]
+parent_dir = os.path.dirname(os.path.abspath(__file__))
+logo_path = os.path.join(parent_dir, "logo.svg")
+page_icon_logo_path = os.path.join(parent_dir, "assets/persevera_logo_page_icon.png")
+
 st.set_page_config(
     page_title="Persevera",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-
-pages = ["Home", "Chartbook", "Fund Analysis", "Quant Screening", "Factor Tearsheet"]
-parent_dir = os.path.dirname(os.path.abspath(__file__))
-logo_path = os.path.join(parent_dir, "logo.svg")
 
 styles = {
     "nav": {
