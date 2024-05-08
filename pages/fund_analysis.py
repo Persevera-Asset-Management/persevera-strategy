@@ -101,7 +101,7 @@ def show_fund_analysis():
     de_para = {
         "Trinity": {"initial_date": datetime(2022, 11, 10),
                     "fund_name": "Persevera Trinity FI RF Ref DI",
-                    "benchmark": "br_cdi"},
+                    "benchmark": "br_cdi_index"},
         "Nemesis": {"initial_date": datetime(2022, 2, 25),
                     "fund_name": "Persevera Nemesis Total Return FIM",
                     "benchmark": "br_ibovespa"},
