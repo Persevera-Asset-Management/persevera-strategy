@@ -10,6 +10,15 @@ import plotly.express as px
 
 PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
+de_para = {
+    "Trinity": {"initial_date": datetime(2022, 11, 10),
+                "fund_name": "Persevera Trinity FI RF Ref DI",
+                "benchmark": "br_cdi_index"},
+    "Nemesis": {"initial_date": datetime(2022, 2, 25),
+                "fund_name": "Persevera Nemesis Total Return FIM",
+                "benchmark": "br_ibovespa"},
+}
+
 
 def get_fund_peers(fund_name):
     peers = pd.read_excel(PROJECT_PATH + "/peers.xlsx", sheet_name=fund_name, index_col=0)
@@ -72,6 +81,18 @@ def get_performance_table(df, custom_date, relative=False):
     return df
 
 
+def format_table(data):
+    df = data.style.format({'day': '{:,.2%}'.format,
+                            'mtd': '{:,.2%}'.format,
+                            'ytd': '{:,.2%}'.format,
+                            '3m': '{:,.2%}'.format,
+                            '6m': '{:,.2%}'.format,
+                            '12m': '{:,.2%}'.format,
+                            'custom': '{:,.2%}'.format}
+                           )
+    return df
+
+
 def format_chart(figure, connect_gaps=False):
     figure.update_layout(
         xaxis=dict(
@@ -98,16 +119,6 @@ def show_fund_analysis():
         orientation="horizontal"
     )
 
-    de_para = {
-        "Trinity": {"initial_date": datetime(2022, 11, 10),
-                    "fund_name": "Persevera Trinity FI RF Ref DI",
-                    "benchmark": "br_cdi_index"},
-        "Nemesis": {"initial_date": datetime(2022, 2, 25),
-                    "fund_name": "Persevera Nemesis Total Return FIM",
-                    "benchmark": "br_ibovespa"},
-    }
-
-
     st.header(selected_fund)
 
     col1, col2 = st.columns(2, gap='large')
@@ -131,7 +142,8 @@ def show_fund_analysis():
         col1, col2 = st.columns(2, gap='large')
 
         with col1:
-            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
+            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers,
+                                 benchmark=de_para[selected_fund]["benchmark"])
             data = (1 + data.pct_change()).cumprod()
             data = data.sub(1)
             data.iloc[0] = 0
@@ -144,17 +156,7 @@ def show_fund_analysis():
             table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
                                        selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
             df = get_performance_table(table_data, custom_date=start_date)
-
-            st.dataframe(df
-                         .style
-                         .format({'day': '{:,.2%}'.format,
-                                  'mtd': '{:,.2%}'.format,
-                                  'ytd': '{:,.2%}'.format,
-                                  '3m': '{:,.2%}'.format,
-                                  '6m': '{:,.2%}'.format,
-                                  '12m': '{:,.2%}'.format,
-                                  'custom': '{:,.2%}'.format}),
-                         use_container_width=True)
+            st.dataframe(format_table(df), use_container_width=True)
 
     # Retorno relativo
     with tab2:
@@ -174,17 +176,7 @@ def show_fund_analysis():
             table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
                                        selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
             df = get_performance_table(table_data, custom_date=start_date, relative=True)
-
-            st.dataframe(df
-                         .style
-                         .format({'day': '{:,.2%}'.format,
-                                  'mtd': '{:,.2%}'.format,
-                                  'ytd': '{:,.2%}'.format,
-                                  '3m': '{:,.2%}'.format,
-                                  '6m': '{:,.2%}'.format,
-                                  '12m': '{:,.2%}'.format,
-                                  'custom': '{:,.2%}'.format}),
-                         use_container_width=True)
+            st.dataframe(format_table(df), use_container_width=True)
 
     if selected_fund == "Trinity":
         pass
