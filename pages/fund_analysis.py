@@ -36,7 +36,7 @@ def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=Fal
 
     logging.info("Importing benchmark...")
     cdi = pd.read_parquet(
-        path=PROJECT_PATH + "/consolidado-indicators",
+        path=PROJECT_PATH + "/consolidado-indicators.parquet",
         filters=[('code', '==', benchmark)]
     ).pivot_table(index='date', columns='code', values='value')
 
@@ -99,8 +99,12 @@ def show_fund_analysis():
     )
 
     de_para = {
-        "Trinity": {"initial_date": datetime(2022, 11, 10), "fund_name": "Persevera Trinity FI RF Ref DI", "benchmark": "br_cdi"},
-        "Nemesis": {"initial_date": datetime(2022, 2, 25), "fund_name": "Persevera Nemesis Total Return FIM", "benchmark": "br_ibovespa"},
+        "Trinity": {"initial_date": datetime(2022, 11, 10),
+                    "fund_name": "Persevera Trinity FI RF Ref DI",
+                    "benchmark": "br_cdi"},
+        "Nemesis": {"initial_date": datetime(2022, 2, 25),
+                    "fund_name": "Persevera Nemesis Total Return FIM",
+                    "benchmark": "br_ibovespa"},
     }
 
 
