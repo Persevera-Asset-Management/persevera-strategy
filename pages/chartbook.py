@@ -19,8 +19,8 @@ def get_data(category: str, fields: list):
 def get_index_fundamentals(codes: list, field: str):
     df = pd.read_parquet(os.path.join(DATA_PATH, f"index_fundamentals-equity.parquet"))
     df = df.query('code == @codes')
-    df.pivot_table(index='date', columns='code', values=field)
-    return
+    df = df.pivot_table(index='date', columns='code', values=field)
+    return df
 
 
 def get_yield_curve(contract):
