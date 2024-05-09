@@ -137,7 +137,7 @@ def show_chartbook():
                 for col, title, dataset in zip(cols, table_titles[start_index:end_index],
                                                datasets[start_index:end_index]):
                     table = get_performance_table(dataset)
-                    st.dataframe(format_table(table), use_container_width=True)
+                    col.dataframe(format_table(table), use_container_width=True)
 
     selected_category = option_menu(
         menu_title=None,
@@ -267,10 +267,10 @@ def show_chartbook():
     elif selected_category == "Commodities":
         display_table_with_expander(
             "Performance: Moedas",
-            ["Índice CRB", "Índice CRB (% 12 meses)"],
+            ["Desenvolvidos", "Emergentes"],
             [
                 get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']),
-                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']),
+                get_data(category='currency', fields=['brl_usd', 'mxn_usd', 'clp_usd', 'zar_usd', 'try_usd', 'cnh_usd']),
             ]
         )
 
