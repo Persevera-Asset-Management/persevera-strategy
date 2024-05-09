@@ -276,7 +276,7 @@ def show_chartbook():
                 get_index_fundamentals(codes=['br_ibovespa', 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'], field='price_to_earnings_fwd'),
                 get_index_fundamentals(
                     codes=['us_sp500', 'br_ibovespa', 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'],
-                    field='price_to_earnings_fwd').apply(lambda x: x / x['us_sp500'], axis=1).drop(columns='us_sp500'),
+                    field='price_to_earnings_fwd').apply(lambda x: x / x['us_sp500'], axis=1).drop(columns='us_sp500').dropna(how='all'),
             ],
             connect_gaps=True
         )

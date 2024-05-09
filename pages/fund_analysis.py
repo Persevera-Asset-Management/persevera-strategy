@@ -15,7 +15,10 @@ de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
                        "benchmark": "br_cdi_index"},
            "Nemesis": {"initial_date": datetime(2022, 2, 25),
                        "fund_name": "Persevera Nemesis Total Return FIM",
-                       "benchmark": "br_ibovespa"},}
+                       "benchmark": "br_ibovespa"},
+           "Proteus": {"initial_date": datetime(2023, 9, 29),
+                       "fund_name": "Persevera Proteus Ações FIA",
+                       "benchmark": "br_ibovespa"}}
 
 
 def get_fund_peers(fund_name):
@@ -115,7 +118,7 @@ def show_fund_analysis():
 
     selected_fund = option_menu(
         menu_title=None,
-        options=["Trinity", "Nemesis"],
+        options=["Trinity", "Nemesis", "Proteus"],
         icons=['globe', 'table'],
         orientation="horizontal"
     )
@@ -127,6 +130,7 @@ def show_fund_analysis():
         start_date = st.date_input(label="Selecione a data inicial:",
                                    value=de_para[selected_fund]["initial_date"],
                                    min_value=de_para[selected_fund]["initial_date"],
+                                   max_value=datetime.today(),
                                    format="YYYY-MM-DD")
 
     with col2:
