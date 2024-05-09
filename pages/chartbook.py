@@ -154,7 +154,7 @@ def show_chartbook():
 
         display_chart_with_expander(
             "PIB",
-            ["PIB Brasil"],
+            ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             [
                 get_data(category='macro', fields=['br_gdp_index']),
                 get_data(category='macro', fields=['br_gdp_yoy']),
@@ -267,10 +267,16 @@ def show_chartbook():
 
         display_chart_with_expander(
             "P/E",
-            ["Desenvolvidos", "Emergentes"],
+            ["Desenvolvidos", "Desenvolvidos (vs. S&P 500)", "Emergentes", "Emergentes (vs. S&P 500)"],
             [
-                get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq_composite', 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd'),
+                get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq100', 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd'),
+                get_index_fundamentals(
+                    codes=['us_sp500', 'us_russell2000', 'us_nasdaq100', 'germany_dax40', 'japan_nikkei225', 'uk_ukx'],
+                    field='price_to_earnings_fwd').apply(lambda x: x / x['us_sp500'], axis=1).drop(columns='us_sp500'),
                 get_index_fundamentals(codes=['br_ibovespa', 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'], field='price_to_earnings_fwd'),
+                get_index_fundamentals(
+                    codes=['us_sp500', 'br_ibovespa', 'china_csi300', 'south_africa_top40', 'mexico_bmv', 'chile_ipsa', 'india_nifty50', 'indonesia_jci'],
+                    field='price_to_earnings_fwd').apply(lambda x: x / x['us_sp500'], axis=1).drop(columns='us_sp500'),
             ],
             connect_gaps=True
         )
