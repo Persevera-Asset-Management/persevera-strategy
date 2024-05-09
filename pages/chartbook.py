@@ -9,8 +9,11 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 
 def get_data(category: str, fields: list):
-    df = pd.read_parquet(os.path.join(DATA_PATH, f"indicators-{category}.parquet"))
-    df = df.query('code == @fields')
+    df = pd.read_parquet(
+        os.path.join(DATA_PATH, f"indicators-{category}.parquet"),
+        filters=[('code', 'in', fields)]
+    )
+    # df = df.query('code == @fields')
     df = df.pivot_table(index='date', columns='code', values='value')
     df = df.filter(fields)
     return df
@@ -77,6 +80,31 @@ def create_line_chart(data, title, connect_gaps):
     return fig
 
 
+def get_performance_table(df):
+    time_frames = {
+        'last': df.iloc[-1],
+        'wtd': df.groupby(pd.Grouper(level='date', freq="1W-FRI")).last().pct_change().iloc[-1],
+        'mtd': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1],
+        '1m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(1 * 21).iloc[-1],
+        'ytd': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1],
+        '1y': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
+        '2y': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(2 * 12 * 21).iloc[-1],
+    }
+    df = pd.DataFrame(time_frames)
+    return df
+
+
+def format_table(df):
+    return df.style.format({'last': '{:,.2f}'.format,
+                            'wtd': '{:,.2%}'.format,
+                            'mtd': '{:,.2%}'.format,
+                            '1m': '{:,.2%}'.format,
+                            'ytd': '{:,.2%}'.format,
+                            '1y': '{:,.2%}'.format,
+                            '2y': '{:,.2%}'.format}
+                           )
+
+
 def show_chartbook():
     st.header("Chartbook")
 
@@ -94,6 +122,23 @@ def show_chartbook():
                 for col, title, dataset in zip(cols, chart_titles[start_index:end_index],
                                                datasets[start_index:end_index]):
                     col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
+
+    def display_table_with_expander(expander_title, table_titles, datasets):
+        with st.expander(expander_title, expanded=False):
+            num_cols = 2
+            num_charts = len(table_titles)
+            num_rows = (num_charts + num_cols - 1) // num_cols
+
+            for row in range(num_rows):
+                cols = st.columns(num_cols, gap='large')
+                start_index = row * num_cols
+                end_index = min((row + 1) * num_cols, num_charts)
+
+                for col, title, dataset in zip(cols, table_titles[start_index:end_index],
+                                               datasets[start_index:end_index]):
+                    col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
+                    table = get_performance_table(dataset)
+                    st.dataframe(format_table(table), use_container_width=True)
 
     selected_category = option_menu(
         menu_title=None,
@@ -221,6 +266,15 @@ def show_chartbook():
         )
 
     elif selected_category == "Commodities":
+        display_table_with_expander(
+            "Performance: Moedas",
+            ["Índice CRB", "Índice CRB (% 12 meses)"],
+            [
+                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']),
+                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']),
+            ]
+        )
+
         display_chart_with_expander(
             "Commodity Research Bureau (CRB)",
             ["Índice CRB", "Índice CRB (% 12 meses)"],
