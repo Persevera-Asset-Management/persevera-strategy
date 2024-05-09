@@ -136,7 +136,6 @@ def show_chartbook():
 
                 for col, title, dataset in zip(cols, table_titles[start_index:end_index],
                                                datasets[start_index:end_index]):
-                    col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
                     table = get_performance_table(dataset)
                     st.dataframe(format_table(table), use_container_width=True)
 
