@@ -136,6 +136,7 @@ def show_chartbook():
 
                 for col, title, dataset in zip(cols, table_titles[start_index:end_index],
                                                datasets[start_index:end_index]):
+                    col.subheader(title)
                     table = get_performance_table(dataset)
                     col.dataframe(format_table(table), use_container_width=True)
 
@@ -269,8 +270,8 @@ def show_chartbook():
             "Performance: Moedas",
             ["Desenvolvidos", "Emergentes"],
             [
-                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']),
-                get_data(category='currency', fields=['brl_usd', 'mxn_usd', 'clp_usd', 'zar_usd', 'try_usd', 'cnh_usd']),
+                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']).fillna(method='ffill', limit=2),
+                get_data(category='currency', fields=['brl_usd', 'mxn_usd', 'clp_usd', 'zar_usd', 'try_usd', 'cnh_usd']).fillna(method='ffill', limit=2),
             ]
         )
 
