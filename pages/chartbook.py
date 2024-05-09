@@ -136,13 +136,13 @@ def show_chartbook():
 
                 for col, title, dataset in zip(cols, table_titles[start_index:end_index],
                                                datasets[start_index:end_index]):
-                    col.subheader(title)
+                    col.markdown(f"**{title}**")
                     table = get_performance_table(dataset)
                     col.dataframe(format_table(table), use_container_width=True)
 
     selected_category = option_menu(
         menu_title=None,
-        options=["Estados Unidos", "Brasil", "Rates", "Commodities", "Mercados", "Posicionamento"],
+        options=["Estados Unidos", "Brasil", "Rates", "Commodities", "Moedas", "Mercados", "Posicionamento"],
         icons=['globe', 'globe-americas', "clipboard2-pulse", 'tree', 'graph-up', 'pie-chart'],
         orientation="horizontal"
     )
@@ -267,11 +267,11 @@ def show_chartbook():
 
     elif selected_category == "Commodities":
         display_table_with_expander(
-            "Performance: Moedas",
-            ["Desenvolvidos", "Emergentes"],
+            "Performance",
+            ["Energia", "Metais"],
             [
-                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']).fillna(method='ffill', limit=2),
-                get_data(category='currency', fields=['brl_usd', 'mxn_usd', 'clp_usd', 'zar_usd', 'try_usd', 'cnh_usd']).fillna(method='ffill', limit=2),
+                get_data(category='commodity', fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']),
+                get_data(category='commodity', fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']),
             ]
         )
 
@@ -305,6 +305,16 @@ def show_chartbook():
                                  'br_anp_lpg_retail']),
             ],
             connect_gaps=True
+        )
+
+    elif selected_category == "Moedas":
+        display_table_with_expander(
+            "Performance",
+            ["Desenvolvidos", "Emergentes"],
+            [
+                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']).fillna(method='ffill', limit=2),
+                get_data(category='currency', fields=['brl_usd', 'mxn_usd', 'clp_usd', 'zar_usd', 'try_usd', 'cnh_usd']).fillna(method='ffill', limit=2),
+            ]
         )
 
     elif selected_category == "Mercados":
