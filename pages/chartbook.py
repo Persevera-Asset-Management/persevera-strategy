@@ -95,14 +95,15 @@ def get_performance_table(df):
 
 
 def format_table(df):
-    return df.style.format({'last': '{:,.2f}'.format,
-                            'wtd': '{:,.2%}'.format,
-                            'mtd': '{:,.2%}'.format,
-                            '1m': '{:,.2%}'.format,
-                            'ytd': '{:,.2%}'.format,
-                            '1y': '{:,.2%}'.format,
-                            '2y': '{:,.2%}'.format}
-                           )
+    return df.style \
+        .format({'last': '{:,.2f}'.format,
+                 'wtd': '{:,.2%}'.format,
+                 'mtd': '{:,.2%}'.format,
+                 '1m': '{:,.2%}'.format,
+                 'ytd': '{:,.2%}'.format,
+                 '1y': '{:,.2%}'.format,
+                 '2y': '{:,.2%}'.format}) \
+        .bar(align='mid', color=['#FCC0CB', '#90EE90'])
 
 
 def show_chartbook():
@@ -270,8 +271,8 @@ def show_chartbook():
             "Performance",
             ["Energia", "Metais"],
             [
-                get_data(category='commodity', fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']),
-                get_data(category='commodity', fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']),
+                get_data(category='commodity', fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']).fillna(method='ffill', limit=2),
+                get_data(category='commodity', fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']).fillna(method='ffill', limit=2),
             ]
         )
 
