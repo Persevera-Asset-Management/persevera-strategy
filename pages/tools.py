@@ -49,7 +49,7 @@ def show_tools():
     with cols[0]:
         meeting_date = st.selectbox(label="Selecione a data da reunião do Copom:",
                                     options=get_copom_meeting_dates(),
-                                    index=(np.abs(get_copom_meeting_dates() - datetime.today())).argmin()
+                                    index=int((np.abs(get_copom_meeting_dates() - datetime.today())).argmin())
                                     )
 
     df = get_copom_data(meeting_date)
