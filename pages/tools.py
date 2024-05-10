@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from datetime import datetime
 import logging, os
 import plotly.express as px
 import streamlit as st
@@ -19,7 +21,7 @@ def get_copom_data(meeting):
 def get_copom_meeting_dates():
     df = pd.read_parquet(os.path.join(DATA_PATH, "b3-copom_options.parquet"), columns=['date_expiration'])
     unique_dates = df['date_expiration'].unique()
-    dates = list(reversed(unique_dates))
+    dates = np.flip(unique_dates)
     return dates
 
 
@@ -46,7 +48,9 @@ def show_tools():
     cols = st.columns(2, gap='large')
     with cols[0]:
         meeting_date = st.selectbox(label="Selecione a data da reunião do Copom:",
-                                    options=get_copom_meeting_dates())
+                                    options=get_copom_meeting_dates(),
+                                    index=(np.abs(get_copom_meeting_dates() - datetime.today())).argmin()
+                                    )
 
     df = get_copom_data(meeting_date)
     fig = px.line(df, line_shape='spline')
