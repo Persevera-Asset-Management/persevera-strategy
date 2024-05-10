@@ -18,8 +18,9 @@ def get_copom_data(meeting):
 
 def get_copom_meeting_dates():
     df = pd.read_parquet(os.path.join(DATA_PATH, "b3-copom_options.parquet"), columns=['date_expiration'])
-    df = df['date_expiration'].unique()
-    return df
+    unique_dates = df['date_expiration'].unique()
+    dates = list(reversed(unique_dates))
+    return dates
 
 
 def format_chart(figure, connect_gaps=False):
@@ -29,7 +30,7 @@ def format_chart(figure, connect_gaps=False):
             type="date",
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash", tickformat=".1%"),
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
         legend=dict(title=None, yanchor="top", orientation="v"),
         showlegend=True,
         hovermode="x unified",
@@ -42,11 +43,13 @@ def show_tools():
     st.header("Tools")
 
     st.subheader("Opções de Copom")
-    meeting_date = st.selectbox(label="Selecione a data da reunião do Copom:",
-                                options=get_copom_meeting_dates())
+    cols = st.columns(2, gap='large')
+    with cols[0]:
+        meeting_date = st.selectbox(label="Selecione a data da reunião do Copom:",
+                                    options=get_copom_meeting_dates())
 
     df = get_copom_data(meeting_date)
-    fig = px.line(df)
+    fig = px.line(df, line_shape='spline')
     st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
     st.subheader("Selic Implícita")
