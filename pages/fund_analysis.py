@@ -8,7 +8,7 @@ from streamlit_option_menu import option_menu
 import plotly.graph_objects as go
 import plotly.express as px
 
-PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
 de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
                        "fund_name": "Persevera Trinity FI RF Ref DI",
@@ -22,7 +22,7 @@ de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
 
 
 def get_fund_peers(fund_name):
-    peers = pd.read_excel(PROJECT_PATH + "/peers.xlsx", sheet_name=fund_name, index_col=0)
+    peers = pd.read_excel(DATA_PATH + "/peers.xlsx", sheet_name=fund_name, index_col=0)
     peers = peers["short_name"].to_dict()
     return peers
 
@@ -33,7 +33,7 @@ def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=Fal
     filtered_peers = {k: v for k, v in listed_peers.items() if v in selected_peers}
 
     df = (
-        pl.scan_parquet(source=PROJECT_PATH + f"/cvm-cotas_fundos-{fund_name.lower()}.parquet")
+        pl.scan_parquet(source=DATA_PATH + f"/cvm-cotas_fundos-{fund_name.lower()}.parquet")
         .drop("fund_value")
         .filter(pl.col("fund_cnpj").is_in(filtered_peers.keys()))
         .filter(pl.col("date") >= start_date)
@@ -46,7 +46,7 @@ def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=Fal
 
     logging.info("Importing benchmark...")
     df_benchmark = pd.read_parquet(
-        path=PROJECT_PATH + "/consolidado-indicators.parquet",
+        path=DATA_PATH + "/consolidado-indicators.parquet",
         columns=[benchmark]
     ).dropna()
 

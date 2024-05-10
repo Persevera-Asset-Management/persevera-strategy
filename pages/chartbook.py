@@ -103,7 +103,7 @@ def format_table(df):
                  'ytd': '{:,.2%}'.format,
                  '1y': '{:,.2%}'.format,
                  '2y': '{:,.2%}'.format}) \
-        .bar(align='mid', color=['#FCC0CB', '#90EE90'])
+        .bar(align='zero', color=['#FCC0CB', '#90EE90'])
 
 
 def show_chartbook():

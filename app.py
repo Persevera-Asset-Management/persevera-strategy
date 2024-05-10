@@ -12,7 +12,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
-pages = ["Home", "Chartbook", "Fund Analysis", "Quant Screening", "Factor Tearsheet"]
+pages = ["Home", "Chartbook", "Fund Analysis", "Tools", "Quant Screening"]
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(parent_dir, "logo.svg")
 page_icon_logo_path = os.path.join(parent_dir, "assets/persevera_logo_page_icon.png")
@@ -67,7 +67,7 @@ functions = {
     "Nemesis": pg.show_nemesis,
     "Fund Analysis": pg.show_fund_analysis,
     "Quant Screening": pg.show_quant_screening,
-    "Factor Tearsheet": pg.show_factor_tearsheet,
+    "Tools": pg.show_tools,
 }
 go_to = functions.get(page)
 if go_to:
