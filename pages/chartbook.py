@@ -143,7 +143,7 @@ def show_chartbook():
 
     selected_category = option_menu(
         menu_title=None,
-        options=["Estados Unidos", "Brasil", "Rates", "Commodities", "Moedas", "Mercados", "Posicionamento"],
+        options=["Estados Unidos", "Brasil", "Juros", "Commodities", "Moedas", "Mercados", "Posicionamento", "Cohorts"],
         icons=['globe', 'globe-americas', "clipboard2-pulse", 'tree', 'graph-up', 'pie-chart'],
         orientation="horizontal"
     )

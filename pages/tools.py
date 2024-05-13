@@ -15,6 +15,8 @@ def get_copom_data(meeting):
                          filters=[('date_expiration', '==', meeting)])
 
     df = df.pivot_table(index='date', columns='decision', values='price')
+    df = df.replace(0.0, np.nan)
+    df = df.dropna(how='all', axis='columns')
     return df
 
 
