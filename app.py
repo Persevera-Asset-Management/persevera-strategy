@@ -12,7 +12,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
-pages = ["Home", "Chartbook", "Fund Analysis", "Tools", "Quant Screening"]
+pages = ["Chartbook", "Fund Analysis", "Tools", "Quant Screening"]
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(parent_dir, "logo.svg")
 page_icon_logo_path = os.path.join(parent_dir, "assets/persevera_logo_page_icon.png")
