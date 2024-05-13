@@ -19,6 +19,7 @@ def show_quant_screening():
         with cols[1]:
             container = st.container(border=True)
             with container:
+                st.markdown("**Definição do universo**")
                 liquidity_thresh = st.number_input("Liq. Threshold", value=0.4, min_value=0., max_value=1., step=0.1)
                 liquidity_lookback = st.selectbox("Liq. Lookback", options=["21", "63", "252"], index=0)
                 size_segment = st.selectbox("Size", options=["ALL", "Large", "Mid", "Small"], index=0)
