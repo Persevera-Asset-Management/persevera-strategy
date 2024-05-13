@@ -25,7 +25,7 @@ def get_copom_meeting_dates():
     return dates
 
 
-def format_chart(figure, yaxis_range=None, connect_gaps=False):
+def format_chart(figure, yaxis_range=None, showlegend=True, connect_gaps=False):
     figure.update_layout(
         xaxis=dict(
             rangeslider=dict(visible=False),
@@ -33,8 +33,8 @@ def format_chart(figure, yaxis_range=None, connect_gaps=False):
         ),
         yaxis_title=None, xaxis_title=None,
         yaxis=dict(range=yaxis_range, fixedrange=False, griddash="dash"),
-        legend=dict(title=None, yanchor="top", orientation="v"),
-        showlegend=True,
+        legend=dict(title=None, yanchor="top", orientation="h"),
+        showlegend=showlegend,
         hovermode="x unified",
     )
     figure.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
@@ -82,7 +82,7 @@ def show_tools():
         ]
         df_copom_dist = df_copom_history.filter(decisions).iloc[-1].fillna(0)
         fig = px.bar(df_copom_dist)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(format_chart(figure=fig, showlegend=False), use_container_width=True)
 
 
     st.subheader("Selic Implícita")
