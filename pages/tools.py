@@ -45,7 +45,7 @@ def format_bar_chart(figure):
     figure.update_layout(
         yaxis_title=None,
         xaxis_title=None,
-        yaxis=dict(fixedrange=False, griddash="dash"),
+        yaxis=dict(range=[0, 100], fixedrange=False, griddash="dash"),
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=False,
     )
