@@ -223,7 +223,7 @@ def show_chartbook():
             connect_gaps=True
         )
 
-    elif selected_category == "Rates":
+    elif selected_category == "Juros":
         display_chart_with_expander(
             "DM Rates",
             ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],

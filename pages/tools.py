@@ -25,14 +25,14 @@ def get_copom_meeting_dates():
     return dates
 
 
-def format_chart(figure, connect_gaps=False):
+def format_chart(figure, yaxis_range=None, connect_gaps=False):
     figure.update_layout(
         xaxis=dict(
             rangeslider=dict(visible=False),
             type="date",
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
+        yaxis=dict(range=yaxis_range, fixedrange=False, griddash="dash"),
         legend=dict(title=None, yanchor="top", orientation="v"),
         showlegend=True,
         hovermode="x unified",
@@ -52,9 +52,38 @@ def show_tools():
                                     index=int((np.abs(get_copom_meeting_dates() - datetime.today())).argmin())
                                     )
 
-    df = get_copom_data(meeting_date)
-    fig = px.line(df, line_shape='spline')
-    st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+    cols = st.columns(2, gap='large')
+    with cols[0]:
+        cols[0].markdown("**Histórico**")
+        df_copom_history = get_copom_data(meeting_date)
+        fig = px.line(df_copom_history, markers=True)
+        st.plotly_chart(format_chart(figure=fig, yaxis_range=[0,100], connect_gaps=True), use_container_width=True)
+
+    with cols[1]:
+        cols[1].markdown("**Distribuição**")
+        decisions = [
+            'Queda de 2%',
+            'Queda de 1.75%',
+            'Queda de 1.5%',
+            'Queda de 1.25%',
+            'Queda de 1%',
+            'Queda de 0.75%',
+            'Queda de 0.5%',
+            'Queda de 0.25%',
+            'Manutenção',
+            'Aumento de 0.25%',
+            'Aumento de 0.5%',
+            'Aumento de 0.75%',
+            'Aumento de 1%',
+            'Aumento de 1.25%',
+            'Aumento de 1.5%',
+            'Aumento de 1.75%',
+            'Aumento de 2%',
+        ]
+        df_copom_dist = df_copom_history.filter(decisions).iloc[-1].fillna(0)
+        fig = px.bar(df_copom_dist)
+        st.plotly_chart(fig, use_container_width=True)
+
 
     st.subheader("Selic Implícita")
 
