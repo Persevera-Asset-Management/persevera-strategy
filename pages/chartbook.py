@@ -4,11 +4,21 @@ import os
 import streamlit as st
 from streamlit_option_menu import option_menu
 import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 
-def get_data(category: str, fields: list):
+def get_data(fields: list):
+    df = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
+                         filters=[('code', 'in', fields)])
+    df = df.pivot_table(index='date', columns='code', values='value')
+    df = df.filter(fields)
+    return df
+
+
+def get_data_old(category: str, fields: list):
     df = pd.read_parquet(
         os.path.join(DATA_PATH, f"indicators-{category}.parquet"),
         filters=[('code', 'in', fields)]
@@ -16,6 +26,18 @@ def get_data(category: str, fields: list):
     # df = df.query('code == @fields')
     df = df.pivot_table(index='date', columns='code', values='value')
     df = df.filter(fields)
+    return df
+
+
+def get_cohort(assets: list, benchmark: str):
+    individual_assets = get_data(fields=assets)
+    individual_assets = individual_assets.filter(assets)
+    cohort = individual_assets.iloc[:, 0] / individual_assets.iloc[:, 1]
+    cohort.name = ' / '.join(individual_assets.columns)
+
+    df_benchmark = get_data(fields=[benchmark])
+    df = cohort.to_frame().merge(df_benchmark, left_index=True, right_index=True, how='left')
+    df = df.dropna()
     return df
 
 
@@ -80,6 +102,38 @@ def create_line_chart(data, title, connect_gaps):
     return fig
 
 
+def create_two_yaxis_line_chart(data, title, connect_gaps):
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(go.Scatter(x=data.index, y=data.iloc[:, 0], name=data.iloc[:, 0].name), secondary_y=False)
+    fig.add_trace(go.Scatter(x=data.index, y=data.iloc[:, 1], name=data.iloc[:, 1].name), secondary_y=True)
+    fig.update_layout(
+        title=title,
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1, label="1m", step="month", stepmode="backward"),
+                    dict(count=6, label="6m", step="month", stepmode="backward"),
+                    dict(count=1, label="YTD", step="year", stepmode="todate"),
+                    dict(count=1, label="1y", step="year", stepmode="backward"),
+                    dict(count=3, label="3y", step="year", stepmode="backward"),
+                    dict(count=5, label="5y", step="year", stepmode="backward"),
+                    dict(count=10, label="10y", step="year", stepmode="backward"),
+                    dict(step="all")
+                ])
+            ),
+            rangeslider=dict(visible=False),
+            type="date",
+        ),
+        yaxis_title=None, xaxis_title=None,
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
+        legend=dict(title=None, yanchor="top", orientation="h"),
+        showlegend=True,
+        hovermode="x unified",
+    )
+    fig.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
+    return fig
+
+
 def get_performance_table(df):
     time_frames = {
         'last': df.iloc[-1],
@@ -109,7 +163,7 @@ def format_table(df):
 def show_chartbook():
     st.header("Chartbook")
 
-    def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False):
+    def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False, two_yaxis=False):
         with st.expander(expander_title, expanded=False):
             num_cols = 2
             num_charts = len(chart_titles)
@@ -122,7 +176,10 @@ def show_chartbook():
 
                 for col, title, dataset in zip(cols, chart_titles[start_index:end_index],
                                                datasets[start_index:end_index]):
-                    col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
+                    if two_yaxis:
+                        col.plotly_chart(create_two_yaxis_line_chart(dataset, title, connect_gaps), use_container_width=True)
+                    else:
+                        col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
 
     def display_table_with_expander(expander_title, table_titles, datasets):
         with st.expander(expander_title, expanded=False):
@@ -153,9 +210,9 @@ def show_chartbook():
             "PIB",
             ["PIB"],
             [
-                get_data(category='macro', fields=['us_gdp_index']),
-                get_data(category='macro', fields=['us_gdp_yoy']),
-                get_data(category='macro', fields=['us_gdp_qoq']),
+                get_data(fields=['us_gdp_index']),
+                get_data(fields=['us_gdp_yoy']),
+                get_data(fields=['us_gdp_qoq']),
             ]
         )
 
@@ -163,14 +220,13 @@ def show_chartbook():
             "Taxas Referenciais",
             ["Curva Pré (Treasuries)", "Curva Inflação (TIPS)", "Curva Implícita (Breakeven)", "Curva de Juros", "Inclinações"],
             [
-                get_data(category='macro', fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
-                get_data(category='macro',
-                         fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
+                get_data(fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
+                get_data(fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
                                  'us_generic_inflation_30y']),
-                get_data(category='macro',
-                         fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y']),
+                get_data(
+                    fields=['us_breakeven_2y', 'us_breakeven_5y', 'us_breakeven_10y', 'usd_inflation_swap_fwd_5y5y']),
                 get_yield_curve(contract='us_fed_funds_curve'),
-                get_data(category='macro', fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness']),
+                get_data(fields=['us_2y10y_steepness', 'us_5y10y_steepness', 'us_5y30y_steepness']),
             ],
             connect_gaps=True
         )
@@ -179,10 +235,10 @@ def show_chartbook():
             "Taxas Corporativas",
             ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
             [
-                get_data(category='macro', fields=['us_corporate_ig_5y_spread', 'us_corporate_ig_10y_spread']),
-                get_data(category='macro', fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield']),
-                get_data(category='macro', fields=['us_corporate_hy_5y_spread', 'us_corporate_hy_10y_spread']),
-                get_data(category='macro', fields=['us_corporate_hy_5y_yield', 'us_corporate_hy_10y_yield'])
+                get_data(fields=['us_corporate_ig_5y_spread', 'us_corporate_ig_10y_spread']),
+                get_data(fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield']),
+                get_data(fields=['us_corporate_hy_5y_spread', 'us_corporate_hy_10y_spread']),
+                get_data(fields=['us_corporate_hy_5y_yield', 'us_corporate_hy_10y_yield'])
             ]
         )
 
@@ -190,8 +246,8 @@ def show_chartbook():
             "Trajetória da Inflação",
             ["Inflação US", "Inflação Brasil"],
             [
-                get_data(category='macro', fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
-                get_data(category='macro', fields=['br_ipca_yoy'])
+                get_data(fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
+                get_data(fields=['br_ipca_yoy'])
             ]
         )
 
@@ -202,9 +258,9 @@ def show_chartbook():
             "PIB",
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             [
-                get_data(category='macro', fields=['br_gdp_index']),
-                get_data(category='macro', fields=['br_gdp_yoy']),
-                get_data(category='macro', fields=['br_gdp_qoq']),
+                get_data(fields=['br_gdp_index']),
+                get_data(fields=['br_gdp_yoy']),
+                get_data(fields=['br_gdp_qoq']),
             ]
         )
 
@@ -212,11 +268,9 @@ def show_chartbook():
             "Taxas Referenciais",
             ["Curva Pré", "Curva IPCA", "Curva Implícita", "Curva de Juros"],
             [
-                get_data(category='macro', fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y']),
-                get_data(category='macro',
-                         fields=['br_ipca_1y', 'br_ipca_2y', 'br_ipca_3y', 'br_ipca_5y', 'br_ipca_10y', 'br_ipca_35y']),
-                get_data(category='macro',
-                         fields=['br_breakeven_1y', 'br_breakeven_2y', 'br_breakeven_3y', 'br_breakeven_5y',
+                get_data(fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y']),
+                get_data(fields=['br_ipca_1y', 'br_ipca_2y', 'br_ipca_3y', 'br_ipca_5y', 'br_ipca_10y', 'br_ipca_35y']),
+                get_data(fields=['br_breakeven_1y', 'br_breakeven_2y', 'br_breakeven_3y', 'br_breakeven_5y',
                                  'br_breakeven_10y']),
                 get_yield_curve('br_di_curve')
             ],
@@ -228,20 +282,16 @@ def show_chartbook():
             "DM Rates",
             ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],
             [
-                get_data(category='macro',
-                         fields=['germany_generic_1y', 'spain_generic_1y', 'france_generic_1y', 'italy_generic_1y',
+                get_data(fields=['germany_generic_1y', 'spain_generic_1y', 'france_generic_1y', 'italy_generic_1y',
                                  'japan_generic_1y',
                                  'switzerland_generic_1y', 'sweden_generic_1y']),
-                get_data(category='macro',
-                         fields=['germany_generic_5y', 'spain_generic_5y', 'france_generic_5y', 'italy_generic_5y',
+                get_data(fields=['germany_generic_5y', 'spain_generic_5y', 'france_generic_5y', 'italy_generic_5y',
                                  'japan_generic_5y',
                                  'switzerland_generic_5y', 'sweden_generic_5y']),
-                get_data(category='macro',
-                         fields=['new_zealand_generic_1y', 'australia_generic_1y', 'canada_generic_1y',
+                get_data(fields=['new_zealand_generic_1y', 'australia_generic_1y', 'canada_generic_1y',
                                  'norway_generic_1y',
                                  'us_generic_1y', 'uk_generic_1y']),
-                get_data(category='macro',
-                         fields=['new_zealand_generic_5y', 'australia_generic_5y', 'canada_generic_5y',
+                get_data(fields=['new_zealand_generic_5y', 'australia_generic_5y', 'canada_generic_5y',
                                  'norway_generic_5y',
                                  'us_generic_5y', 'uk_generic_5y']),
             ]
@@ -251,17 +301,13 @@ def show_chartbook():
             "EM Rates",
             ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],
             [
-                get_data(category='macro',
-                         fields=['china_generic_1y', 'chile_generic_1y', 'colombia_generic_1y', 'hungary_generic_1y',
+                get_data(fields=['china_generic_1y', 'chile_generic_1y', 'colombia_generic_1y', 'hungary_generic_1y',
                                  'poland_generic_1y', 'peru_generic_1y']),
-                get_data(category='macro',
-                         fields=['china_generic_5y', 'chile_generic_5y', 'colombia_generic_5y', 'hungary_generic_5y',
+                get_data(fields=['china_generic_5y', 'chile_generic_5y', 'colombia_generic_5y', 'hungary_generic_5y',
                                  'poland_generic_5y', 'peru_generic_5y']),
-                get_data(category='macro',
-                         fields=['south_africa_generic_1y', 'russia_generic_1y', 'br_generic_1y', 'mexico_generic_1y',
+                get_data(fields=['south_africa_generic_1y', 'russia_generic_1y', 'br_generic_1y', 'mexico_generic_1y',
                                  'india_generic_1y', 'indonesia_generic_1y', 'turkey_generic_1y']),
-                get_data(category='macro',
-                         fields=['south_africa_generic_5y', 'russia_generic_5y', 'br_generic_5y', 'mexico_generic_5y',
+                get_data(fields=['south_africa_generic_5y', 'russia_generic_5y', 'br_generic_5y', 'mexico_generic_5y',
                                  'india_generic_5y', 'indonesia_generic_5y', 'turkey_generic_1y']),
             ]
         )
@@ -271,8 +317,8 @@ def show_chartbook():
             "Performance",
             ["Energia", "Metais"],
             [
-                get_data(category='commodity', fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']).fillna(method='ffill', limit=2),
-                get_data(category='commodity', fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']).fillna(method='ffill', limit=2),
+                get_data(fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']).fillna(method='ffill', limit=2),
+                get_data(fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']).fillna(method='ffill', limit=2),
             ]
         )
 
@@ -280,8 +326,8 @@ def show_chartbook():
             "Commodity Research Bureau (CRB)",
             ["Índice CRB", "Índice CRB (% 12 meses)"],
             [
-                get_data(category='commodity', fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index']),
-                get_data(category='commodity', fields=['crb_index']).pct_change(252).dropna(),
+                get_data(fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index']),
+                get_data(fields=['crb_index']).pct_change(252).dropna(),
             ],
             connect_gaps=True
         )
@@ -290,7 +336,7 @@ def show_chartbook():
             "Fretes",
             ["XXX"],
             [
-                get_data(category='commodity', fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])
+                get_data(fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])
             ],
             connect_gaps=True
         )
@@ -299,10 +345,8 @@ def show_chartbook():
             "Combustível",
             ["Atacado", "Varejo"],
             [
-                get_data(category='commodity',
-                         fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline', 'usda_diesel']),
-                get_data(category='commodity',
-                         fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail', 'br_anp_hydrated_ethanol_retail',
+                get_data(fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline', 'usda_diesel']),
+                get_data(fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail', 'br_anp_hydrated_ethanol_retail',
                                  'br_anp_lpg_retail']),
             ],
             connect_gaps=True
@@ -313,8 +357,10 @@ def show_chartbook():
             "Performance",
             ["Desenvolvidos", "Emergentes"],
             [
-                get_data(category='currency', fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']).fillna(method='ffill', limit=2),
-                get_data(category='currency', fields=['brl_usd', 'mxn_usd', 'clp_usd', 'zar_usd', 'try_usd', 'cnh_usd']).fillna(method='ffill', limit=2),
+                get_data(
+                    fields=['twd_usd', 'bloomberg_dollar_index', 'eur_usd', 'jpy_usd', 'gbp_usd', 'chf_usd', 'cad_usd', 'aud_usd', 'nok_usd', 'sek_usd']).fillna(method='ffill', limit=2),
+                get_data(
+                    fields=['brl_usd', 'mxn_usd', 'clp_usd', 'zar_usd', 'try_usd', 'cnh_usd']).fillna(method='ffill', limit=2),
             ]
         )
 
@@ -351,10 +397,10 @@ def show_chartbook():
             "Treasuries",
             ["Treasury 2Y", "Treasury 5Y", "Treasury 10Y", "Treasury Bonds"],
             [
-                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_2y']),
-                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_5y']),
-                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_10y']),
-                get_data(category='positions_cftc', fields=['cftc_cbt_treasury_bonds']),
+                get_data(fields=['cftc_cbt_treasury_2y']),
+                get_data(fields=['cftc_cbt_treasury_5y']),
+                get_data(fields=['cftc_cbt_treasury_10y']),
+                get_data(fields=['cftc_cbt_treasury_bonds']),
             ]
         )
 
@@ -362,10 +408,10 @@ def show_chartbook():
             "Commodities",
             ["Copper", "Gold", "Silver", "Crude Oil"],
             [
-                get_data(category='positions_cftc', fields=['cftc_cmx_copper']),
-                get_data(category='positions_cftc', fields=['cftc_cmx_gold']),
-                get_data(category='positions_cftc', fields=['cftc_cmx_silver']),
-                get_data(category='positions_cftc', fields=['cftc_nyme_crude_oil']),
+                get_data(fields=['cftc_cmx_copper']),
+                get_data(fields=['cftc_cmx_gold']),
+                get_data(fields=['cftc_cmx_silver']),
+                get_data(fields=['cftc_nyme_crude_oil']),
             ]
         )
 
@@ -373,17 +419,17 @@ def show_chartbook():
             "Currencies",
             ["AUD", "BRL", "CAD", "CHF", "EUR", "GBP", "JPY", "MXN", "NZD", "RUB", "ZAR"],
             [
-                get_data(category='positions_cftc', fields=['cftc_cme_aud']),
-                get_data(category='positions_cftc', fields=['cftc_cme_brl']),
-                get_data(category='positions_cftc', fields=['cftc_cme_cad']),
-                get_data(category='positions_cftc', fields=['cftc_cme_chf']),
-                get_data(category='positions_cftc', fields=['cftc_cme_eur']),
-                get_data(category='positions_cftc', fields=['cftc_cme_gbp']),
-                get_data(category='positions_cftc', fields=['cftc_cme_jpy']),
-                get_data(category='positions_cftc', fields=['cftc_cme_mxn']),
-                get_data(category='positions_cftc', fields=['cftc_cme_nzd']),
-                get_data(category='positions_cftc', fields=['cftc_cme_rub']),
-                get_data(category='positions_cftc', fields=['cftc_cme_zar']),
+                get_data(fields=['cftc_cme_aud']),
+                get_data(fields=['cftc_cme_brl']),
+                get_data(fields=['cftc_cme_cad']),
+                get_data(fields=['cftc_cme_chf']),
+                get_data(fields=['cftc_cme_eur']),
+                get_data(fields=['cftc_cme_gbp']),
+                get_data(fields=['cftc_cme_jpy']),
+                get_data(fields=['cftc_cme_mxn']),
+                get_data(fields=['cftc_cme_nzd']),
+                get_data(fields=['cftc_cme_rub']),
+                get_data(fields=['cftc_cme_zar']),
             ]
         )
 
@@ -391,9 +437,23 @@ def show_chartbook():
             "Equities",
             ["Nasdaq", "Nikkei", "Russell 2000", "S&P 500"],
             [
-                get_data(category='positions_cftc', fields=['cftc_cme_nasdaq']),
-                get_data(category='positions_cftc', fields=['cftc_cme_nikkei']),
-                get_data(category='positions_cftc', fields=['cftc_cme_russel2000']),
-                get_data(category='positions_cftc', fields=['cftc_cme_sp500']),
+                get_data(fields=['cftc_cme_nasdaq']),
+                get_data(fields=['cftc_cme_nikkei']),
+                get_data(fields=['cftc_cme_russel2000']),
+                get_data(fields=['cftc_cme_sp500']),
             ]
+        )
+
+    elif selected_category == "Cohorts":
+        display_chart_with_expander(
+            "Estados Unidos",
+            ['SOXX vs SPY', 'Discretionary vs Staples', 'VIX3M vs VIX', 'High Beta vs Low Volatility'],
+            [
+                get_cohort(assets=['us_semiconductor_soxx', 'us_sp500'], benchmark='us_sp500'),
+                get_cohort(assets=['us_ew_discretionary_rspd', 'us_ew_staples_rspd'], benchmark='us_sp500'),
+                get_cohort(assets=['us_semiconductor_soxx', 'us_sp500'], benchmark='us_sp500'),
+                get_cohort(assets=['us_vix3m', 'us_vix'], benchmark='us_sp500'),
+                get_cohort(assets=['us_high_beta_sphb', 'us_low_volatility_usmv'], benchmark='us_sp500'),
+            ],
+            two_yaxis=True
         )
