@@ -43,11 +43,8 @@ def format_chart(figure, yaxis_range=None, showlegend=True, connect_gaps=False):
 
 def format_bar_chart(figure):
     figure.update_layout(
-        xaxis=dict(
-            rangeslider=dict(visible=False),
-            type="date",
-        ),
-        yaxis_title=None, xaxis_title=None,
+        yaxis_title=None,
+        xaxis_title=None,
         yaxis=dict(fixedrange=False, griddash="dash"),
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=False,
