@@ -19,7 +19,7 @@ def show_quant_screening():
             sector = st.selectbox("Sector Group", index=1, options=["sector_layer_0", "sector_layer_1", "sector_layer_2", "sector_layer_3"])
             container = st.container(border=True)
             with container:
-                liquidity_thresh = st.number_input("Liq. Threshold", value=0.4, min_value=0, max_value=1, step=0.05)
+                liquidity_thresh = st.number_input("Liq. Threshold", value=0.4, min_value=0., max_value=1., step=0.1)
                 liquidity_lookback = st.selectbox("Liq. Lookback", options=["21", "63", "252"], index=0)
                 size_segment = st.selectbox("Size", options=["ALL", "Large", "Mid", "Small"], index=0)
 
