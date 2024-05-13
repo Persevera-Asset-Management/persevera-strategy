@@ -125,7 +125,7 @@ def create_two_yaxis_line_chart(data, title, connect_gaps):
             type="date",
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
+        yaxis=dict(autorange=True, fixedrange=False, showgrid=False),
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
         hovermode="x unified",
