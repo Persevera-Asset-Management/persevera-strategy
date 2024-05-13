@@ -47,8 +47,9 @@ def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=Fal
     logging.info("Importing benchmark...")
     df_benchmark = pd.read_parquet(
         path=DATA_PATH + "/consolidado-indicators.parquet",
-        columns=[benchmark]
-    ).dropna()
+        filters=[('code', 'in', benchmark)]
+    )
+    df_benchmark = df_benchmark.pivot_table(index='date', columns='code', values='value')
 
     logging.info("Including benchmark to DataFrame...")
     df = pd.merge(left=df, right=df_benchmark, left_index=True, right_index=True, how='left')
