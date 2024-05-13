@@ -41,6 +41,20 @@ def format_chart(figure, yaxis_range=None, showlegend=True, connect_gaps=False):
     return figure
 
 
+def format_bar_chart(figure):
+    figure.update_layout(
+        xaxis=dict(
+            rangeslider=dict(visible=False),
+            type="date",
+        ),
+        yaxis_title=None, xaxis_title=None,
+        yaxis=dict(fixedrange=False, griddash="dash"),
+        legend=dict(title=None, yanchor="top", orientation="h"),
+        showlegend=False,
+    )
+    return figure
+
+
 def show_tools():
     st.header("Tools")
 
@@ -57,7 +71,7 @@ def show_tools():
         cols[0].markdown("**Histórico**")
         df_copom_history = get_copom_data(meeting_date)
         fig = px.line(df_copom_history, markers=True)
-        st.plotly_chart(format_chart(figure=fig, yaxis_range=[0,100], connect_gaps=True), use_container_width=True)
+        st.plotly_chart(format_chart(figure=fig, yaxis_range=[0, 100], connect_gaps=True), use_container_width=True)
 
     with cols[1]:
         cols[1].markdown("**Distribuição**")
@@ -82,7 +96,7 @@ def show_tools():
         ]
         df_copom_dist = df_copom_history.filter(decisions).iloc[-1].fillna(0)
         fig = px.bar(df_copom_dist)
-        st.plotly_chart(format_chart(figure=fig, showlegend=False), use_container_width=True)
+        st.plotly_chart(format_bar_chart(figure=fig), use_container_width=True)
 
 
     st.subheader("Selic Implícita")
