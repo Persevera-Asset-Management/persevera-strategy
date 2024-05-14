@@ -92,13 +92,43 @@ def create_line_chart(data, title, connect_gaps):
             rangeslider=dict(visible=False),
             type="date",
         ),
-        yaxis_title=None, xaxis_title=None,
+        yaxis_title=None,
+        xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
         hovermode="x unified",
     )
     fig.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
+    return fig
+
+
+def create_bar_chart(data, title):
+    fig = px.bar(data)
+    fig.update_layout(
+        title=title,
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1, label="1m", step="month", stepmode="backward"),
+                    dict(count=6, label="6m", step="month", stepmode="backward"),
+                    dict(count=1, label="YTD", step="year", stepmode="todate"),
+                    dict(count=1, label="1y", step="year", stepmode="backward"),
+                    dict(count=3, label="3y", step="year", stepmode="backward"),
+                    dict(count=5, label="5y", step="year", stepmode="backward"),
+                    dict(count=10, label="10y", step="year", stepmode="backward"),
+                    dict(step="all")
+                ])
+            ),
+            rangeslider=dict(visible=False),
+            type="date",
+        ),
+        yaxis_title=None,
+        xaxis_title=None,
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
+        legend=dict(title=None, yanchor="top", orientation="h"),
+        showlegend=True,
+    )
     return fig
 
 
@@ -181,6 +211,29 @@ def show_chartbook():
                     else:
                         col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
 
+    def display_new_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False, two_yaxis=False):
+        with st.expander(expander_title, expanded=False):
+            num_cols = 2
+            num_charts = len(chart_titles)
+            num_rows = (num_charts + num_cols - 1) // num_cols
+
+            for row in range(num_rows):
+                cols = st.columns(num_cols, gap='large')
+                start_index = row * num_cols
+                end_index = min((row + 1) * num_cols, num_charts)
+
+                for col, title, chart_type, dataset in zip(cols, chart_titles[start_index:end_index],
+                                                           chart_types[start_index:end_index],
+                                                           datasets[start_index:end_index]):
+                    if chart_type == 'line':
+                        if two_yaxis:
+                            col.plotly_chart(create_two_yaxis_line_chart(dataset, title, connect_gaps), use_container_width=True)
+                        else:
+                            col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
+                    elif chart_type == 'bar':
+                        col.plotly_chart(create_bar_chart(dataset, title), use_container_width=True)
+
+
     def display_table_with_expander(expander_title, table_titles, datasets):
         with st.expander(expander_title, expanded=False):
             num_cols = 2
@@ -244,19 +297,17 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["Inflação US", "Inflação Brasil"],
+            ["Índices de Inflação"],
             [
                 get_data(fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
-                get_data(fields=['br_ipca_yoy'])
             ]
         )
 
     elif selected_category == "Brasil":
-        st.empty()
-
-        display_chart_with_expander(
+        display_new_chart_with_expander(
             "PIB",
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
+            ['line', 'bar', 'bar'],
             [
                 get_data(fields=['br_gdp_index']),
                 get_data(fields=['br_gdp_yoy']),
@@ -275,6 +326,24 @@ def show_chartbook():
                 get_yield_curve('br_di_curve')
             ],
             connect_gaps=True
+        )
+
+        display_chart_with_expander(
+            "Inflação",
+            ["Índices de Inflação"],
+            [
+                get_data(fields=['br_ipca_yoy']),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Termos de Troca",
+            ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
+            [
+                get_data(fields=['br_gdp_index']),
+                get_data(fields=['br_gdp_yoy']),
+                get_data(fields=['br_gdp_qoq']),
+            ]
         )
 
     elif selected_category == "Juros":
@@ -416,7 +485,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Currencies",
+            "Moedas",
             ["AUD", "BRL", "CAD", "CHF", "EUR", "GBP", "JPY", "MXN", "NZD", "RUB", "ZAR"],
             [
                 get_data(fields=['cftc_cme_aud']),
@@ -434,7 +503,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Equities",
+            "Bolsas",
             ["S&P 500", "Nasdaq", "Nikkei", "Russell 2000"],
             [
                 get_data(fields=['cftc_cme_sp500']),

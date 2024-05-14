@@ -62,5 +62,5 @@ def show_quant_screening():
             f.initialize()
             f.historical_members(save=False, how='overwrite')
             screening = f.raw_data
-            screening_last = screening[screening['date'] == screening['date'].max()]
+            screening_last = screening[screening['date'] == screening['date'].max()].set_index('code')
             st.dataframe(screening_last)
