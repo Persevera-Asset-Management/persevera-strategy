@@ -94,7 +94,6 @@ def custom_stock_selection(screening, kind, constraints):
     df = df.filter([possible_scores])
 
     if kind == 'intersection':
-        #TODO: calcular os quintiles para cada fator; corr entre score e fwd returns
         i = 1
 
     return

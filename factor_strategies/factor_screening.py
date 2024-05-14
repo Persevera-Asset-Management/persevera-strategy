@@ -6,7 +6,7 @@ import json
 import os
 from datetime import datetime
 
-import utils, performance
+from factor_strategies import utils, performance
 
 
 class MultiFactorStrategy:
