@@ -192,7 +192,7 @@ def format_table(df):
 
 def scale_to_100(date, df):
     idx = df.loc[date:].iloc[0].name
-    return df / df.loc[idx, :]
+    return 100 * (df / df.loc[idx, :])
 
 
 def show_chartbook():
@@ -381,13 +381,13 @@ def show_chartbook():
             "Performance",
             ["Energia", "Metais"],
             [
-                get_data(fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']).fillna(method='ffill', limit=2),
-                get_data(fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']).fillna(method='ffill', limit=2),
+                scale_to_100(date='2019', df=get_data(fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']).fillna(method='ffill', limit=2)),
+                scale_to_100(date='2019', df=get_data(fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']).fillna(method='ffill', limit=2)),
             ]
         )
 
         display_chart_with_expander(
-            "Commodity Research Bureau (CRB)",
+            "Commodity Research Bureau (CRB) (2019 = 100)",
             ["Índice CRB", "Índice CRB (% 12 meses)"],
             ['line', 'line'],
             [
@@ -409,7 +409,7 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Combustível",
-            ["Atacado", "Varejo"],
+            ["Atacado (2019 = 100)", "Varejo (2019 = 100)"],
             ['line', 'line'],
             [
                 scale_to_100(date='2019', df=get_data(fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline',
