@@ -345,7 +345,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Termos de Troca",
             ["Citi", "MDIC"],
-            ['line', 'line', 'line'],
+            ['line', 'line'],
             [
                 get_data(fields=['br_citi_terms_of_trade_index', 'br_current_account_to_gdp']),
                 get_data(fields=['br_mdic_terms_of_trade_index', 'br_current_account_to_gdp']),
