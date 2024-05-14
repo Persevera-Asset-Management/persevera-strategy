@@ -3,27 +3,8 @@ import os
 
 import numpy as np
 import pandas as pd
-from tabulate import tabulate
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
-
-
-def print_config(self):
-    text = f"""
-           Factors: {self.factor_list}
-           Custom Name: {self.custom_name}
-           Start: {self.start}
-           Holding Period: {self.holding_period}
-           Sector Neutrality: {self.sector_neutral}
-           Daily Rebalance: {self.daily_rebalance}
-           Parent Index: {self.parent_index}
-           Weighting Scheme: {self.weight}
-           """
-
-    table = [[text]]
-    output = tabulate(table, tablefmt='grid')
-    print(output)
-    return
 
 
 def feriados_anbima():
