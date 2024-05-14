@@ -394,7 +394,7 @@ def show_chartbook():
         
         display_chart_with_expander(
             "Fretes",
-            ["XXX"],
+            ["Índices de Custo de Frete"],
             ['line'],
             [
                 get_data(fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])
