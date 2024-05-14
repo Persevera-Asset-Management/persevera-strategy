@@ -7,3 +7,4 @@ streamlit-navigation-bar
 openpyxl
 streamlit_option_menu
 numpy~=1.26.4
+scipy~=1.11.4
