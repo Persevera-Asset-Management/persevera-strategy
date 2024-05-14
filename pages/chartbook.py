@@ -381,17 +381,17 @@ def show_chartbook():
             "Performance",
             ["Energia", "Metais"],
             [
-                scale_to_100(date='2019', df=get_data(fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']).fillna(method='ffill', limit=2)),
-                scale_to_100(date='2019', df=get_data(fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']).fillna(method='ffill', limit=2)),
+                get_data(fields=['crude_oil_wti', 'crude_oil_brent', 'gasoline', 'usda_diesel', 'natural_gas', 'thermal_coal']).fillna(method='ffill', limit=2),
+                get_data(fields=['gold', 'silver', 'lme_aluminum', 'lme_copper', 'lme_nickel_cash', 'sgx_iron_ore_62', 'platinum', 'palladium', 'lme_zinc_spot', 'coking_coal']).fillna(method='ffill', limit=2),
             ]
         )
 
         display_chart_with_expander(
-            "Commodity Research Bureau (CRB) (2019 = 100)",
-            ["Índice CRB", "Índice CRB (% 12 meses)"],
+            "Commodity Research Bureau (CRB)",
+            ["Índice CRB (2019 = 100)", "Índice CRB (% 12 meses)"],
             ['line', 'line'],
             [
-                get_data(fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index']),
+                scale_to_100(date='2019', df=get_data(fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index'])),
                 get_data(fields=['crb_index']).pct_change(252).dropna(),
             ],
             connect_gaps=True
