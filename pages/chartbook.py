@@ -339,8 +339,7 @@ def show_chartbook():
             ['line'],
             [
                 get_data(fields=['br_ipca_yoy']),
-            ],
-            two_yaxis=True
+            ]
         )
 
         display_chart_with_expander(
@@ -350,7 +349,8 @@ def show_chartbook():
             [
                 get_data(fields=['br_citi_terms_of_trade_index', 'br_current_account_to_gdp']),
                 get_data(fields=['br_mdic_terms_of_trade_index', 'br_current_account_to_gdp']),
-            ]
+            ],
+            two_yaxis=True
         )
 
     elif selected_category == "Juros":
