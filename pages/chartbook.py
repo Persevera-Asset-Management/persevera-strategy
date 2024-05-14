@@ -330,7 +330,8 @@ def show_chartbook():
             [
                 get_data(fields=['br_citi_terms_of_trade_index', 'br_current_account_to_gdp']),
                 get_data(fields=['br_mdic_terms_of_trade_index', 'br_current_account_to_gdp']),
-            ]
+            ],
+            connect_gaps=True
         )
 
     elif selected_category == "Juros":
