@@ -384,6 +384,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Commodity Research Bureau (CRB)",
             ["Índice CRB", "Índice CRB (% 12 meses)"],
+            ['line', 'line'],
             [
                 get_data(fields=['crb_index', 'crb_fats_oils_index', 'crb_food_index', 'crb_livestock_index', 'crb_metals_index', 'crb_raw_industrials_index', 'crb_textiles_index']),
                 get_data(fields=['crb_index']).pct_change(252).dropna(),
@@ -394,6 +395,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Fretes",
             ["XXX"],
+            ['line'],
             [
                 get_data(fields=['baltic_dry_index', 'shanghai_containerized_freight_index'])
             ],
@@ -403,6 +405,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Combustível",
             ["Atacado", "Varejo"],
+            ['line', 'line'],
             [
                 get_data(fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline', 'usda_diesel']),
                 get_data(fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail', 'br_anp_hydrated_ethanol_retail',
@@ -429,6 +432,7 @@ def show_chartbook():
         display_chart_with_expander(
             "EPS",
             ["S&P 500", "Ibovespa"],
+            ['line', 'line'],
             [
                 get_index_fundamentals(codes=['us_sp500'], field='earnings_per_share_fwd'),
                 get_index_fundamentals(codes=['br_ibovespa'], field='earnings_per_share_fwd'),
@@ -438,6 +442,7 @@ def show_chartbook():
         display_chart_with_expander(
             "P/E",
             ["Desenvolvidos", "Desenvolvidos (vs. S&P 500)", "Emergentes", "Emergentes (vs. S&P 500)"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_index_fundamentals(codes=['us_sp500', 'us_russell2000', 'us_nasdaq100', 'germany_dax40', 'japan_nikkei225', 'uk_ukx'], field='price_to_earnings_fwd'),
                 get_index_fundamentals(
