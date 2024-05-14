@@ -50,7 +50,7 @@ styles = {
 }
 options = {
     "show_menu": False,
-    "show_sidebar": False,
+    "show_sidebar": True,
 }
 
 page = st_navbar(

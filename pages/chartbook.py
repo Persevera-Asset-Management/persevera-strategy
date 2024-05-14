@@ -193,25 +193,7 @@ def format_table(df):
 def show_chartbook():
     st.header("Chartbook")
 
-    def display__oldchart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False, two_yaxis=False):
-        with st.expander(expander_title, expanded=False):
-            num_cols = 2
-            num_charts = len(chart_titles)
-            num_rows = (num_charts + num_cols - 1) // num_cols
-
-            for row in range(num_rows):
-                cols = st.columns(num_cols, gap='large')
-                start_index = row * num_cols
-                end_index = min((row + 1) * num_cols, num_charts)
-
-                for col, title, dataset in zip(cols, chart_titles[start_index:end_index],
-                                               datasets[start_index:end_index]):
-                    if two_yaxis:
-                        col.plotly_chart(create_two_yaxis_line_chart(dataset, title, connect_gaps), use_container_width=True)
-                    else:
-                        col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
-
-    def display_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False, two_yaxis=False):
+    def display_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False):
         with st.expander(expander_title, expanded=False):
             num_cols = 2
             num_charts = len(chart_titles)
@@ -226,13 +208,12 @@ def show_chartbook():
                                                            chart_types[start_index:end_index],
                                                            datasets[start_index:end_index]):
                     if chart_type == 'line':
-                        if two_yaxis:
-                            col.plotly_chart(create_two_yaxis_line_chart(dataset, title, connect_gaps), use_container_width=True)
-                        else:
-                            col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
+                        col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
+                    elif chart_type == 'line_two_yaxis':
+                        col.plotly_chart(create_two_yaxis_line_chart(dataset, title, connect_gaps),
+                                         use_container_width=True)
                     elif chart_type == 'bar':
                         col.plotly_chart(create_bar_chart(dataset, title), use_container_width=True)
-
 
     def display_table_with_expander(expander_title, table_titles, datasets):
         with st.expander(expander_title, expanded=False):
@@ -345,12 +326,11 @@ def show_chartbook():
         display_chart_with_expander(
             "Termos de Troca",
             ["Citi", "MDIC"],
-            ['line', 'line'],
+            ['line_two_yaxis', 'line_two_yaxis'],
             [
                 get_data(fields=['br_citi_terms_of_trade_index', 'br_current_account_to_gdp']),
                 get_data(fields=['br_mdic_terms_of_trade_index', 'br_current_account_to_gdp']),
-            ],
-            two_yaxis=True
+            ]
         )
 
     elif selected_category == "Juros":
@@ -530,13 +510,12 @@ def show_chartbook():
         display_chart_with_expander(
             "Estados Unidos",
             ['SOXX vs SPY', 'Discretionary vs Staples', 'VIX3M vs VIX', 'High Beta vs Low Volatility'],
-            ['line', 'line', 'line', 'line', 'line'],
+            ['line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis'],
             [
                 get_cohort(assets=['us_semiconductor_soxx', 'us_sp500'], benchmark='us_sp500'),
                 get_cohort(assets=['us_ew_discretionary_rspd', 'us_ew_staples_rspd'], benchmark='us_sp500'),
                 get_cohort(assets=['us_semiconductor_soxx', 'us_sp500'], benchmark='us_sp500'),
                 get_cohort(assets=['us_vix3m', 'us_vix'], benchmark='us_sp500'),
                 get_cohort(assets=['us_high_beta_sphb', 'us_low_volatility_usmv'], benchmark='us_sp500'),
-            ],
-            two_yaxis=True
+            ]
         )
