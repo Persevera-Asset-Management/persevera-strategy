@@ -412,9 +412,9 @@ def show_chartbook():
             ["Atacado", "Varejo"],
             ['line', 'line'],
             [
-                scale_to_100(year='2019', df=get_data(fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline',
+                scale_to_100(date='2019', df=get_data(fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline',
                                                               'usda_diesel'])),
-                scale_to_100(year='2019', df=get_data(fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail',
+                scale_to_100(date='2019', df=get_data(fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail',
                                                               'br_anp_hydrated_ethanol_retail', 'br_anp_lpg_retail'])),
             ],
             connect_gaps=True
