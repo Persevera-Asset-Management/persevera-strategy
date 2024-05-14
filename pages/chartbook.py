@@ -190,6 +190,11 @@ def format_table(df):
         .bar(align='zero', color=['#FCC0CB', '#90EE90'])
 
 
+def scale_to_100(date, df):
+    idx = df.loc[date:].iloc[0].name
+    return df / df.loc[idx, :]
+
+
 def show_chartbook():
     st.header("Chartbook")
 
@@ -407,9 +412,10 @@ def show_chartbook():
             ["Atacado", "Varejo"],
             ['line', 'line'],
             [
-                get_data(fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline', 'usda_diesel']),
-                get_data(fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail', 'br_anp_hydrated_ethanol_retail',
-                                 'br_anp_lpg_retail']),
+                scale_to_100(year='2019', df=get_data(fields=['crude_oil_brent', 'crude_oil_wti', 'gasoline',
+                                                              'usda_diesel'])),
+                scale_to_100(year='2019', df=get_data(fields=['br_anp_gasoline_retail', 'br_anp_diesel_retail',
+                                                              'br_anp_hydrated_ethanol_retail', 'br_anp_lpg_retail'])),
             ],
             connect_gaps=True
         )
