@@ -201,14 +201,14 @@ def show_chartbook():
     selected_category = option_menu(
         menu_title=None,
         options=["Estados Unidos", "Brasil", "Juros", "Commodities", "Moedas", "Mercados", "Posicionamento", "Cohorts"],
-        icons=['globe', 'globe-americas', "clipboard2-pulse", 'tree', 'graph-up', 'pie-chart', 'arrow-left-right'],
+        icons=['globe', 'globe-americas', "clipboard2-pulse", 'tree', 'graph-up', 'pie-chart', 'broadcast-pin', 'arrow-left-right'],
         orientation="horizontal"
     )
 
     if selected_category == "Estados Unidos":
         display_chart_with_expander(
             "PIB",
-            ["PIB"],
+            ["PIB", "PIB (QoQ)", "PIB (YoY)"],
             [
                 get_data(fields=['us_gdp_index']),
                 get_data(fields=['us_gdp_yoy']),
@@ -243,7 +243,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Trajetória da Inflação",
+            "Inflação",
             ["Inflação US", "Inflação Brasil"],
             [
                 get_data(fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
@@ -279,8 +279,8 @@ def show_chartbook():
 
     elif selected_category == "Juros":
         display_chart_with_expander(
-            "DM Rates",
-            ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],
+            "Desenvolvidos",
+            ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
             [
                 get_data(fields=['germany_generic_1y', 'spain_generic_1y', 'france_generic_1y', 'italy_generic_1y',
                                  'japan_generic_1y',
@@ -298,8 +298,8 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "EM Rates",
-            ["Taxa de 1 ano", "Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 5 anos"],
+            "Emergentes",
+            ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
             [
                 get_data(fields=['china_generic_1y', 'chile_generic_1y', 'colombia_generic_1y', 'hungary_generic_1y',
                                  'poland_generic_1y', 'peru_generic_1y']),
@@ -435,12 +435,12 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Equities",
-            ["Nasdaq", "Nikkei", "Russell 2000", "S&P 500"],
+            ["S&P 500", "Nasdaq", "Nikkei", "Russell 2000"],
             [
+                get_data(fields=['cftc_cme_sp500']),
                 get_data(fields=['cftc_cme_nasdaq']),
                 get_data(fields=['cftc_cme_nikkei']),
-                get_data(fields=['cftc_cme_russel2000']),
-                get_data(fields=['cftc_cme_sp500']),
+                get_data(fields=['cftc_cme_russell2000']),
             ]
         )
 
