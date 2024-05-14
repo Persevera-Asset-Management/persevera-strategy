@@ -193,7 +193,7 @@ def format_table(df):
 def show_chartbook():
     st.header("Chartbook")
 
-    def display_chart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False, two_yaxis=False):
+    def display__oldchart_with_expander(expander_title, chart_titles, datasets, connect_gaps=False, two_yaxis=False):
         with st.expander(expander_title, expanded=False):
             num_cols = 2
             num_charts = len(chart_titles)
@@ -211,7 +211,7 @@ def show_chartbook():
                     else:
                         col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
 
-    def display_new_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False, two_yaxis=False):
+    def display_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False, two_yaxis=False):
         with st.expander(expander_title, expanded=False):
             num_cols = 2
             num_charts = len(chart_titles)
@@ -262,6 +262,7 @@ def show_chartbook():
         display_chart_with_expander(
             "PIB",
             ["PIB", "PIB (QoQ)", "PIB (YoY)"],
+            ['line', 'bar', 'bar'],
             [
                 get_data(fields=['us_gdp_index']),
                 get_data(fields=['us_gdp_yoy']),
@@ -272,6 +273,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Taxas Referenciais",
             ["Curva Pré (Treasuries)", "Curva Inflação (TIPS)", "Curva Implícita (Breakeven)", "Curva de Juros", "Inclinações"],
+            ['line', 'line', 'line', 'line', 'line'],
             [
                 get_data(fields=['us_generic_2y', 'us_generic_5y', 'us_generic_10y', 'us_generic_30y']),
                 get_data(fields=['us_generic_inflation_5y', 'us_generic_inflation_10y', 'us_generic_inflation_20y',
@@ -287,6 +289,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Taxas Corporativas",
             ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_data(fields=['us_corporate_ig_5y_spread', 'us_corporate_ig_10y_spread']),
                 get_data(fields=['us_corporate_ig_5y_yield', 'us_corporate_ig_10y_yield']),
@@ -298,13 +301,14 @@ def show_chartbook():
         display_chart_with_expander(
             "Inflação",
             ["Índices de Inflação"],
+            ['line'],
             [
                 get_data(fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
             ]
         )
 
     elif selected_category == "Brasil":
-        display_new_chart_with_expander(
+        display_chart_with_expander(
             "PIB",
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             ['line', 'bar', 'bar'],
@@ -318,6 +322,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Taxas Referenciais",
             ["Curva Pré", "Curva IPCA", "Curva Implícita", "Curva de Juros"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_data(fields=['br_pre_1y', 'br_pre_2y', 'br_pre_3y', 'br_pre_5y', 'br_pre_10y']),
                 get_data(fields=['br_ipca_1y', 'br_ipca_2y', 'br_ipca_3y', 'br_ipca_5y', 'br_ipca_10y', 'br_ipca_35y']),
@@ -331,18 +336,20 @@ def show_chartbook():
         display_chart_with_expander(
             "Inflação",
             ["Índices de Inflação"],
+            ['line'],
             [
                 get_data(fields=['br_ipca_yoy']),
-            ]
+            ],
+            two_yaxis=True
         )
 
         display_chart_with_expander(
             "Termos de Troca",
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
+            ['line', 'line', 'line'],
             [
-                get_data(fields=['br_gdp_index']),
-                get_data(fields=['br_gdp_yoy']),
-                get_data(fields=['br_gdp_qoq']),
+                get_data(fields=['br_citi_terms_of_trade_index', 'br_current_account_to_gdp']),
+                get_data(fields=['br_mdic_terms_of_trade_index', 'br_current_account_to_gdp']),
             ]
         )
 
@@ -350,6 +357,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Desenvolvidos",
             ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_data(fields=['germany_generic_1y', 'spain_generic_1y', 'france_generic_1y', 'italy_generic_1y',
                                  'japan_generic_1y',
@@ -369,6 +377,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Emergentes",
             ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_data(fields=['china_generic_1y', 'chile_generic_1y', 'colombia_generic_1y', 'hungary_generic_1y',
                                  'poland_generic_1y', 'peru_generic_1y']),
@@ -465,6 +474,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Treasuries",
             ["Treasury 2Y", "Treasury 5Y", "Treasury 10Y", "Treasury Bonds"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_data(fields=['cftc_cbt_treasury_2y']),
                 get_data(fields=['cftc_cbt_treasury_5y']),
@@ -476,6 +486,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Commodities",
             ["Copper", "Gold", "Silver", "Crude Oil"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_data(fields=['cftc_cmx_copper']),
                 get_data(fields=['cftc_cmx_gold']),
@@ -487,6 +498,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Moedas",
             ["AUD", "BRL", "CAD", "CHF", "EUR", "GBP", "JPY", "MXN", "NZD", "RUB", "ZAR"],
+            ['line', 'line', 'line', 'line', 'line', 'line', 'line', 'line', 'line', 'line', 'line'],
             [
                 get_data(fields=['cftc_cme_aud']),
                 get_data(fields=['cftc_cme_brl']),
@@ -505,6 +517,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Bolsas",
             ["S&P 500", "Nasdaq", "Nikkei", "Russell 2000"],
+            ['line', 'line', 'line', 'line'],
             [
                 get_data(fields=['cftc_cme_sp500']),
                 get_data(fields=['cftc_cme_nasdaq']),
@@ -517,6 +530,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Estados Unidos",
             ['SOXX vs SPY', 'Discretionary vs Staples', 'VIX3M vs VIX', 'High Beta vs Low Volatility'],
+            ['line', 'line', 'line', 'line', 'line'],
             [
                 get_cohort(assets=['us_semiconductor_soxx', 'us_sp500'], benchmark='us_sp500'),
                 get_cohort(assets=['us_ew_discretionary_rspd', 'us_ew_staples_rspd'], benchmark='us_sp500'),
