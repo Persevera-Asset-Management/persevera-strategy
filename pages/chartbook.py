@@ -321,10 +321,11 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["Índices de Inflação"],
-            ['line'],
+            ["Índices de Inflação", "Projeção do IPCA (Focus)"],
+            ['line', 'line'],
             [
                 get_data(fields=['br_ipca_yoy']),
+                get_data(fields=['br_focus_ipca_median_fwd_12m_yoy', 'br_focus_ipca_median_smooth_fwd_12m_yoy']),
             ]
         )
 
@@ -337,6 +338,17 @@ def show_chartbook():
                 get_data(fields=['br_mdic_terms_of_trade_index', 'br_current_account_to_gdp']),
             ],
             connect_gaps=True
+        )
+
+        display_chart_with_expander(
+            "Atividade Econômica",
+            ["IBC-Br", "IBC-Br (% YoY)", "IBC-Br (% QoQ)"],
+            ['line', 'bar', 'bar'],
+            [
+                get_data(fields=['br_ibcbr_index']),
+                get_data(fields=['br_ibcbr_yoy']),
+                get_data(fields=['br_ibcbr_qoq']),
+            ]
         )
 
     elif selected_category == "Juros":
