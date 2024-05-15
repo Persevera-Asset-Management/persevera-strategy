@@ -6,6 +6,7 @@ from streamlit_option_menu import option_menu
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import utils
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 
@@ -13,17 +14,6 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 def get_data(fields: list):
     df = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
                          filters=[('code', 'in', fields)])
-    df = df.pivot_table(index='date', columns='code', values='value')
-    df = df.filter(fields)
-    return df
-
-
-def get_data_old(category: str, fields: list):
-    df = pd.read_parquet(
-        os.path.join(DATA_PATH, f"indicators-{category}.parquet"),
-        filters=[('code', 'in', fields)]
-    )
-    # df = df.query('code == @fields')
     df = df.pivot_table(index='date', columns='code', values='value')
     df = df.filter(fields)
     return df

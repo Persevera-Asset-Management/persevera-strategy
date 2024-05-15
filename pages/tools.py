@@ -5,7 +5,10 @@ import logging, os
 import plotly.express as px
 import streamlit as st
 from streamlit_option_menu import option_menu
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
+import utils
 
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
@@ -108,10 +111,12 @@ def show_tools():
     elif selected_category == "Drivers":
         cols = st.columns(2, gap='large')
         with cols[0]:
-            cols[0].markdown("**Histórico**")
-            df = pd.read_parquet(os.path.join(DATA_PATH, "macro_drivers.parquet"))
-            fig = px.area(df)
-            st.plotly_chart(fig, use_container_width=True)
+            df_drivers = pd.read_parquet(os.path.join(DATA_PATH, "macro_drivers.parquet"))
+            df_benchmark = utils.get_data(fields=['br_ibovespa'])
+            fig = make_subplots(specs=[[{"secondary_y": True}]])
+            fig.add_trace(go.Scatter(x=df_drivers.index, y=df_drivers, stackgroup='one'), secondary_y=False)
+            fig.add_trace(go.Scatter(x=df_benchmark.index, y=df_benchmark), secondary_y=True)
+            st.plotly_chart(format_chart(figure=fig), use_container_width=True)
 
         with cols[1]:
             cols[1].markdown("**Distribuição**")
