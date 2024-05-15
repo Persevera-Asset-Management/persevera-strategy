@@ -4,6 +4,7 @@ from datetime import datetime
 import logging, os
 import plotly.express as px
 import streamlit as st
+from streamlit_option_menu import option_menu
 
 
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
@@ -57,50 +58,60 @@ def format_bar_chart(figure):
 def show_tools():
     st.header("Tools")
 
-    st.subheader("Opções de Copom")
-    cols = st.columns(2, gap='large')
-    with cols[0]:
-        meeting_date = st.selectbox(label="Selecione a data da reunião do Copom:",
-                                    options=get_copom_meeting_dates(),
-                                    index=int((np.abs(get_copom_meeting_dates() - datetime.today())).argmin()),
-                                    format_func=lambda x: format(x, "%Y-%m-%d")
-                                    )
+    selected_category = option_menu(
+        menu_title=None,
+        options=["Opções de Copom", "Drivers", "Selic Implícita", "Valuation"],
+        orientation="horizontal"
+    )
 
-    cols = st.columns(2, gap='large')
-    with cols[0]:
-        cols[0].markdown("**Histórico**")
-        df_copom_history = get_copom_data(meeting_date)
-        fig = px.line(df_copom_history, markers=True)
-        st.plotly_chart(format_chart(figure=fig, yaxis_range=[0, 100], connect_gaps=True), use_container_width=True)
+    if selected_category == "Opções de Copom":
+        cols = st.columns(2, gap='large')
+        with cols[0]:
+            meeting_date = st.selectbox(label="Selecione a data da reunião do Copom:",
+                                        options=get_copom_meeting_dates(),
+                                        index=int((np.abs(get_copom_meeting_dates() - datetime.today())).argmin()),
+                                        format_func=lambda x: format(x, "%Y-%m-%d")
+                                        )
 
-    with cols[1]:
-        cols[1].markdown("**Distribuição**")
-        decisions = [
-            'Queda de 2%',
-            'Queda de 1.75%',
-            'Queda de 1.5%',
-            'Queda de 1.25%',
-            'Queda de 1%',
-            'Queda de 0.75%',
-            'Queda de 0.5%',
-            'Queda de 0.25%',
-            'Manutenção',
-            'Aumento de 0.25%',
-            'Aumento de 0.5%',
-            'Aumento de 0.75%',
-            'Aumento de 1%',
-            'Aumento de 1.25%',
-            'Aumento de 1.5%',
-            'Aumento de 1.75%',
-            'Aumento de 2%',
-        ]
-        df_copom_dist = df_copom_history.filter(decisions).iloc[-1].fillna(0)
-        fig = px.bar(df_copom_dist)
-        st.plotly_chart(format_bar_chart(figure=fig), use_container_width=True)
+        cols = st.columns(2, gap='large')
+        with cols[0]:
+            cols[0].markdown("**Histórico**")
+            df_copom_history = get_copom_data(meeting_date)
+            fig = px.line(df_copom_history, markers=True)
+            st.plotly_chart(format_chart(figure=fig, yaxis_range=[0, 100], connect_gaps=True), use_container_width=True)
 
+        with cols[1]:
+            cols[1].markdown("**Distribuição**")
+            decisions = [
+                'Queda de 2%',
+                'Queda de 1.75%',
+                'Queda de 1.5%',
+                'Queda de 1.25%',
+                'Queda de 1%',
+                'Queda de 0.75%',
+                'Queda de 0.5%',
+                'Queda de 0.25%',
+                'Manutenção',
+                'Aumento de 0.25%',
+                'Aumento de 0.5%',
+                'Aumento de 0.75%',
+                'Aumento de 1%',
+                'Aumento de 1.25%',
+                'Aumento de 1.5%',
+                'Aumento de 1.75%',
+                'Aumento de 2%',
+            ]
+            df_copom_dist = df_copom_history.filter(decisions).iloc[-1].fillna(0)
+            fig = px.bar(df_copom_dist)
+            st.plotly_chart(format_bar_chart(figure=fig), use_container_width=True)
 
-    st.subheader("Selic Implícita")
+    elif selected_category == "Drivers":
+        cols = st.columns(2, gap='large')
+        with cols[0]:
+            cols[0].markdown("**Histórico**")
+            df = pd.read_parquet(os.path.join(DATA_PATH, "macro_drivers.parquet"))
+            fig = px.area(df)
+            st.plotly_chart(fig, use_container_width=True)
 
-    st.subheader("Valuation Pré")
-
-    st.subheader("Valuation Forward")
+        with cols[1]:
+            cols[1].markdown("**Distribuição**")
