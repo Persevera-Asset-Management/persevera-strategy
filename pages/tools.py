@@ -113,10 +113,12 @@ def show_tools():
         with cols[0]:
             df_drivers = pd.read_parquet(os.path.join(DATA_PATH, "macro_drivers.parquet"))
             df_benchmark = utils.get_data(fields=['br_ibovespa'])
-            fig = make_subplots(specs=[[{"secondary_y": True}]])
-            fig.add_trace(go.Scatter(x=df_drivers.index, y=df_drivers, stackgroup='one'), secondary_y=False)
-            fig.add_trace(go.Scatter(x=df_benchmark.index, y=df_benchmark), secondary_y=True)
+            fig = px.area(df_drivers)
             st.plotly_chart(format_chart(figure=fig), use_container_width=True)
+
+            # fig = make_subplots(specs=[[{"secondary_y": True}]])
+            # fig.add_trace(go.Scatter(x=df_drivers.index, y=df_drivers, stackgroup='one'), secondary_y=False)
+            # fig.add_trace(go.Scatter(x=df_benchmark.index, y=df_benchmark), secondary_y=True)
 
         with cols[1]:
             cols[1].markdown("**Distribuição**")
