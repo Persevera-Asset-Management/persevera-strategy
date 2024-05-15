@@ -122,3 +122,11 @@ def show_tools():
 
         with cols[1]:
             cols[1].markdown("**Distribuição**")
+            selected_benchmark = st.selectbox("Selecione o ativo de comparação",
+                                              options=['br_pre_1y', 'br_pre_10y', 'br_cds_5y', 'crb_index', 'crude_oil_brent',
+                                                       'crb_metals_index', 'brl_usd', 'us_sp500'])
+            df = utils.get_data(fields=['br_ibovespa', selected_benchmark])
+            fig = make_subplots(specs=[[{"secondary_y": True}]])
+            fig.add_trace(go.Scatter(x=df.index, y=df.iloc[:, 0], name=df.iloc[:, 0].name), secondary_y=False)
+            fig.add_trace(go.Scatter(x=df.index, y=df.iloc[:, 1], name=df.iloc[:, 1].name), secondary_y=True)
+            st.plotly_chart(format_chart(figure=fig), use_container_width=True)
