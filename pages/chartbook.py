@@ -283,6 +283,15 @@ def show_chartbook():
             ]
         )
 
+        display_chart_with_expander(
+            "Emprego",
+            ["Índices de Inflação"],
+            ['line'],
+            [
+                get_data(fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
+            ]
+        )
+
     elif selected_category == "Brasil":
         display_chart_with_expander(
             "PIB",
@@ -311,11 +320,15 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["Índices de Inflação", "Projeção do IPCA (Focus)"],
-            ['line', 'line'],
+            ["IPCA", "Projeção do IPCA (Focus)", "IGP-10", "IGP-10", "IPA-10", "INCC-10"],
+            ['line', 'line', 'line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis'],
             [
                 get_data(fields=['br_ipca_yoy']),
                 get_data(fields=['br_focus_ipca_median_fwd_12m_yoy', 'br_focus_ipca_median_smooth_fwd_12m_yoy']),
+                get_data(fields=['br_igp10_mom', 'br_igp10_yoy']),
+                get_data(fields=['br_igpdi_mom', 'br_igpdi_yoy']),
+                get_data(fields=['br_ipa10_mom', 'br_ipa10_yoy']),
+                get_data(fields=['br_incc10_mom', 'br_incc10_yoy']),
             ]
         )
 
