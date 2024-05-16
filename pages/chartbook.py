@@ -444,6 +444,17 @@ def show_chartbook():
             connect_gaps=True
         )
 
+        display_chart_with_expander(
+            "Brasil",
+            ["ICB (2019 = 100)"],
+            ['line'],
+            [
+                scale_to_100(date='2019', df=get_data(
+                    fields=['br_icb_composite', 'br_icb_agriculture', 'br_icb_energy', 'br_icb_metal'])),
+            ],
+            connect_gaps=True
+        )
+
     elif selected_category == "Moedas":
         display_table_with_expander(
             "Performance",
