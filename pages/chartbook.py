@@ -285,10 +285,10 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Emprego",
-            ["Índices de Inflação"],
+            ["Pedidos de Seguro-Desemprego"],
             ['line'],
             [
-                get_data(fields=['us_cpi_yoy', 'us_core_cpi_yoy', 'us_pce_yoy', 'us_supercore_cpi_yoy']),
+                get_data(fields=['us_initial_jobless_claims', 'us_initial_jobless_claims_4wma']),
             ]
         )
 
@@ -351,6 +351,15 @@ def show_chartbook():
                 get_data(fields=['br_ibcbr_index']),
                 get_data(fields=['br_ibcbr_yoy']),
                 get_data(fields=['br_ibcbr_qoq']),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Emprego",
+            ["Taxa de Desemprego"],
+            ['line'],
+            [
+                get_data(fields=['br_pnad_unemployment_rate']),
             ]
         )
 
