@@ -128,14 +128,14 @@ def show_fund_analysis():
 
     cols = st.columns(2, gap='large')
     with cols[0]:
-        cols = st.columns(2, gap='large')
-        with cols[0]:
+        nested_cols = st.columns(2)
+        with nested_cols[0]:
             start_date = st.date_input(label="Selecione a data inicial:",
                                        value=de_para[selected_fund]["initial_date"],
                                        min_value=de_para[selected_fund]["initial_date"],
                                        max_value=datetime.today(),
                                        format="YYYY-MM-DD")
-        with cols[1]:
+        with nested_cols[1]:
             end_date = st.date_input(label="Selecione a data final:",
                                      value=datetime.today(),
                                      min_value=start_date,
