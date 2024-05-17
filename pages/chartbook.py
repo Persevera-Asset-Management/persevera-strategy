@@ -556,13 +556,13 @@ def show_chartbook():
     elif selected_category == "Cohorts":
         display_chart_with_expander(
             "Estados Unidos",
-            ['SOXX vs SPY', 'Discretionary vs Staples', 'VIX3M vs VIX', 'High Beta vs Low Volatility'],
+            ['SOXX vs SPY', 'Discretionary vs Staples', 'VIX3M vs VIX', 'High Beta vs Low Volatility', 'Utilities vs SPY'],
             ['line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis', 'line_two_yaxis'],
             [
                 get_cohort(assets=['us_semiconductor_soxx', 'us_sp500'], benchmark='us_sp500'),
                 get_cohort(assets=['us_ew_discretionary_rspd', 'us_ew_staples_rspd'], benchmark='us_sp500'),
-                get_cohort(assets=['us_semiconductor_soxx', 'us_sp500'], benchmark='us_sp500'),
                 get_cohort(assets=['us_vix3m', 'us_vix'], benchmark='us_sp500'),
                 get_cohort(assets=['us_high_beta_sphb', 'us_low_volatility_usmv'], benchmark='us_sp500'),
+                get_cohort(assets=['us_utilities_xlu', 'us_sp500'], benchmark='us_sp500'),
             ]
         )

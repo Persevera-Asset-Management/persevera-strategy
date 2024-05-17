@@ -126,15 +126,23 @@ def show_fund_analysis():
 
     st.header(selected_fund)
 
-    col1, col2 = st.columns(2, gap='large')
-    with col1:
-        start_date = st.date_input(label="Selecione a data inicial:",
-                                   value=de_para[selected_fund]["initial_date"],
-                                   min_value=de_para[selected_fund]["initial_date"],
-                                   max_value=datetime.today(),
-                                   format="YYYY-MM-DD")
+    cols = st.columns(2, gap='large')
+    with cols[0]:
+        cols = st.columns(2, gap='large')
+        with cols[0]:
+            start_date = st.date_input(label="Selecione a data inicial:",
+                                       value=de_para[selected_fund]["initial_date"],
+                                       min_value=de_para[selected_fund]["initial_date"],
+                                       max_value=datetime.today(),
+                                       format="YYYY-MM-DD")
+        with cols[1]:
+            end_date = st.date_input(label="Selecione a data final:",
+                                     value=datetime.today(),
+                                     min_value=start_date,
+                                     max_value=datetime.today(),
+                                     format="YYYY-MM-DD")
 
-    with col2:
+    with cols[1]:
         peers_list = get_fund_peers(selected_fund).values()
         selected_peers = st.multiselect(label='Selecione os peers:',
                                         options=peers_list,
