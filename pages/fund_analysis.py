@@ -146,7 +146,7 @@ def show_fund_analysis():
         selected_peers = st.multiselect(label='Selecione os peers:',
                                         options=peers_list,
                                         default=[de_para[selected_fund]["fund_name"]])
-        if selected_peers == 'Todos':
+        if 'Todos' in selected_peers:
             selected_peers = peers_list
 
     st.subheader("Rentabilidade Acumulada")
