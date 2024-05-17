@@ -66,7 +66,7 @@ def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=Fal
     return df
 
 
-def get_performance_table(df, custom_date, relative=False):
+def get_performance_table(df, start_date, end_date, relative=False):
     time_frames = {
         'day': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change().iloc[-1],
         'mtd': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1],
@@ -74,7 +74,7 @@ def get_performance_table(df, custom_date, relative=False):
         '3m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(3 * 21).iloc[-1],
         '6m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(6 * 21).iloc[-1],
         '12m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
-        'custom': df[custom_date:].iloc[-1] / df[custom_date:].iloc[0] - 1,
+        'custom': df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1,
     }
     df = pd.DataFrame(time_frames)
     if relative:
@@ -82,7 +82,7 @@ def get_performance_table(df, custom_date, relative=False):
             df = df.div(df.loc['CDI'])
             df = df.drop(index='CDI')
         except:
-            df = df.div(df.loc['IBOV'])
+            df = df.sub(df.loc['IBOV'])
             df = df.drop(index='IBOV')
     return df
 
@@ -169,7 +169,7 @@ def show_fund_analysis():
             st.write("Data mais recente:", data.index.max())
             table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
                                        selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
-            df = get_performance_table(table_data, custom_date=start_date)
+            df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
             st.dataframe(format_table(df), use_container_width=True)
 
     # Retorno relativo
