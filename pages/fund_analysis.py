@@ -1,7 +1,7 @@
 import pandas as pd
+import numpy as np
 import logging, os
 from datetime import datetime, timedelta
-import polars as pl
 import streamlit as st
 from streamlit_option_menu import option_menu
 
@@ -42,6 +42,7 @@ def get_fund_data(fund_name, selected_peers, benchmark, start_date, end_date=dat
     )
     df = df.pivot(index='date', columns='fund_cnpj', values='fund_nav')
     df = df.rename(columns=filtered_peers)
+    df = df.replace(0, np.nan).dropna(how='all')
 
     logging.info("Importing benchmark...")
     df_benchmark = pd.read_parquet(
