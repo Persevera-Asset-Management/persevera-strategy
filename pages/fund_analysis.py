@@ -27,26 +27,25 @@ def get_fund_peers(fund_name):
     return peers
 
 
-def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=False):
+def get_fund_data(fund_name, start_date, end_date, selected_peers, benchmark, relative=False):
     logging.info(f'Loading data for {fund_name} and its peers since {start_date}...')
     listed_peers = get_fund_peers(fund_name)
     filtered_peers = {k: v for k, v in listed_peers.items() if v in selected_peers}
 
-    df = (
-        pl.scan_parquet(source=DATA_PATH + f"/cvm-cotas_fundos-{fund_name.lower()}.parquet")
-        .drop("fund_value")
-        .filter(pl.col("fund_cnpj").is_in(filtered_peers.keys()))
-        .filter(pl.col("date") >= start_date)
-        .collect()
-        .pivot(index='date', columns='fund_cnpj', values='fund_nav')
-        .to_pandas()
+    df = pd.read_parquet(
+        os.path.join(DATA_PATH, f"cvm-cotas_fundos-{fund_name.lower()}.parquet"),
+        filters=[
+            ('fund_cnpj', 'in', filtered_peers.keys()),
+            ('date', '>=', start_date),
+            ('date', '<=', end_date)
+        ]
     )
+    df = df.pivot(index='date', columns='fund_cnpj', values='fund_nav')
     df = df.rename(columns=filtered_peers)
-    df = df.set_index('date')
 
     logging.info("Importing benchmark...")
     df_benchmark = pd.read_parquet(
-        path=DATA_PATH + "/consolidado-indicators.parquet",
+        path=os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
         filters=[('code', '==', benchmark)]
     )
     df_benchmark = df_benchmark.pivot_table(index='date', columns='code', values='value')
@@ -61,8 +60,7 @@ def get_fund_data(fund_name, start_date, selected_peers, benchmark, relative=Fal
         df.iloc[0] = 1
         df = df.ffill()
 
-    df = df.rename(columns={"br_cdi_index": "CDI"})
-    df = df.rename(columns={"br_ibovespa": "IBOV"})
+    df = df.rename(columns={"br_cdi_index": "CDI", "br_ibovespa": "IBOV"})
     return df
 
 
@@ -156,8 +154,8 @@ def show_fund_analysis():
         col1, col2 = st.columns(2, gap='large')
 
         with col1:
-            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers,
-                                 benchmark=de_para[selected_fund]["benchmark"])
+            data = get_fund_data(fund_name=selected_fund, start_date=start_date, end_date=end_date,
+                                 selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
             data = (1 + data.pct_change()).cumprod()
             data = data.sub(1)
             data.iloc[0] = 0
