@@ -27,7 +27,7 @@ def get_fund_peers(fund_name):
     return peers
 
 
-def get_fund_data(fund_name, start_date, end_date, selected_peers, benchmark, relative=False):
+def get_fund_data(fund_name, selected_peers, benchmark, start_date, end_date=datetime.today(), relative=False):
     logging.info(f'Loading data for {fund_name} and its peers since {start_date}...')
     listed_peers = get_fund_peers(fund_name)
     filtered_peers = {k: v for k, v in listed_peers.items() if v in selected_peers}
@@ -154,10 +154,14 @@ def show_fund_analysis():
         col1, col2 = st.columns(2, gap='large')
 
         with col1:
-            data = get_fund_data(fund_name=selected_fund, start_date=start_date, end_date=end_date,
-                                 selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
-            data = (1 + data.pct_change()).cumprod()
-            data = data.sub(1)
+            data = get_fund_data(
+                fund_name=selected_fund,
+                start_date=start_date,
+                end_date=end_date,
+                selected_peers=selected_peers,
+                benchmark=de_para[selected_fund]["benchmark"]
+            )
+            data = (1 + data.pct_change()).cumprod().sub(1)
             data.iloc[0] = 0
             data = data.ffill()
             fig = px.line(data)
@@ -165,8 +169,12 @@ def show_fund_analysis():
 
         with col2:
             st.write("Data mais recente:", data.index.max())
-            table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
-                                       selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
+            table_data = get_fund_data(
+                fund_name=selected_fund,
+                start_date=de_para[selected_fund]["initial_date"],
+                selected_peers=selected_peers,
+                benchmark=de_para[selected_fund]["benchmark"]
+            )
             df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
             st.dataframe(format_table(df), use_container_width=True)
 
@@ -175,19 +183,28 @@ def show_fund_analysis():
         col1, col2 = st.columns(2, gap='large')
 
         with col1:
-            data = get_fund_data(fund_name=selected_fund, start_date=start_date, selected_peers=selected_peers,
-                                 benchmark=de_para[selected_fund]["benchmark"], relative=True)
-            data = (1 + data.pct_change()).cumprod()
-            data = data.sub(1)
+            data = get_fund_data(
+                fund_name=selected_fund,
+                start_date=start_date,
+                end_date=end_date,
+                selected_peers=selected_peers,
+                benchmark=de_para[selected_fund]["benchmark"],
+                relative=True
+            )
+            data = (1 + data.pct_change()).cumprod().sub(1)
             data.iloc[0] = 0
             data = data.ffill()
             fig = px.line(data)
             st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
         with col2:
-            table_data = get_fund_data(fund_name=selected_fund, start_date=de_para[selected_fund]["initial_date"],
-                                       selected_peers=selected_peers, benchmark=de_para[selected_fund]["benchmark"])
-            df = get_performance_table(table_data, custom_date=start_date, relative=True)
+            table_data = get_fund_data(
+                fund_name=selected_fund,
+                start_date=de_para[selected_fund]["initial_date"],
+                selected_peers=selected_peers,
+                benchmark=de_para[selected_fund]["benchmark"]
+            )
+            df = get_performance_table(table_data, start_date=start_date, end_date=end_date, relative=True)
             st.dataframe(format_table(df), use_container_width=True)
 
     if selected_fund == "Trinity":
