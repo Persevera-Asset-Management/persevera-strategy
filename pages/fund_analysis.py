@@ -141,10 +141,13 @@ def show_fund_analysis():
                                      format="YYYY-MM-DD")
 
     with cols[1]:
-        peers_list = get_fund_peers(selected_fund).values()
+        peers_list = list(get_fund_peers(selected_fund).values())
+        peers_list.insert(0, 'Todos')
         selected_peers = st.multiselect(label='Selecione os peers:',
                                         options=peers_list,
                                         default=[de_para[selected_fund]["fund_name"]])
+        if selected_peers == 'Todos':
+            selected_peers = peers_list
 
     st.subheader("Rentabilidade Acumulada")
     tab1, tab2 = st.tabs(["Absoluto", "Relativo"])
