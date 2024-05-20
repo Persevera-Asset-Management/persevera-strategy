@@ -285,10 +285,13 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Emprego",
-            ["Pedidos de Seguro-Desemprego"],
-            ['line'],
+            ["Pedidos de Seguro-Desemprego", "Taxa de Desemprego", "Non-Farm Payroll (MoM)", "Non-Farm Payroll (% YoY)"],
+            ['line', 'line', 'bar', 'line'],
             [
                 get_data(fields=['us_initial_jobless_claims', 'us_initial_jobless_claims_4wma']),
+                get_data(fields=['us_unemployment_rate']),
+                get_data(fields=['us_employees_nonfarm_payrolls_mom']),
+                get_data(fields=['us_employees_nonfarm_payrolls_yoy']),
             ]
         )
 
