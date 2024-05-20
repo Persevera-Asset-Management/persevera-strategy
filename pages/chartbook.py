@@ -118,6 +118,7 @@ def create_bar_chart(data, title):
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
+        barmode="group"
     )
     return fig
 
@@ -286,10 +287,11 @@ def show_chartbook():
         display_chart_with_expander(
             "Produção Industrial",
             ["Produção Industrial", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
-            ["line", "line", "line"],
+            ["line", "bar", "bar"],
             [
-                get_data(fields=["us_industrial_production_index", "us_industrial_production_yoy",
-                                 "us_industrial_production_mom"]),
+                get_data(fields=["us_industrial_production_index"]),
+                get_data(fields=["us_industrial_production_yoy"]),
+                get_data(fields=["us_industrial_production_mom"]),
             ]
         )
 
@@ -305,7 +307,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Habitação",
             ["Habitação", "Habitação", "Preços de Imóveis (% YoY)", "Preços de Imóveis (% YoY)"],
-            ["line", "bar", "line", "bar"],
+            ["line", "line", "line", "line"],
             [
                 get_data(fields=["us_new_home_sales_index", "us_housing_starts_index",
                                  "us_building_permits_index"]),
@@ -345,7 +347,7 @@ def show_chartbook():
             "Emprego",
             ["Pedidos de Seguro-Desemprego", "Taxa de Desemprego", "Non-Farm Payroll (MoM)", "Non-Farm Payroll (% YoY)",
              "Ganho Médio por Hora (% YoY)"],
-            ["line", "line", "bar", "bar", "bar"],
+            ["line", "line", "bar", "bar", "line"],
             [
                 get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma"]),
                 get_data(fields=["us_unemployment_rate"]),
@@ -383,32 +385,33 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["IPCA", "Projeção do IPCA (Focus)", "IGP-10", "IGP-10", "IPA-10", "INCC-10"],
-            ["line", "line", "line_two_yaxis", "line_two_yaxis", "line_two_yaxis", "line_two_yaxis"],
+            ["IPCA", "Projeção do IPCA (Focus)", "Outros Índices"],
+            ["line", "line", "line"],
             [
                 get_data(fields=["br_ipca_yoy"]),
                 get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy"]),
-                get_data(fields=["br_igp10_mom", "br_igp10_yoy"]),
-                get_data(fields=["br_igpdi_mom", "br_igpdi_yoy"]),
-                get_data(fields=["br_ipa10_mom", "br_ipa10_yoy"]),
-                get_data(fields=["br_incc10_mom", "br_incc10_yoy"]),
+                get_data(fields=["br_igp10_yoy", "br_igpdi_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_cpi_fipe_yoy"]),
             ]
         )
 
         display_chart_with_expander(
-            "Termos de Troca",
-            ["Citi", "MDIC"],
-            ["line_two_yaxis", "line_two_yaxis"],
+            "Balança Comercial",
+            ["Termos de Troca (Citi)", "Termos de Troca (MDIC)", "Exportações vs Importações", "Exportações vs Importações (YTD)", "Exportações vs Importações (LTM)", "Saldo da Balança Comercial (LTM)"],
+            ["line_two_yaxis", "line_two_yaxis", "line", "bar", "line", "bar"],
             [
                 get_data(fields=["br_citi_terms_of_trade_index", "br_current_account_to_gdp"]),
                 get_data(fields=["br_mdic_terms_of_trade_index", "br_current_account_to_gdp"]),
+                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]),
+                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).resample("Y").sum(),
+                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).rolling(12).sum().dropna(),
+                get_data(fields=["br_trade_balance_fob_t12"]),
             ],
             connect_gaps=True
         )
 
         display_chart_with_expander(
             "Serviços (PMS)",
-            ["Volume de Serviços", "Volume de Serviços (12 meses)", "Volume de Serviços (% YoY)", "Volume de Serviços (% QoQ)", "Evolução por Atividade"],
+            ["Volume de Serviços", "Volume de Serviços (12 meses)", "Volume de Serviços (% YoY)", "Volume de Serviços (% MoM)", "Evolução por Atividade"],
             ["line", "line", "bar", "bar", "line"],
             [
                 get_data(fields=["br_pms_services_volume_total_index"]),
@@ -420,7 +423,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Varejo (PMS)",
+            "Varejo (PMC)",
             ["Volume de Vendas", "Volume de Vendas (% YoY)", "Evolução por Atividade"],
             ["line", "bar", "line"],
             [
@@ -455,10 +458,30 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Emprego",
-            ["Taxa de Desemprego"],
-            ["line"],
+            ["Taxa de Desemprego", "Criação de Empregos Formais"],
+            ["line", "line"],
             [
                 get_data(fields=["br_pnad_unemployment_rate"]),
+                get_data(fields=["br_caged_job_creation"]),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Crédito",
+            ["Taxa Média de Juros das Operações"],
+            ["line"],
+            [
+                get_data(fields=["br_bcb_average_interest_rate_new_loans_pf", "br_bcb_average_interest_rate_new_loans_pj", "br_selic_target"]),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Tráfego",
+            ["Fluxo Pedagiado nas Estradas", "Fluxo Pedagiado nas Estradas (% YoY)"],
+            ["line", "line"],
+            [
+                get_data(fields=["br_abcr_traffic_heavy_vehicles", "br_abcr_traffic_light_vehicles"]),
+                get_data(fields=["br_abcr_traffic_heavy_vehicles_yoy", "br_abcr_traffic_light_vehicles_yoy"]),
             ]
         )
 
