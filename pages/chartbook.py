@@ -639,7 +639,7 @@ def show_chartbook():
                         min_periods=252).rank(pct=True) * 100),
                 get_index_data(category='options', codes=["br_ibovespa"],
                                field="implied_volatility_100_moneyness_1m").assign(
-                    percentile=get_index_data(category='options', codes=["us_sp500"],
+                    percentile=get_index_data(category='options', codes=["br_ibovespa"],
                                               field="implied_volatility_100_moneyness_1m").expanding(
                         min_periods=252).rank(pct=True) * 100),
             ]
