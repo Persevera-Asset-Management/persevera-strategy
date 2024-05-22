@@ -630,10 +630,18 @@ def show_chartbook():
         display_chart_with_expander(
             "Volatilidade Implícita",
             ["S&P 500", "Ibovespa"],
-            ["line", "line"],
+            ["line_two_yaxis", "line_two_yaxis"],
             [
-                get_index_data(category='options', codes=["us_sp500"], field="implied_volatility_100_moneyness_1m"),
-                get_index_data(category='options', codes=["br_ibovespa"], field="implied_volatility_100_moneyness_1m"),
+                get_index_data(category='options', codes=["us_sp500"],
+                               field="implied_volatility_100_moneyness_1m").assign(
+                    percentile=get_index_data(category='options', codes=["us_sp500"],
+                                              field="implied_volatility_100_moneyness_1m").expanding(
+                        min_periods=252).rank(pct=True) * 100),
+                get_index_data(category='options', codes=["br_ibovespa"],
+                               field="implied_volatility_100_moneyness_1m").assign(
+                    percentile=get_index_data(category='options', codes=["us_sp500"],
+                                              field="implied_volatility_100_moneyness_1m").expanding(
+                        min_periods=252).rank(pct=True) * 100),
             ]
         )
 
