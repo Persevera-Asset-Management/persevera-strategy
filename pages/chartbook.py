@@ -31,8 +31,8 @@ def get_cohort(assets: list, benchmark: str):
     return df
 
 
-def get_index_fundamentals(codes: list, field: str):
-    df = pd.read_parquet(os.path.join(DATA_PATH, f"index_fundamentals-equity.parquet"))
+def get_index_data(category: str, codes: list, field: str):
+    df = pd.read_parquet(os.path.join(DATA_PATH, f"indicators-index_{category}.parquet"))
     df = df.query('code == @codes')
     df = df.pivot_table(index='date', columns='code', values=field)
     df = df.filter(codes)
@@ -597,8 +597,8 @@ def show_chartbook():
             ["S&P 500", "Ibovespa"],
             ["line", "line"],
             [
-                get_index_fundamentals(codes=["us_sp500"], field="earnings_per_share_fwd"),
-                get_index_fundamentals(codes=["br_ibovespa"], field="earnings_per_share_fwd"),
+                get_index_data(category='valuation', codes=["us_sp500"], field="earnings_per_share_fwd"),
+                get_index_data(category='valuation', codes=["br_ibovespa"], field="earnings_per_share_fwd"),
             ]
         )
 
@@ -607,16 +607,34 @@ def show_chartbook():
             ["Desenvolvidos", "Desenvolvidos (vs. S&P 500)", "Emergentes", "Emergentes (vs. S&P 500)"],
             ["line", "line", "line", "line"],
             [
-                get_index_fundamentals(codes=["us_sp500", "us_russell2000", "us_nasdaq100", "germany_dax40", "japan_nikkei225", "uk_ukx"], field="price_to_earnings_fwd"),
-                get_index_fundamentals(
+                get_index_data(
+                    category='valuation',
+                    codes=["us_sp500", "us_russell2000", "us_nasdaq100", "germany_dax40", "japan_nikkei225", "uk_ukx"],
+                    field="price_to_earnings_fwd"),
+                get_index_data(
+                    category='valuation',
                     codes=["us_sp500", "us_russell2000", "us_nasdaq100", "germany_dax40", "japan_nikkei225", "uk_ukx"],
                     field="price_to_earnings_fwd").apply(lambda x: x / x["us_sp500"], axis=1).drop(columns="us_sp500"),
-                get_index_fundamentals(codes=["br_ibovespa", "china_csi300", "south_africa_top40", "mexico_bmv", "chile_ipsa", "india_nifty50", "indonesia_jci"], field="price_to_earnings_fwd"),
-                get_index_fundamentals(
+                get_index_data(
+                    category='valuation',
+                    codes=["br_ibovespa", "china_csi300", "south_africa_top40", "mexico_bmv", "chile_ipsa", "india_nifty50", "indonesia_jci"],
+                    field="price_to_earnings_fwd"),
+                get_index_data(
+                    category='valuation',
                     codes=["us_sp500", "br_ibovespa", "china_csi300", "south_africa_top40", "mexico_bmv", "chile_ipsa", "india_nifty50", "indonesia_jci"],
                     field="price_to_earnings_fwd").apply(lambda x: x / x["us_sp500"], axis=1).drop(columns="us_sp500").dropna(how="all"),
             ],
             connect_gaps=True
+        )
+
+        display_chart_with_expander(
+            "Volatilidade Implícita",
+            ["S&P 500", "Ibovespa"],
+            ["line", "line"],
+            [
+                get_index_data(category='options', codes=["us_sp500"], field="implied_volatility_100_moneyness_1m"),
+                get_index_data(category='options', codes=["br_ibovespa"], field="implied_volatility_100_moneyness_1m"),
+            ]
         )
 
     elif selected_category == "Posicionamento":
