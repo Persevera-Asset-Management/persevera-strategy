@@ -65,48 +65,64 @@ def show_factor_playground():
                                              default=["VALE3"],
                                              max_selections=2)
 
-        background_color = {'value': '#d4e8c6',
-                            'quality': '#7fd7f7',
-                            'momentum': '#fbe5d6',
-                            'risk': '#ffe080',
-                            'liquidity': '#ffff7f'}
+        # Define background colors for factor groups
+        background_color = {
+            'value': '#d4e8c6',
+            'quality': '#7fd7f7',
+            'momentum': '#fbe5d6',
+            'risk': '#ffe080',
+            'liquidity': '#ffff7f'
+        }
 
+        # Load the data and filter for selected stocks
         df = pd.read_parquet(os.path.join(DATA_PATH, "factors-signal_ranks.parquet"),
                              filters=[('code', 'in', selected_stocks)])
-        df = df.iloc[:, 4:].T.reset_index()
 
-        df.columns = ['signal', 'percentile']
+        # Transform the DataFrame to the required format
+        df = df.set_index('code').iloc[:, 3:].T.reset_index()
+        df = df.rename(columns={'index': 'signal'})
         df['factor_group'] = df['signal'].str.split('_').str[0]
         df['factor'] = df['signal'].str.split('_').str[2:].str.join('_')
         df = df[df['factor_group'] != "size"]
         df['factor_color'] = df['factor_group'].map(background_color)
 
+        # Initialize the figure
         fig = go.Figure()
-        fig.add_trace(
-            go.Scatterpolar(
-                r=df['percentile'],
-                theta=df['factor'],
-                mode="lines+markers",
-                name="PETR4",
-                fill='toself',
-                line_color='#16537e',
-            )
-        )
 
-        for f in background_color:
-            temp = df.query('factor_group == @f')
+        # Add traces for each selected stock
+        for stock, color in zip(selected_stocks, ['#16537e', '#722f37']):
+            fig.add_trace(
+                go.Scatterpolar(
+                    r=df[stock],
+                    theta=df['factor'],
+                    mode="lines+markers",
+                    name=stock,
+                    fill='toself',
+                    line_color=color,
+                )
+            )
+
+        # Add background colors for factor groups
+        for factor_group, color in background_color.items():
+            temp = df[df['factor_group'] == factor_group]
             fig.add_trace(
                 go.Barpolar(
                     r=[100] * len(temp),
                     theta=temp['factor'],
                     width=[1] * len(temp),
-                    marker_color=[background_color[f]] * len(temp),
+                    marker_color=[color] * len(temp),
                     marker_line_color="white",
                     opacity=0.5,
+                    name=factor_group
                 )
             )
 
-        fig.update_polars(angularaxis_tickfont_size=10, angularaxis_showgrid=False, radialaxis_showgrid=False)
+        # Update the layout
+        fig.update_polars(
+            angularaxis_tickfont_size=10,
+            angularaxis_showgrid=False,
+            radialaxis_showgrid=False
+        )
 
         fig.update_layout(
             polar=dict(
@@ -116,8 +132,9 @@ def show_factor_playground():
                 )
             ),
             height=800,
-            showlegend=False
+            showlegend=True
         )
+
         st.plotly_chart(fig, use_container_width=True)
 
     elif selected_category == "Backtester":
