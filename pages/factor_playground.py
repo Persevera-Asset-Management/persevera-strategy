@@ -140,8 +140,21 @@ def show_factor_playground():
 
         cols = st.columns(2, gap='large')
         with cols[0]:
-            fig_value = create_polar_chart(df.query('factor_group == "value"'), selected_stocks, background_color,
+            fig_value = create_polar_chart(df[df['factor_group'] == "value"], selected_stocks, background_color,
                                            title="Value Factors")
+            st.plotly_chart(fig_value, use_container_width=True)
+
+            fig_value = create_polar_chart(df[df['factor_group'] == "momentum"], selected_stocks, background_color,
+                                           title="Momentum Factors")
+            st.plotly_chart(fig_value, use_container_width=True)
+
+        with cols[1]:
+            fig_value = create_polar_chart(df[df['factor_group'] == "quality"], selected_stocks, background_color,
+                                           title="Quality Factors")
+            st.plotly_chart(fig_value, use_container_width=True)
+
+            fig_value = create_polar_chart(df[df['factor_group'] == "risk"], selected_stocks, background_color,
+                                           title="Risk Factors")
             st.plotly_chart(fig_value, use_container_width=True)
 
     elif selected_category == "Backtester":
