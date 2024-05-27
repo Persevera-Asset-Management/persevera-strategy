@@ -241,8 +241,8 @@ def show_chartbook():
     }
     selected_category = option_menu(
         menu_title=None,
-        options=menu_options.keys(),
-        icons=menu_options.values(),
+        options=[*menu_options.keys()],
+        icons=[*menu_options.values()],
         orientation="horizontal"
     )
 
