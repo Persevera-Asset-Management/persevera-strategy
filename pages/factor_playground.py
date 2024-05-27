@@ -52,6 +52,12 @@ def show_factor_playground():
 
     if selected_category == "Factor Radar":
         cols = st.columns(2, gap='large')
+        with cols[0]:
+            stocks_info = pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name="equities").query('code_exchange == "BZ"')
+            selected_stocks = st.multiselect(label='Selecione as ações:',
+                                             options=sorted(stocks_info['code']),
+                                             default=["VALE3"],
+                                             max_selections=2)
 
     elif selected_category == "Backtester":
         with st.form("factor_definition"):

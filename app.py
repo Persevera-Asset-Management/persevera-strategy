@@ -66,7 +66,7 @@ functions = {
     "Trinity": pg.show_trinity,
     "Fund Analysis": pg.show_fund_analysis,
     "Factor Playground": pg.show_factor_playground,
-    "Quant Screening": pg.show_screener,
+    "Screener": pg.show_screener,
     "Tools": pg.show_tools,
 }
 go_to = functions.get(page)
