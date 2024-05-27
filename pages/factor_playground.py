@@ -65,20 +65,27 @@ def show_factor_playground():
                                              default=["VALE3"],
                                              max_selections=2)
 
+        background_color = {'value': '#d4e8c6',
+                            'quality': '#7fd7f7',
+                            'momentum': '#fbe5d6',
+                            'risk': '#ffe080',
+                            'liquidity': '#ffff7f'}
+
         df = pd.read_parquet(os.path.join(DATA_PATH, "factors-signal_ranks.parquet"),
                              filters=[('code', 'in', selected_stocks)])
+        df = df.iloc[:, 4:].T.reset_index()
 
-        data.columns = ['signal', 'percentile']
-        data['factor_group'] = data['signal'].str.split('_').str[0]
-        data['factor'] = data['signal'].str.split('_').str[2:].str.join('_')
-        data = data[data['factor_group'] != "size"]
-        data['factor_color'] = data['factor_group'].map(background_color)
+        df.columns = ['signal', 'percentile']
+        df['factor_group'] = df['signal'].str.split('_').str[0]
+        df['factor'] = df['signal'].str.split('_').str[2:].str.join('_')
+        df = df[df['factor_group'] != "size"]
+        df['factor_color'] = df['factor_group'].map(background_color)
 
         fig = go.Figure()
         fig.add_trace(
             go.Scatterpolar(
-                r=data['percentile'],
-                theta=data['factor'],
+                r=df['percentile'],
+                theta=df['factor'],
                 mode="lines+markers",
                 name="PETR4",
                 fill='toself',
@@ -87,7 +94,7 @@ def show_factor_playground():
         )
 
         for f in background_color:
-            temp = data.query('factor_group == @f')
+            temp = df.query('factor_group == @f')
             fig.add_trace(
                 go.Barpolar(
                     r=[100] * len(temp),
