@@ -186,7 +186,7 @@ def scale_to_100(date, df):
     return 100 * (df / df.loc[idx, :])
 
 
-def show_chartbook():
+def create_layout():
     st.header("Chartbook")
 
     def display_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False):

@@ -12,7 +12,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
-pages = ["Chartbook", "Fund Analysis", "Tools", "Quant Screening"]
+pages = ["Chartbook", "Fund Analysis", "Tools", "Factor Playground", "Quant Screening"]
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(parent_dir, "logo.svg")
 page_icon_logo_path = os.path.join(parent_dir, "assets/persevera_logo_page_icon.png")
@@ -61,10 +61,11 @@ page = st_navbar(
 )
 
 functions = {
-    "Home": pg.show_home,
-    "Chartbook": pg.show_chartbook,
+    "Home": pg.create_layout,
+    "Chartbook": pg.create_layout,
     "Trinity": pg.show_trinity,
     "Fund Analysis": pg.show_fund_analysis,
+    "Factor Playground": pg.show_quant_screening,
     "Quant Screening": pg.show_quant_screening,
     "Tools": pg.show_tools,
 }
