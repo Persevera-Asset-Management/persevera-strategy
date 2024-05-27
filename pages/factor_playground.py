@@ -220,7 +220,7 @@ def show_factor_playground():
                                               default=factor_list)
 
         st.subheader("Rentabilidade Acumulada")
-        tabs = st.tabs(["Absoluto", "Relativo"])
+        tabs = st.tabs(["Top", "L/S"])
 
         # Tab1: Retorno absoluto
         with tabs[0]:
@@ -241,6 +241,29 @@ def show_factor_playground():
                 st.write("Data mais recente:", data.index.max())
                 table_data = get_factor_performance(selected_factors=selected_factors,
                                               quantile='rank_1',
+                                              start_date=start_date)
+
+                df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
+                st.dataframe(format_table(df), use_container_width=True)
+
+        with tabs[1]:
+            col1, col2 = st.columns(2, gap='large')
+
+            with col1:
+                data = get_factor_performance(selected_factors=selected_factors,
+                                              quantile='long_short',
+                                              start_date=start_date,
+                                              end_date=end_date)
+
+                data = data.sub(1)
+                data = data.ffill()
+                fig = px.line(data)
+                st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+
+            with col2:
+                st.write("Data mais recente:", data.index.max())
+                table_data = get_factor_performance(selected_factors=selected_factors,
+                                              quantile='long_short',
                                               start_date=start_date)
 
                 df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
