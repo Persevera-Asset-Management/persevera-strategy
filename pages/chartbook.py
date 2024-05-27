@@ -396,7 +396,7 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["IPCA", "Projeção do IPCA (Focus)", "Outros Índices"],
+            ["IPCA (% YoY)", "Projeção do IPCA (Focus)", "Outros Índices (% YoY)"],
             ["line", "line", "line"],
             [
                 get_data(fields=["br_ipca_yoy"]),
