@@ -61,8 +61,8 @@ page = st_navbar(
 )
 
 functions = {
-    "Home": pg.create_layout,
-    "Chartbook": pg.create_layout,
+    "Home": pg.show_home,
+    "Chartbook": pg.show_chartbook,
     "Trinity": pg.show_trinity,
     "Fund Analysis": pg.show_fund_analysis,
     "Factor Playground": pg.show_quant_screening,

@@ -40,7 +40,7 @@ def format_bar_chart(figure):
     return figure
 
 
-def create_layout():
+def show_factor_playground():
     st.header("Factor Playground")
 
     selected_category = option_menu(
