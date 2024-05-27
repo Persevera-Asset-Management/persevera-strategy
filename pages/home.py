@@ -1,6 +1,6 @@
 import streamlit as st
 
 
-def create_layout():
+def show_home():
     st.header("Persevera Asset Management")
 

@@ -1,4 +1,4 @@
-from pages.home import create_layout
+from pages.home import show_home
 from pages.chartbook import show_chartbook
 from pages.fund_analysis import show_fund_analysis
 from pages.trinity import show_trinity
