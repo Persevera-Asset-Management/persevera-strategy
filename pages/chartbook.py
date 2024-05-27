@@ -714,12 +714,10 @@ def show_chartbook():
             ["S&P 500", "Ibovespa"],
             ["line", "line"],
             [
-                get_data(fields=["us_sp500"]).assign(
-                    ma_200=get_data(fields=["us_sp500"]).rolling(200).mean()).assign(
-                    ma_50=get_data(fields=["us_sp500"]).rolling(50).mean()),
-                get_data(fields=["br_ibovespa"]).assign(
-                    ma_200=get_data(fields=["br_ibovespa"]).rolling(200).mean()).assign(
-                    ma_50=get_data(fields=["br_ibovespa"]).rolling(50).mean())
+                get_data(fields=["us_sp500"]).assign(ma_200=lambda x: x['us_sp500'].rolling(200).mean(),
+                                                        ma_50=lambda x: x['us_sp500'].rolling(50).mean()),
+                get_data(fields=["br_ibovespa"]).assign(ma_200=lambda x: x['br_ibovespa'].rolling(200).mean(),
+                                                        ma_50=lambda x: x['br_ibovespa'].rolling(50).mean())
             ]
         )
 
