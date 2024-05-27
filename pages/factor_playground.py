@@ -176,9 +176,9 @@ def show_factor_playground():
 
         with cols[1]:
             factor_list = ['momentum', 'value', 'quality', 'risk', 'size', 'short_interest']
-            selected_peers = st.multiselect(label='Selecione os fatores:',
-                                            options=factor_list,
-                                            default=factor_list)
+            selected_factors = st.multiselect(label='Selecione os fatores:',
+                                              options=factor_list,
+                                              default=factor_list)
 
 
     elif selected_category == "Backtester":
