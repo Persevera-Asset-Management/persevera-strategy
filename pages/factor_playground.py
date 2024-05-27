@@ -157,6 +157,30 @@ def show_factor_playground():
                                            title="Risk Factors")
             st.plotly_chart(fig_value, use_container_width=True)
 
+    elif selected_category == "Performance":
+        cols = st.columns(2, gap='large')
+        with cols[0]:
+            nested_cols = st.columns(2)
+            with nested_cols[0]:
+                start_date = st.date_input(label="Selecione a data inicial:",
+                                           value=datetime(2008,1,1),
+                                           min_value=datetime(2008,1,1),
+                                           max_value=datetime.today(),
+                                           format="YYYY-MM-DD")
+            with nested_cols[1]:
+                end_date = st.date_input(label="Selecione a data final:",
+                                         value=datetime.today(),
+                                         min_value=start_date,
+                                         max_value=datetime.today(),
+                                         format="YYYY-MM-DD")
+
+        with cols[1]:
+            factor_list = ['momentum', 'value', 'quality', 'risk', 'size', 'short_interest']
+            selected_peers = st.multiselect(label='Selecione os fatores:',
+                                            options=factor_list,
+                                            default=factor_list)
+
+
     elif selected_category == "Backtester":
         with st.form("factor_definition"):
             st.markdown("**Definição dos fatores**")
