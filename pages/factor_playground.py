@@ -20,6 +20,45 @@ def get_stock_data(code: str, fields: list):
     return df
 
 
+def get_performance_table(df, start_date, end_date):
+    time_frames = {
+        'day': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change().iloc[-1],
+        'mtd': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1],
+        'ytd': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1],
+        '3m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(3 * 21).iloc[-1],
+        '6m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(6 * 21).iloc[-1],
+        '12m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
+        'custom': df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1,
+    }
+    df = pd.DataFrame(time_frames)
+    return df
+
+
+def get_factor_performance(selected_factors, quantile, start_date, end_date=datetime.today()):
+    try:
+        df = pd.read_parquet(os.path.join(DATA_PATH, "factors-quantile_performance.parquet"),
+                             filters=[('date', '>=', start_date), ('date', '<=', end_date)])
+        cols = [col for col in df.columns for factor in selected_factors if factor in col]
+        cols = [col for col in cols if quantile in col]
+        df = df.filter(cols)
+        df = np.cumprod(1 + df.pct_change()).fillna(1)
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return None
+    return df
+
+
+def format_table(df):
+    return df.style.format({'day': '{:,.2%}'.format,
+                            'mtd': '{:,.2%}'.format,
+                            'ytd': '{:,.2%}'.format,
+                            '3m': '{:,.2%}'.format,
+                            '6m': '{:,.2%}'.format,
+                            '12m': '{:,.2%}'.format,
+                            'custom': '{:,.2%}'.format}
+                           )
+
+
 def format_chart(figure, yaxis_range=None, showlegend=True, connect_gaps=False):
     figure.update_layout(
         xaxis=dict(
@@ -175,10 +214,37 @@ def show_factor_playground():
                                          format="YYYY-MM-DD")
 
         with cols[1]:
-            factor_list = ['momentum', 'value', 'quality', 'risk', 'size', 'short_interest']
+            factor_list = ['liquidity', 'momentum', 'quality', 'risk', 'short_interest', 'size', 'value']
             selected_factors = st.multiselect(label='Selecione os fatores:',
                                               options=factor_list,
                                               default=factor_list)
+
+        st.subheader("Rentabilidade Acumulada")
+        tabs = st.tabs(["Absoluto", "Relativo"])
+
+        # Tab1: Retorno absoluto
+        with tabs[0]:
+            col1, col2 = st.columns(2, gap='large')
+
+            with col1:
+                data = get_factor_performance(selected_factors=selected_factors,
+                                              quantile='rank_1',
+                                              start_date=start_date,
+                                              end_date=end_date)
+
+                data = data.sub(1)
+                data = data.ffill()
+                fig = px.line(data)
+                st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+
+            with col2:
+                st.write("Data mais recente:", data.index.max())
+                table_data = get_factor_performance(selected_factors=selected_factors,
+                                              quantile='rank_1',
+                                              start_date=start_date)
+
+                df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
+                st.dataframe(format_table(df), use_container_width=True)
 
 
     elif selected_category == "Backtester":
