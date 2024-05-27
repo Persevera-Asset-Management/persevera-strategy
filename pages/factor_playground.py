@@ -71,7 +71,8 @@ def show_factor_playground():
             'quality': '#7fd7f7',
             'momentum': '#fbe5d6',
             'risk': '#ffe080',
-            'liquidity': '#ffff7f'
+            'liquidity': '#ffff7f',
+            'short_interest': '#b11226',
         }
 
         # Load the data and filter for selected stocks
@@ -86,10 +87,9 @@ def show_factor_playground():
         df = df[df['factor_group'] != "size"]
         df['factor_color'] = df['factor_group'].map(background_color)
 
-        # Initialize the figure
+        # All signals
         fig = go.Figure()
 
-        # Add traces for each selected stock
         for stock, color in zip(selected_stocks, ['#16537e', '#722f37']):
             fig.add_trace(
                 go.Scatterpolar(
@@ -102,7 +102,6 @@ def show_factor_playground():
                 )
             )
 
-        # Add background colors for factor groups
         for factor_group, color in background_color.items():
             temp = df[df['factor_group'] == factor_group]
             fig.add_trace(
@@ -119,19 +118,20 @@ def show_factor_playground():
 
         # Update the layout
         fig.update_polars(
-            angularaxis_tickfont_size=10,
-            angularaxis_showgrid=False,
-            radialaxis_showgrid=False
+            #angularaxis_tickfont_size=10,
+            angularaxis_showgrid=True,
+            radialaxis_showgrid=True
         )
 
         fig.update_layout(
+            title="Todos os fatores",
             polar=dict(
                 radialaxis=dict(
                     visible=True,
                     range=[0, 100]
                 )
             ),
-            height=800,
+            #height=800,
             showlegend=True
         )
 
