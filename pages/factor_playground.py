@@ -14,6 +14,12 @@ import utils
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
 
+def get_stock_data(code: str, fields: list):
+    df = pd.read_parquet("https://persevera.s3.sa-east-1.amazonaws.com/factor_zoo.parquet",
+                         filters=[("code", "==", code)], columns=fields)
+    return df
+
+
 def format_chart(figure, yaxis_range=None, showlegend=True, connect_gaps=False):
     figure.update_layout(
         xaxis=dict(
@@ -46,18 +52,66 @@ def show_factor_playground():
 
     selected_category = option_menu(
         menu_title=None,
-        options=["Factor Radar", "Performance", "Backtester"],
+        options=["Factor Radar", "Performance", "Backtester", "Universo"],
         orientation="horizontal"
     )
 
     if selected_category == "Factor Radar":
-        cols = st.columns(2, gap='large')
-        with cols[0]:
+        cols_header = st.columns(2, gap='large')
+        with cols_header[0]:
             stocks_info = pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name="equities").query('code_exchange == "BZ"')
             selected_stocks = st.multiselect(label='Selecione as ações:',
                                              options=sorted(stocks_info['code']),
                                              default=["VALE3"],
                                              max_selections=2)
+
+        df = pd.read_parquet(os.path.join(DATA_PATH, "factors-signal_ranks.parquet"),
+                             filters=[('code', 'in', selected_stocks)])
+
+        data.columns = ['signal', 'percentile']
+        data['factor_group'] = data['signal'].str.split('_').str[0]
+        data['factor'] = data['signal'].str.split('_').str[2:].str.join('_')
+        data = data[data['factor_group'] != "size"]
+        data['factor_color'] = data['factor_group'].map(background_color)
+
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatterpolar(
+                r=data['percentile'],
+                theta=data['factor'],
+                mode="lines+markers",
+                name="PETR4",
+                fill='toself',
+                line_color='#16537e',
+            )
+        )
+
+        for f in background_color:
+            temp = data.query('factor_group == @f')
+            fig.add_trace(
+                go.Barpolar(
+                    r=[100] * len(temp),
+                    theta=temp['factor'],
+                    width=[1] * len(temp),
+                    marker_color=[background_color[f]] * len(temp),
+                    marker_line_color="white",
+                    opacity=0.5,
+                )
+            )
+
+        fig.update_polars(angularaxis_tickfont_size=10, angularaxis_showgrid=False, radialaxis_showgrid=False)
+
+        fig.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 100]
+                )
+            ),
+            height=800,
+            showlegend=False
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
     elif selected_category == "Backtester":
         with st.form("factor_definition"):
