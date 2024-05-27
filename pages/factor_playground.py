@@ -214,7 +214,7 @@ def show_factor_playground():
                                          format="YYYY-MM-DD")
 
         with cols[1]:
-            factor_list = ['liquidity', 'momentum', 'quality', 'risk', 'short_interest', 'size', 'value']
+            factor_list = ['liquidity', 'momentum', 'quality', 'risk', 'short_interest', 'size', 'value', 'multi_factor']
             selected_factors = st.multiselect(label='Selecione os fatores:',
                                               options=factor_list,
                                               default=factor_list)
