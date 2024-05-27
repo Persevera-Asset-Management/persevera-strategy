@@ -228,10 +228,21 @@ def show_chartbook():
                     table = get_performance_table(dataset)
                     col.dataframe(format_table(table), use_container_width=True)
 
+    menu_options = {
+        "Estados Unidos": "globe",
+        "Brasil": "globe-americas",
+        "Juros": "clipboard2-pulse",
+        "Commodities": "tree",
+        "Moedas": "graph-up",
+        "Mercados": "pie-chart",
+        "Posicionamento": "broadcast-pin",
+        "Tendência": "graph-up",
+        "Cohorts": "arrow-left-right",
+    }
     selected_category = option_menu(
         menu_title=None,
-        options=["Estados Unidos", "Brasil", "Juros", "Commodities", "Moedas", "Mercados", "Posicionamento", "Cohorts"],
-        icons=['globe', 'globe-americas', "clipboard2-pulse", 'tree', 'graph-up', 'pie-chart', 'broadcast-pin', 'arrow-left-right'],
+        options=menu_options.keys(),
+        icons=menu_options.values(),
         orientation="horizontal"
     )
 
@@ -590,8 +601,6 @@ def show_chartbook():
         )
 
     elif selected_category == "Mercados":
-        st.empty()
-
         display_chart_with_expander(
             "EPS",
             ["S&P 500", "Ibovespa"],
@@ -696,6 +705,21 @@ def show_chartbook():
                 get_data(fields=["cftc_cme_nasdaq"]),
                 get_data(fields=["cftc_cme_nikkei"]),
                 get_data(fields=["cftc_cme_russell2000"]),
+            ]
+        )
+
+    elif selected_category == "Tendência":
+        display_chart_with_expander(
+            "Média Móvel",
+            ["S&P 500", "Ibovespa"],
+            ["line", "line"],
+            [
+                get_data(fields=["us_sp500"]).assign(
+                    ma_200=get_data(fields=["us_sp500"]).rolling(200).mean()).assign(
+                    ma_50=get_data(fields=["us_sp500"]).rolling(50).mean()),
+                get_data(fields=["br_ibovespa"]).assign(
+                    ma_200=get_data(fields=["br_ibovespa"]).rolling(200).mean()).assign(
+                    ma_50=get_data(fields=["br_ibovespa"]).rolling(50).mean())
             ]
         )
 
