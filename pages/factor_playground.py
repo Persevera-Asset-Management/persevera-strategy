@@ -72,7 +72,7 @@ def show_factor_playground():
             'momentum': '#fbe5d6',
             'risk': '#ffe080',
             'liquidity': '#ffff7f',
-            'short_interest': '#b11226',
+            'short': '#b11226',
         }
 
         # Load the data and filter for selected stocks
@@ -124,7 +124,7 @@ def show_factor_playground():
         )
 
         fig.update_layout(
-            title="Todos os fatores",
+            title="Factor Zoo",
             polar=dict(
                 radialaxis=dict(
                     visible=True,
@@ -136,6 +136,55 @@ def show_factor_playground():
         )
 
         st.plotly_chart(fig, use_container_width=True)
+
+        cols = st.columns(2, gap='large')
+        with cols[0]:
+            fig_value = go.Figure()
+            temp = df.query('factor_group == "value"')
+            for stock, color in zip(selected_stocks, ['#16537e', '#722f37']):
+                fig_value.add_trace(
+                    go.Scatterpolar(
+                        r=temp[stock],
+                        theta=temp['factor'],
+                        mode="lines+markers",
+                        name=stock,
+                        fill='toself',
+                        line_color=color,
+                    )
+                )
+
+            for factor_group, color in background_color.items():
+                fig_value.add_trace(
+                    go.Barpolar(
+                        r=[100] * len(temp),
+                        theta=temp['factor'],
+                        width=[1] * len(temp),
+                        marker_color=[color] * len(temp),
+                        marker_line_color="white",
+                        opacity=0.5,
+                        name=factor_group
+                    )
+                )
+
+            # Update the layout
+            fig_value.update_polars(
+                # angularaxis_tickfont_size=10,
+                angularaxis_showgrid=True,
+                radialaxis_showgrid=True
+            )
+
+            fig_value.update_layout(
+                title="Value Factors",
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True,
+                        range=[0, 100]
+                    )
+                ),
+                # height=800,
+                showlegend=True
+            )
+        st.plotly_chart(fig_value, use_container_width=True)
 
     elif selected_category == "Backtester":
         with st.form("factor_definition"):
