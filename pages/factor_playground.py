@@ -47,6 +47,62 @@ def format_bar_chart(figure):
     return figure
 
 
+def load_factor_data(selected_stocks):
+    try:
+        df = pd.read_parquet(os.path.join(DATA_PATH, "factors-signal_ranks.parquet"),
+                             filters=[('code', 'in', selected_stocks)])
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return None
+
+    df = df.set_index('code').iloc[:, 3:].T.reset_index()
+    df = df.rename(columns={'index': 'signal'})
+    df['factor_group'] = df['signal'].str.split('_').str[0]
+    df['factor'] = df['signal'].str.split('_').str[2:].str.join('_')
+    df = df[df['factor_group'] != "size"]
+    return df
+
+
+def create_polar_chart(df, selected_stocks, background_color, title="Factor Zoo"):
+    fig = go.Figure()
+
+    for stock, color in zip(selected_stocks, ['#16537e', '#722f37']):
+        fig.add_trace(
+            go.Scatterpolar(
+                r=df[stock],
+                theta=df['factor'],
+                mode="lines+markers",
+                name=stock,
+                fill='toself',
+                line_color=color,
+            )
+        )
+
+    for factor_group, color in background_color.items():
+        temp = df[df['factor_group'] == factor_group]
+        fig.add_trace(
+            go.Barpolar(
+                r=[100] * len(temp),
+                theta=temp['factor'],
+                width=[1] * len(temp),
+                marker_color=[color] * len(temp),
+                marker_line_color="white",
+                opacity=0.5,
+                name=factor_group
+            )
+        )
+
+    fig.update_polars(angularaxis_showgrid=True, radialaxis_showgrid=True)
+
+    fig.update_layout(
+        title=title,
+        polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+        showlegend=True
+    )
+
+    return fig
+
+
 def show_factor_playground():
     st.header("Factor Playground")
 
@@ -75,116 +131,18 @@ def show_factor_playground():
             'short': '#b11226',
         }
 
-        # Load the data and filter for selected stocks
-        df = pd.read_parquet(os.path.join(DATA_PATH, "factors-signal_ranks.parquet"),
-                             filters=[('code', 'in', selected_stocks)])
+        df = load_factor_data(selected_stocks)
+        if df is None:
+            return
 
-        # Transform the DataFrame to the required format
-        df = df.set_index('code').iloc[:, 3:].T.reset_index()
-        df = df.rename(columns={'index': 'signal'})
-        df['factor_group'] = df['signal'].str.split('_').str[0]
-        df['factor'] = df['signal'].str.split('_').str[2:].str.join('_')
-        df = df[df['factor_group'] != "size"]
-        df['factor_color'] = df['factor_group'].map(background_color)
-
-        # All signals
-        fig = go.Figure()
-
-        for stock, color in zip(selected_stocks, ['#16537e', '#722f37']):
-            fig.add_trace(
-                go.Scatterpolar(
-                    r=df[stock],
-                    theta=df['factor'],
-                    mode="lines+markers",
-                    name=stock,
-                    fill='toself',
-                    line_color=color,
-                )
-            )
-
-        for factor_group, color in background_color.items():
-            temp = df[df['factor_group'] == factor_group]
-            fig.add_trace(
-                go.Barpolar(
-                    r=[100] * len(temp),
-                    theta=temp['factor'],
-                    width=[1] * len(temp),
-                    marker_color=[color] * len(temp),
-                    marker_line_color="white",
-                    opacity=0.5,
-                    name=factor_group
-                )
-            )
-
-        # Update the layout
-        fig.update_polars(
-            #angularaxis_tickfont_size=10,
-            angularaxis_showgrid=True,
-            radialaxis_showgrid=True
-        )
-
-        fig.update_layout(
-            title="Factor Zoo",
-            polar=dict(
-                radialaxis=dict(
-                    visible=True,
-                    range=[0, 100]
-                )
-            ),
-            #height=800,
-            showlegend=True
-        )
-
+        fig = create_polar_chart(df, selected_stocks, background_color)
         st.plotly_chart(fig, use_container_width=True)
 
         cols = st.columns(2, gap='large')
         with cols[0]:
-            fig_value = go.Figure()
-            temp = df.query('factor_group == "value"')
-            for stock, color in zip(selected_stocks, ['#16537e', '#722f37']):
-                fig_value.add_trace(
-                    go.Scatterpolar(
-                        r=temp[stock],
-                        theta=temp['factor'],
-                        mode="lines+markers",
-                        name=stock,
-                        fill='toself',
-                        line_color=color,
-                    )
-                )
-
-            for factor_group, color in background_color.items():
-                fig_value.add_trace(
-                    go.Barpolar(
-                        r=[100] * len(temp),
-                        theta=temp['factor'],
-                        width=[1] * len(temp),
-                        marker_color=[color] * len(temp),
-                        marker_line_color="white",
-                        opacity=0.5,
-                        name=factor_group
-                    )
-                )
-
-            # Update the layout
-            fig_value.update_polars(
-                # angularaxis_tickfont_size=10,
-                angularaxis_showgrid=True,
-                radialaxis_showgrid=True
-            )
-
-            fig_value.update_layout(
-                title="Value Factors",
-                polar=dict(
-                    radialaxis=dict(
-                        visible=True,
-                        range=[0, 100]
-                    )
-                ),
-                # height=800,
-                showlegend=True
-            )
-        st.plotly_chart(fig_value, use_container_width=True)
+            fig_value = create_polar_chart(df.query('factor_group == "value"'), selected_stocks, background_color,
+                                           title="Value Factors")
+            st.plotly_chart(fig_value, use_container_width=True)
 
     elif selected_category == "Backtester":
         with st.form("factor_definition"):
