@@ -401,7 +401,16 @@ def show_chartbook():
             [
                 get_data(fields=["br_ipca_yoy"]),
                 get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy"]),
-                get_data(fields=["br_igp10_yoy", "br_igpdi_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_cpi_fipe_yoy"]),
+                get_data(fields=["br_igp10_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_cpi_fipe_yoy"]),
+            ]
+        )
+
+        display_chart_with_expander(
+            "Contas Públicas",
+            ["Dívida / PIB"],
+            ["line"],
+            [
+                get_data(fields=["br_bcb_gross_gov_debt_to_gdp", "br_bcb_net_gov_debt_to_gdp"]),
             ]
         )
 
