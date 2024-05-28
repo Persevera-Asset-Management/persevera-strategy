@@ -63,7 +63,7 @@ def show_tools():
 
     selected_category = option_menu(
         menu_title=None,
-        options=["Opções de Copom", "Drivers", "Selic Implícita", "Valuation"],
+        options=["Opções de Copom", "Drivers", "Selic Implícita", "Valuation", "Style Analysis"],
         orientation="horizontal"
     )
 

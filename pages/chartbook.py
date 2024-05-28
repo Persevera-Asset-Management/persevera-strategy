@@ -656,7 +656,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Treasuries",
             ["Treasury 2Y", "Treasury 5Y", "Treasury 10Y", "Treasury Bonds"],
-            ["line", "line", "line", "line"],
+            ["bar", "bar", "bar", "bar"],
             [
                 get_data(fields=["cftc_cbt_treasury_2y"]),
                 get_data(fields=["cftc_cbt_treasury_5y"]),
@@ -668,7 +668,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Commodities",
             ["Copper", "Gold", "Silver", "Crude Oil"],
-            ["line", "line", "line", "line"],
+            ["bar", "bar", "bar", "bar"],
             [
                 get_data(fields=["cftc_cmx_copper"]),
                 get_data(fields=["cftc_cmx_gold"]),
