@@ -28,7 +28,7 @@ def show_screener():
 
     if selected_category == "Geral":
         variables_available = pd.read_parquet(os.path.join(DATA_PATH, "factors-factor_zoo.parquet")).columns
-        sectors_available = sorted(pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name='equities')['sector_layer_1'].unique())
+        sectors_available = sorted(pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name='equities')['sector_layer_1'].dropna().unique())
         sectors_available.insert(0, 'Todos')
 
         cols = st.columns(2, 'large')
