@@ -469,11 +469,12 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Emprego",
-            ["Taxa de Desemprego", "Criação de Empregos Formais"],
-            ["line", "line"],
+            ["Taxa de Desemprego", "Criação de Empregos Formais (MoM)" "Criação de Empregos Formais (LTM)"],
+            ["line", "bar", "bar"],
             [
                 get_data(fields=["br_pnad_unemployment_rate"]),
-                get_data(fields=["br_caged_job_creation"]),
+                get_data(fields=["br_caged_registered_employess_total"]).diff(),
+                get_data(fields=["br_caged_registered_employess_total"]).diff().rolling(12).sum()
             ]
         )
 
@@ -482,7 +483,7 @@ def show_chartbook():
             ["Taxa Média de Juros das Operações"],
             ["line"],
             [
-                get_data(fields=["br_bcb_average_interest_rate_new_loans_pf", "br_bcb_average_interest_rate_new_loans_pj", "br_selic_target"]),
+                get_data(fields=["br_bcb_average_interest_rate_individuals", "br_bcb_average_interest_rate_nonfinancial", "br_bcb_average_interest_rate_total", "br_selic_target"]),
             ]
         )
 
