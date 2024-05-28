@@ -680,7 +680,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Moedas",
             ["AUD", "BRL", "CAD", "CHF", "EUR", "GBP", "JPY", "MXN", "NZD", "RUB", "ZAR"],
-            ["line", "line", "line", "line", "line", "line", "line", "line", "line", "line", "line"],
+            ["bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar"],
             [
                 get_data(fields=["cftc_cme_aud"]),
                 get_data(fields=["cftc_cme_brl"]),
@@ -699,7 +699,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Bolsas",
             ["S&P 500", "Nasdaq", "Nikkei", "Russell 2000"],
-            ["line", "line", "line", "line"],
+            ["bar", "bar", "bar", "bar"],
             [
                 get_data(fields=["cftc_cme_sp500"]),
                 get_data(fields=["cftc_cme_nasdaq"]),
