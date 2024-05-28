@@ -47,5 +47,5 @@ def show_screener():
                                                      options=variables_available,
                                                      default=['price_close'])
 
-        data = get_screen(fields=selected_variables)
+        data = get_screen(fields=selected_variables, selected_sectors=selected_sectors)
         st.dataframe(data)
