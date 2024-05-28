@@ -12,17 +12,17 @@ DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'
 
 de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
                        "fund_name": "Persevera Trinity FI RF Ref DI",
-                       "benchmark": "br_cdi_index"},
+                       "benchmark": ["br_cdi_index"]},
            "Nemesis": {"initial_date": datetime(2022, 2, 25),
                        "fund_name": "Persevera Nemesis Total Return FIM",
-                       "benchmark": "br_ibovespa"},
+                       "benchmark": ["br_ibovespa", "br_cdi_index"]},
            "Proteus": {"initial_date": datetime(2023, 9, 29),
                        "fund_name": "Persevera Proteus Ações FIA",
-                       "benchmark": "br_ibovespa"}}
+                       "benchmark": ["br_ibovespa", "br_cdi_index"]}}
 
 
 def get_fund_peers(fund_name):
-    peers = pd.read_excel(DATA_PATH + "/peers.xlsx", sheet_name=fund_name, index_col=0)
+    peers = pd.read_excel(os.path.join(DATA_PATH, "peers.xlsx"), sheet_name=fund_name, index_col=0)
     peers = peers["short_name"].to_dict()
     return peers
 
@@ -47,16 +47,17 @@ def get_fund_data(fund_name, selected_peers, benchmark, start_date, end_date=dat
     logging.info("Importing benchmark...")
     df_benchmark = pd.read_parquet(
         path=os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
-        filters=[('code', '==', benchmark)]
+        filters=[('code', 'in', benchmark)]
     )
     df_benchmark = df_benchmark.pivot_table(index='date', columns='code', values='value')
+    df_benchmark = df_benchmark.ffill()
 
     logging.info("Including benchmark to DataFrame...")
     df = pd.merge(left=df, right=df_benchmark, left_index=True, right_index=True, how='left')
 
     if relative:
         df = df.pct_change()
-        df = df.apply(lambda x: x - df[benchmark])
+        df = df.apply(lambda x: x - df[benchmark[0]])
         df = (1 + df.drop(columns=benchmark)).cumprod()
         df.iloc[0] = 1
         df = df.ffill()
