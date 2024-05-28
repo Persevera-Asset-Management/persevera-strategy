@@ -78,12 +78,12 @@ def get_performance_table(df, start_date, end_date, relative=False):
     }
     df = pd.DataFrame(time_frames)
     if relative:
-        try:
+        if 'IBOV' in df.index:
+            df = df.sub(df.loc['IBOV'])
+            df = df.drop(index=['CDI', 'IBOV'])
+        else:
             df = df.div(df.loc['CDI'])
             df = df.drop(index='CDI')
-        except:
-            df = df.sub(df.loc['IBOV'])
-            df = df.drop(index='IBOV')
     return df
 
 
