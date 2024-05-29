@@ -399,7 +399,7 @@ def show_chartbook():
             ["IPCA (% YoY)", "Projeção do IPCA (Focus)", "Outros Índices (% YoY)"],
             ["line", "line", "line"],
             [
-                get_data(fields=["br_ipca_yoy", "br_ipca_target_inflation_rate"]),
+                get_data(fields=["br_ipca_yoy"]).merge(get_data(fields=["br_ipca_yoy", "br_ipca_target_inflation_rate"]).ffill().drop(columns="br_ipca_yoy"), left_index=True, right_index=True, how='left'),
                 get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy"]),
                 get_data(fields=["br_igp10_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_cpi_fipe_yoy"]),
             ]
