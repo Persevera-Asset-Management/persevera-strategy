@@ -19,9 +19,12 @@ de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
            "Proteus": {"initial_date": datetime(2023, 9, 29),
                        "fund_name": "Persevera Proteus Ações FIA",
                        "benchmark": ["br_ibovespa", "br_cdi_index"]},
+           "Yield": {"initial_date": datetime(2023, 9, 29),
+                     "fund_name": "Persevera Proteus Ações FIA",
+                     "benchmark": ["br_cdi_index"]},
            "Compass": {"initial_date": datetime(2019, 2, 11),
                        "fund_name": "Persevera Compass Advisory FIC FIM",
-                       "benchmark": ["br_ibovespa", "br_cdi_index"]}}
+                       "benchmark": ["br_cdi_index"]}}
 
 
 def get_fund_peers(fund_name):
@@ -122,8 +125,7 @@ def show_fund_analysis():
 
     selected_fund = option_menu(
         menu_title=None,
-        options=["Trinity", "Nemesis", "Proteus", "Compass"],
-        icons=['globe', 'table'],
+        options=["Trinity", "Yield", "Compass", "Nemesis", "Proteus"],
         orientation="horizontal"
     )
 
