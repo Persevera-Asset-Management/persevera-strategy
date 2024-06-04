@@ -21,7 +21,7 @@ de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
                        "benchmark": ["br_cdi_index"]},
            "Compass": {"initial_date": datetime(2019, 2, 11),
                        "fund_name": "Persevera Compass Advisory FIC FIM",
-                       "benchmark": ["br_cdi_index"]}
+                       "benchmark": ["br_cdi_index"]},
            "Nemesis": {"initial_date": datetime(2022, 2, 25),
                        "fund_name": "Persevera Nemesis Total Return FIM",
                        "benchmark": ["br_ibovespa", "br_cdi_index"]},
