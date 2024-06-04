@@ -482,7 +482,7 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Emprego",
-            ["Taxa de Desemprego", "Criação de Empregos Formais (MoM)" "Criação de Empregos Formais (LTM)"],
+            ["Taxa de Desemprego", "Criação de Empregos Formais (MoM)", "Criação de Empregos Formais (LTM)"],
             ["line", "bar", "bar"],
             [
                 get_data(fields=["br_pnad_unemployment_rate"]),
