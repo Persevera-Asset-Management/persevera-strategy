@@ -13,12 +13,6 @@ DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'
 de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
                        "fund_name": "Persevera Trinity FI RF Ref DI",
                        "benchmark": ["br_cdi_index"]},
-           "Nemesis": {"initial_date": datetime(2022, 2, 25),
-                       "fund_name": "Persevera Nemesis Total Return FIM",
-                       "benchmark": ["br_ibovespa", "br_cdi_index"]},
-           "Proteus": {"initial_date": datetime(2023, 9, 29),
-                       "fund_name": "Persevera Proteus Ações FIA",
-                       "benchmark": ["br_ibovespa", "br_cdi_index"]},
            "Yield": {"initial_date": datetime(2023, 9, 29),
                      "fund_name": "Persevera Yield FI RF Ref DI",
                      "benchmark": ["br_cdi_index"]},
@@ -27,7 +21,13 @@ de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
                        "benchmark": ["br_cdi_index"]},
            "Compass": {"initial_date": datetime(2019, 2, 11),
                        "fund_name": "Persevera Compass Advisory FIC FIM",
-                       "benchmark": ["br_cdi_index"]}}
+                       "benchmark": ["br_cdi_index"]}
+           "Nemesis": {"initial_date": datetime(2022, 2, 25),
+                       "fund_name": "Persevera Nemesis Total Return FIM",
+                       "benchmark": ["br_ibovespa", "br_cdi_index"]},
+           "Proteus": {"initial_date": datetime(2023, 9, 29),
+                       "fund_name": "Persevera Proteus Ações FIA",
+                       "benchmark": ["br_ibovespa", "br_smll", "br_cdi_index"]},}
 
 
 def get_fund_peers(fund_name):
@@ -71,7 +71,7 @@ def get_fund_data(fund_name, selected_peers, benchmark, start_date, end_date=dat
         df.iloc[0] = 1
         df = df.ffill()
 
-    df = df.rename(columns={"br_cdi_index": "CDI", "br_ibovespa": "IBOV"})
+    df = df.rename(columns={"br_cdi_index": "CDI", "br_ibovespa": "IBOV", "br_smll": "SMLL"})
     return df
 
 
