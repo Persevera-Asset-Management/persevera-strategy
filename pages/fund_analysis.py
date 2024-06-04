@@ -128,7 +128,7 @@ def show_fund_analysis():
 
     selected_fund = option_menu(
         menu_title=None,
-        options=["Trinity", "Yield", "Phoenix", "Compass" "Nemesis", "Proteus"],
+        options=["Trinity", "Yield", "Phoenix", "Compass", "Nemesis", "Proteus"],
         orientation="horizontal"
     )
 
