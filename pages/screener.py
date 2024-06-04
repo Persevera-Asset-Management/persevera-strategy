@@ -45,7 +45,7 @@ def show_screener():
         with cols[1]:
             selected_variables = cols[1].multiselect(label='Selecione as variáveis:',
                                                      options=variables_available,
-                                                     default=['price_close', ''])
+                                                     default=['price_close', 'market_cap', '21d_median_dollar_volume_traded'])
 
         data = get_screen(fields=selected_variables, selected_sectors=selected_sectors)
         st.dataframe(data)
