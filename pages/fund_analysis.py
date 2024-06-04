@@ -22,6 +22,9 @@ de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
            "Yield": {"initial_date": datetime(2023, 9, 29),
                      "fund_name": "Persevera Yield FI RF Ref DI",
                      "benchmark": ["br_cdi_index"]},
+           "Phoenix": {"initial_date": datetime(2023, 9, 29),
+                       "fund_name": "Persevera Phoenix RF Ativo LP FI",
+                       "benchmark": ["br_cdi_index"]},
            "Compass": {"initial_date": datetime(2019, 2, 11),
                        "fund_name": "Persevera Compass Advisory FIC FIM",
                        "benchmark": ["br_cdi_index"]}}
@@ -125,7 +128,7 @@ def show_fund_analysis():
 
     selected_fund = option_menu(
         menu_title=None,
-        options=["Trinity", "Yield", "Compass", "Nemesis", "Proteus"],
+        options=["Trinity", "Yield", "Phoenix", "Compass" "Nemesis", "Proteus"],
         orientation="horizontal"
     )
 
