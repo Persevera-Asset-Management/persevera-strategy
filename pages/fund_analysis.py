@@ -18,11 +18,14 @@ de_para = {"Trinity": {"initial_date": datetime(2022, 11, 10),
                        "benchmark": ["br_ibovespa", "br_cdi_index"]},
            "Proteus": {"initial_date": datetime(2023, 9, 29),
                        "fund_name": "Persevera Proteus Ações FIA",
+                       "benchmark": ["br_ibovespa", "br_cdi_index"]},
+           "Compass": {"initial_date": datetime(2019, 2, 11),
+                       "fund_name": "Persevera Compass Advisory FIC FIM",
                        "benchmark": ["br_ibovespa", "br_cdi_index"]}}
 
 
 def get_fund_peers(fund_name):
-    peers = pd.read_excel(os.path.join(DATA_PATH, "peers.xlsx"), sheet_name=fund_name, index_col=0)
+    peers = pd.read_excel(os.path.join(DATA_PATH, "persevera_peers.xlsx"), sheet_name=fund_name, index_col=0)
     peers = peers["short_name"].to_dict()
     return peers
 
@@ -119,7 +122,7 @@ def show_fund_analysis():
 
     selected_fund = option_menu(
         menu_title=None,
-        options=["Trinity", "Nemesis", "Proteus"],
+        options=["Trinity", "Nemesis", "Proteus", "Compass"],
         icons=['globe', 'table'],
         orientation="horizontal"
     )

@@ -482,12 +482,12 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Emprego",
-            ["Taxa de Desemprego", "Criação de Empregos Formais (MoM)", "Criação de Empregos Formais (LTM)"],
+            ["Criação de Empregos Formais (MoM)", "Criação de Empregos Formais (LTM)", "Taxa de Desemprego"],
             ["line", "bar", "bar"],
             [
-                get_data(fields=["br_pnad_unemployment_rate"]),
                 get_data(fields=["br_caged_registered_employess_total"]).diff(),
-                get_data(fields=["br_caged_registered_employess_total"]).diff().rolling(12).sum()
+                get_data(fields=["br_caged_registered_employess_total"]).diff().rolling(12).sum(),
+                get_data(fields=["br_pnad_unemployment_rate"]),
             ]
         )
 
