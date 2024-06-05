@@ -520,10 +520,15 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Crédito",
-            ["Taxa Média de Juros das Operações"],
-            ["line"],
+            ["Saldo da Carteira de Crédito (Total)", "Saldo da Carteira de Crédito (Abertura)", "Saldo da Carteira de Crédito (Porte PJ)", "Taxa Média de Juros das Operações", "Inadimplência da Carteira de Crédito"],
+            ["line", "line", "line", "line", "line"],
             [
-                get_data(fields=["br_bcb_average_interest_rate_individuals", "br_bcb_average_interest_rate_nonfinancial", "br_bcb_average_interest_rate_total", "br_selic_target"]),
+                get_data(fields=["br_bcb_credit_outstanding_pf", "br_bcb_credit_outstanding_pj"]),
+                get_data(fields=["br_bcb_nonearmarked_credit_outstanding_pj", "br_bcb_earmarked_credit_outstanding_pj", "br_bcb_nonearmarked_credit_outstanding_pf", "br_bcb_earmarked_credit_outstanding_pf"]),
+                get_data(fields=["br_bcb_credit_outstanding_msme", "br_bcb_credit_outstanding_corporate", "br_bcb_credit_outstanding_total"]),
+                get_data(fields=["br_bcb_average_interest_rate_pf", "br_bcb_average_interest_rate_pj",
+                                 "br_bcb_average_interest_rate_total", "br_selic_target"]),
+                get_data(fields=["br_bcb_past_due_loans_pf", "br_bcb_past_due_loans_pj"]),
             ],
             connect_gaps=True
         )
