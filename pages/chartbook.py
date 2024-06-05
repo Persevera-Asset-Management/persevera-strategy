@@ -314,7 +314,7 @@ def show_chartbook():
             ["line", "line", "bar", "bar"],
             [
                 get_data(fields=["us_advance_retail_sales_total"]),
-                get_data(fields=["us_advance_retail_sales_total"]).rolling(12).sum().pct_change(12),
+                get_data(fields=["us_advance_retail_sales_total"]).rolling(12).sum().pct_change(12).dropna(),
                 get_data(fields=["us_advance_retail_sales_total_yoy"]),
                 get_data(fields=["us_advance_retail_sales_total_mom"]),
             ]
@@ -524,7 +524,8 @@ def show_chartbook():
             ["line"],
             [
                 get_data(fields=["br_bcb_average_interest_rate_individuals", "br_bcb_average_interest_rate_nonfinancial", "br_bcb_average_interest_rate_total", "br_selic_target"]),
-            ]
+            ],
+            connect_gaps=True
         )
 
         display_chart_with_expander(
