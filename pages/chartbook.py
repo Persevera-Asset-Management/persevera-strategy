@@ -404,8 +404,8 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["IPCA (% YoY)", "Expectativa de Inflação (Focus)", "Outros Índices (% YoY)"],
-            ["line", "line", "line"],
+            ["IPCA (% YoY)", "Expectativa de Inflação (Focus)", "IPCA Grupos (% YoY)", "IPCA Grupos (% YoY)", "IPCA Grupos (% YoY)", "Outros Índices (% YoY)"],
+            ["line", "line", "line", "line", "line", "line"],
             [
                 get_data(fields=["br_ipca_yoy"]).merge(
                     get_data(fields=["br_ipca_yoy", "br_ipca_target_inflation_rate"]).ffill().drop(
@@ -413,7 +413,13 @@ def show_chartbook():
                     upper_bound=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
                     lower_bound=lambda x: x["br_ipca_target_inflation_rate"] - 1.5),
                 get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy"]),
-                get_data(fields=["br_igp10_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_cpi_fipe_yoy"]),
+                get_data(fields=["br_ipca_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_igpm_yoy", "br_cpi_fipe_yoy"]),
+                get_data(fields=["br_ipca_yoy", "br_ipca_non_regulated_yoy", "br_ipca_regulated_yoy"]),
+                get_data(fields=["br_ipca_yoy", "br_ipca_services_yoy", "br_ipca_durable_yoy", "br_ipca_semi_durable_yoy", "br_ipca_non_durable_yoy"]),
+                get_data(fields=["br_ipca_yoy", "br_ipca_food_beverages_yoy", "br_ipca_housing_yoy",
+                                 "br_ipca_household_goods_yoy", "br_ipca_clothing_yoy", "br_ipca_transport_yoy",
+                                 "br_ipca_health_yoy", "br_ipca_personal_expenses_yoy", "br_ipca_education_yoy",
+                                 "br_ipca_communications_yoy"]),
             ]
         )
 
