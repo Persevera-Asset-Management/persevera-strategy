@@ -288,10 +288,12 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["Índices de Inflação"],
-            ["line"],
+            ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)", "Projeção de Inflação (University of Michigan)"],
+            ["line", "line", "line"],
             [
-                get_data(fields=["us_cpi_yoy", "us_core_cpi_yoy", "us_pce_yoy", "us_supercore_cpi_yoy"]),
+                get_data(fields=["us_cpi_yoy", "us_core_cpi_yoy", "us_pce_yoy", "us_core_pce_yoy", "us_supercore_cpi_yoy"]),
+                get_data(fields=["us_ppi_yoy"]),
+                get_data(fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
             ]
         )
 
@@ -306,19 +308,22 @@ def show_chartbook():
             ]
         )
 
-        # display_chart_with_expander(
-        #     "Vendas no Varejo",
-        #     [""],
-        #     ["line"],
-        #     [
-        #         get_data(fields=[""]),
-        #     ]
-        # )
+        display_chart_with_expander(
+            "Vendas no Varejo",
+            ["Advance Retail Sales", "Advance Retail Sales (% LTM)", "Advance Retail Sales (% YoY)", "Advance Retail Sales (% MoM)"],
+            ["line", "line", "bar", "bar"],
+            [
+                get_data(fields=["us_advance_retail_sales_total"]),
+                get_data(fields=["us_advance_retail_sales_total"]).rolling(12).sum().pct_change(12),
+                get_data(fields=["us_advance_retail_sales_total_yoy"]),
+                get_data(fields=["us_advance_retail_sales_total_mom"]),
+            ]
+        )
 
         display_chart_with_expander(
             "Habitação",
-            ["Habitação", "Habitação", "Preços de Imóveis (% YoY)", "Preços de Imóveis (% YoY)"],
-            ["line", "line", "line", "line"],
+            ["Habitação", "Habitação (% YoY)", "Preços de Imóveis (% YoY)", "Preços de Imóveis"],
+            ["line", "bar", "line", "bar"],
             [
                 get_data(fields=["us_new_home_sales_index", "us_housing_starts_index",
                                  "us_building_permits_index"]),
@@ -357,14 +362,17 @@ def show_chartbook():
         display_chart_with_expander(
             "Emprego",
             ["Pedidos de Seguro-Desemprego", "Taxa de Desemprego", "Non-Farm Payroll (MoM)", "Non-Farm Payroll (% YoY)",
-             "Ganho Médio por Hora (% YoY)"],
-            ["line", "line", "bar", "bar", "line"],
+             "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)", "Quits Rate (JOLTS)"],
+            ["line", "line", "bar", "bar", "line", "line", "line", "line"],
             [
                 get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma"]),
-                get_data(fields=["us_unemployment_rate"]),
+                get_data(fields=["us_unemployment_rate", "us_unemployment_rate_u6"]),
                 get_data(fields=["us_adp_nonfarm_employment"]).diff().merge(get_data(fields=["us_employees_nonfarm_payrolls_mom"]), left_index=True, right_index=True, how='outer'),
                 get_data(fields=["us_adp_nonfarm_employment_yoy", "us_employees_nonfarm_payrolls_yoy"]),
+                get_data(fields=["us_average_hourly_earnings"]),
                 get_data(fields=["us_average_hourly_earnings_yoy"]),
+                get_data(fields=["us_jolts_job_openings_total"]),
+                get_data(fields=["us_jolts_quits_rate"]),
             ]
         )
 
@@ -396,7 +404,7 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação",
-            ["IPCA (% YoY)", "Projeção do IPCA (Focus)", "Outros Índices (% YoY)"],
+            ["IPCA (% YoY)", "Expectativa de Inflação (Focus)", "Outros Índices (% YoY)"],
             ["line", "line", "line"],
             [
                 get_data(fields=["br_ipca_yoy"]).merge(
