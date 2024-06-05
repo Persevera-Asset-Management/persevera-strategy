@@ -431,10 +431,11 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Contas Públicas",
-            ["Dívida / PIB"],
-            ["line"],
+            ["Dívida (% do PIB)", "Resultado Fiscal (% do PIB)"],
+            ["line", "line"],
             [
-                get_data(fields=["br_bcb_gross_gov_debt_to_gdp", "br_bcb_net_gov_debt_to_gdp"]),
+                get_data(fields=["br_bcb_gross_gov_debt_to_gdp", "br_bcb_net_gov_debt_to_gdp", "br_bcb_net_public_sector_debt_to_gdp"]),
+                get_data(fields=["br_bcb_primary_result_12m_to_gdp", "br_bcb_nominal_result_12m_to_gdp"]),
             ]
         )
 
@@ -613,11 +614,15 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Brasil",
-            ["ICB (2019 = 100)"],
-            ["line"],
+            ["Índice de Commodities Brasil (2019 = 100)", "Agrícolas (2019 = 100)", "Pecuárias (2019 = 100)"],
+            ["line", "line", "line"],
             [
                 scale_to_100(date="2019", df=get_data(
                     fields=["br_icb_composite", "br_icb_agriculture", "br_icb_energy", "br_icb_metal"])),
+                scale_to_100(date="2019", df=get_data(
+                    fields=["br_cepea_paddy_rice", "br_cepea_soft_wheat", "br_cepea_corn_wholesale", "br_cepea_soybean_wholesale", "br_cepea_sugar", "br_cepea_cotton_feather", "br_cepea_arabica_coffee"])),
+                scale_to_100(date="2019", df=get_data(
+                    fields=["br_cepea_chilled_whole_broiler", "br_cepea_pork", "br_cepea_beef_carcass", "br_cepea_beef_forequarter", "br_cepea_beef_hindquarter", "br_cepea_beef_thin_flank", "br_cepea_fed_cattle"])),
             ],
             connect_gaps=True
         )
