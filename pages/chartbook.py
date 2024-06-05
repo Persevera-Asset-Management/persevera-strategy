@@ -147,6 +147,7 @@ def create_two_yaxis_line_chart(data, title, connect_gaps):
         ),
         yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, showgrid=False),
+        secondary_y=dict(autorange=True, fixedrange=False, showgrid=False),
         legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
         hovermode="x unified",
@@ -322,7 +323,7 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Habitação",
-            ["Habitação", "Habitação (% YoY)", "Preços de Imóveis (% YoY)", "Preços de Imóveis"],
+            ["Habitação", "Habitação (% YoY)", "Preços de Imóveis", "Preços de Imóveis (% YoY)"],
             ["line", "bar", "line", "bar"],
             [
                 get_data(fields=["us_new_home_sales_index", "us_housing_starts_index",
@@ -418,6 +419,18 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
+            "Produção Industrial",
+            ["Produção Industrial", "Produção Industrial (% LTM)", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
+            ["line", "line", "bar", "bar"],
+            [
+                get_data(fields=["br_industrial_production"]),
+                get_data(fields=["br_industrial_production_12m_yoy"]),
+                get_data(fields=["br_industrial_production_yoy"]),
+                get_data(fields=["br_industrial_production_mom"]),
+            ]
+        )
+
+        display_chart_with_expander(
             "Contas Públicas",
             ["Dívida / PIB"],
             ["line"],
@@ -491,7 +504,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Emprego",
             ["Criação de Empregos Formais (MoM)", "Criação de Empregos Formais (LTM)", "Taxa de Desemprego"],
-            ["line", "bar", "bar"],
+            ["bar", "bar", "line"],
             [
                 get_data(fields=["br_caged_registered_employess_total"]).diff(),
                 get_data(fields=["br_caged_registered_employess_total"]).diff().rolling(12).sum(),
@@ -511,7 +524,7 @@ def show_chartbook():
         display_chart_with_expander(
             "Tráfego",
             ["Fluxo Pedagiado nas Estradas", "Fluxo Pedagiado nas Estradas (% YoY)"],
-            ["line", "line"],
+            ["line", "bar"],
             [
                 get_data(fields=["br_abcr_traffic_heavy_vehicles", "br_abcr_traffic_light_vehicles"]),
                 get_data(fields=["br_abcr_traffic_heavy_vehicles_yoy", "br_abcr_traffic_light_vehicles_yoy"]),
