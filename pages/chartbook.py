@@ -248,7 +248,7 @@ def show_chartbook():
 
     if selected_category == "Estados Unidos":
         display_chart_with_expander(
-            "PIB",
+            "PIB 🇪🇨 🇪🇸",
             ["PIB", "PIB (% QoQ)", "PIB (% YoY)"],
             ["line", "bar", "bar"],
             [
@@ -259,7 +259,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Taxas Referenciais",
+            "Taxas Referenciais 🅰️",
             ["Curva Pré (Treasuries)", "Curva Inflação (TIPS)", "Curva Implícita (Breakeven)", "Curva de Juros", "Inclinações"],
             ["line", "line", "line", "line", "line"],
             [
