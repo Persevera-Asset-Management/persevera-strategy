@@ -378,8 +378,9 @@ def show_chartbook():
                 get_data(fields=["us_jolts_hiring_rate", "us_jolts_job_openings_rate"]),
                 get_data(fields=["us_jolts_quits_rate"]),
                 get_data(fields=['us_unemployed_level_to_job_openings', 'us_job_openings_total_non_farm']).eval(
-                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna()
-            ]
+                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna().rename('job_openings_to_unemployment_level')
+            ],
+            connect_gaps=True,
         )
 
     elif selected_category == "Brasil":

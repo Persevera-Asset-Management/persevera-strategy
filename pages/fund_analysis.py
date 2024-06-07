@@ -112,13 +112,13 @@ def format_table(df):
                             '6m': '{:,.2%}'.format,
                             '12m': '{:,.2%}'.format,
                             'custom': '{:,.2%}'.format,
-                            'day_rank': '{:,}'.format,
-                            'mtd_rank': '{:,}'.format,
-                            'ytd_rank': '{:,}'.format,
-                            '3m_rank': '{:,}'.format,
-                            '6m_rank': '{:,}'.format,
-                            '12m_rank': '{:,}'.format,
-                            'custom_rank': '{:,}'.format}
+                            'day_rank': '{:.0f}'.format,
+                            'mtd_rank': '{:.0f}'.format,
+                            'ytd_rank': '{:.0f}'.format,
+                            '3m_rank': '{:.0f}'.format,
+                            '6m_rank': '{:.0f}'.format,
+                            '12m_rank': '{:.0f}'.format,
+                            'custom_rank': '{:.0f}'.format}
                            )
 
 
