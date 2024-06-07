@@ -44,7 +44,7 @@ def show_screener():
 
             liquidity_filter = st.number_input(label="Filtro de Liquidez",
                                                min_value=0,
-                                               value=1e6)
+                                               value=0)
 
         with cols[1]:
             selected_variables = cols[1].multiselect(label='Selecione as variáveis:',
