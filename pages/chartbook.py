@@ -346,8 +346,9 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Sentimento",
-            ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor"],
-            ["line", "line", "line", "line"],
+            ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor",
+             "Índice de Surpresas Econômicas"],
+            ["line", "line", "line", "line", "line"],
             [
                 get_data(fields=["us_ism_manufacting", "us_ism_services"]),
                 get_data(fields=["us_ism_manufacturing_new_orders", "us_ism_manufacturing_inventories",
@@ -356,14 +357,16 @@ def show_chartbook():
                                  "us_ism_services_employment"]),
                 get_data(fields=["us_university_michigan_consumer_sentiment_index",
                                  "us_university_michigan_consumer_expectations_index"]),
+                get_data(fields=["us_citi_economic_surprise_index", "us_bloomberg_economic_surprise_index"]),
             ]
         )
 
         display_chart_with_expander(
             "Emprego",
             ["Pedidos de Seguro-Desemprego", "Taxa de Desemprego", "Non-Farm Payroll (MoM)", "Non-Farm Payroll (% YoY)",
-             "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)", "Quits Rate (JOLTS)"],
-            ["line", "line", "bar", "bar", "line", "line", "line", "line"],
+             "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)", "Quits Rate (JOLTS)",
+             "Número de vagas abertas por desempregado"],
+            ["line", "line", "bar", "bar", "line", "line", "line", "line", "line"],
             [
                 get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma"]),
                 get_data(fields=["us_unemployment_rate", "us_unemployment_rate_u6"]),
@@ -371,8 +374,10 @@ def show_chartbook():
                 get_data(fields=["us_adp_nonfarm_employment_yoy", "us_employees_nonfarm_payrolls_yoy"]),
                 get_data(fields=["us_average_hourly_earnings"]),
                 get_data(fields=["us_average_hourly_earnings_yoy"]),
-                get_data(fields=["us_jolts_job_openings_total"]),
+                get_data(fields=["us_jolts_hiring_rate", "us_jolts_job_openings_rate"]),
                 get_data(fields=["us_jolts_quits_rate"]),
+                get_data(fields=['us_unemployed_level_to_job_openings', 'us_job_openings_total_non_farm']).eval(
+                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna()
             ]
         )
 
