@@ -248,7 +248,7 @@ def show_chartbook():
 
     if selected_category == "Estados Unidos":
         display_chart_with_expander(
-            "PIB 🇪🇨 🇪🇸",
+            "PIB 🅴",
             ["PIB", "PIB (% QoQ)", "PIB (% YoY)"],
             ["line", "bar", "bar"],
             [
@@ -259,7 +259,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Taxas Referenciais 🅰️",
+            "Taxas Referenciais 🆂",
             ["Curva Pré (Treasuries)", "Curva Inflação (TIPS)", "Curva Implícita (Breakeven)", "Curva de Juros", "Inclinações"],
             ["line", "line", "line", "line", "line"],
             [
@@ -275,7 +275,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Taxas Corporativas",
+            "Taxas Corporativas 🆂",
             ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
             ["line", "line", "line", "line"],
             [
@@ -287,7 +287,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Inflação",
+            "Inflação 🅴 🆂",
             ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)", "Projeção de Inflação (University of Michigan)"],
             ["line", "line", "line"],
             [
@@ -298,7 +298,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Produção Industrial",
+            "Produção Industrial 🅴 🆂",
             ["Produção Industrial", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
             ["line", "bar", "bar"],
             [
@@ -309,7 +309,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Vendas no Varejo",
+            "Vendas no Varejo 🅴",
             ["Advance Retail Sales", "Advance Retail Sales (% LTM)", "Advance Retail Sales (% YoY)", "Advance Retail Sales (% MoM)"],
             ["line", "line", "bar", "bar"],
             [
@@ -321,7 +321,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Habitação",
+            "Habitação 🅴",
             ["Habitação", "Habitação (% YoY)", "Preços de Imóveis", "Preços de Imóveis (% YoY)"],
             ["line", "bar", "line", "bar"],
             [
@@ -335,7 +335,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Crédito",
+            "Crédito 🅴",
             ["Inadimplência"],
             ["line"],
             [
@@ -345,7 +345,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Sentimento",
+            "Sentimento 🅴",
             ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor",
              "Índice de Surpresas Econômicas"],
             ["line", "line", "line", "line", "line"],
@@ -362,7 +362,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Emprego",
+            "Emprego 🅴",
             ["Pedidos de Seguro-Desemprego", "Taxa de Desemprego", "Non-Farm Payroll (MoM)", "Non-Farm Payroll (% YoY)",
              "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)", "Quits Rate (JOLTS)",
              "Número de vagas abertas por desempregado"],
