@@ -37,10 +37,14 @@ def show_screener():
 
         with cols[0]:
             selected_sectors = st.multiselect(label='Selecione os setores:',
-                                                  options=sectors_available,
-                                                  default=['Todos'])
+                                              options=sectors_available,
+                                              default=['Todos'])
             if 'Todos' in selected_sectors:
                 selected_sectors = sectors_available
+
+            liquidity_filter = st.number_input(label="Filtro de Liquidez",
+                                               min_value=0,
+                                               value=1e6)
 
         with cols[1]:
             selected_variables = cols[1].multiselect(label='Selecione as variáveis:',
@@ -48,4 +52,5 @@ def show_screener():
                                                      default=['price_close', 'market_cap', '21d_median_dollar_volume_traded'])
 
         data = get_screen(fields=selected_variables, selected_sectors=selected_sectors)
+        data = data[data['21d_median_dollar_volume_traded'] >= liquidity_filter]
         st.dataframe(data)
