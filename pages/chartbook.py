@@ -298,7 +298,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Produção Industrial 🅴 🆂",
+            "Produção Industrial 🅴",
             ["Produção Industrial", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
             ["line", "bar", "bar"],
             [
@@ -348,7 +348,7 @@ def show_chartbook():
             "Sentimento 🅴",
             ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor",
              "Índice de Surpresas Econômicas"],
-            ["line", "line", "line", "line", "line"],
+            ["line", "line", "line", "line", "line_two_yaxis"],
             [
                 get_data(fields=["us_ism_manufacting", "us_ism_services"]),
                 get_data(fields=["us_ism_manufacturing_new_orders", "us_ism_manufacturing_inventories",
@@ -358,7 +358,8 @@ def show_chartbook():
                 get_data(fields=["us_university_michigan_consumer_sentiment_index",
                                  "us_university_michigan_consumer_expectations_index"]),
                 get_data(fields=["us_citi_economic_surprise_index", "us_bloomberg_economic_surprise_index"]),
-            ]
+            ],
+            connect_gaps=True,
         )
 
         display_chart_with_expander(
@@ -383,7 +384,7 @@ def show_chartbook():
 
     elif selected_category == "Brasil":
         display_chart_with_expander(
-            "PIB",
+            "PIB 🅴",
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             ["line", "bar", "bar"],
             [
@@ -394,7 +395,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Taxas Referenciais",
+            "Taxas Referenciais 🆂",
             ["Curva Pré", "Curva IPCA", "Curva Implícita", "Curva de Juros"],
             ["line", "line", "line", "line"],
             [
@@ -408,7 +409,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Inflação",
+            "Inflação 🅴 🆂",
             ["IPCA (% YoY)", "Expectativa de Inflação (Focus)", "IPCA Grupos (% YoY)", "IPCA Grupos (% YoY)", "IPCA Grupos (% YoY)", "Outros Índices (% YoY)"],
             ["line", "line", "line", "line", "line", "line"],
             [
@@ -429,7 +430,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Produção Industrial",
+            "Produção Industrial 🅴",
             ["Produção Industrial", "Produção Industrial (% LTM)", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
             ["line", "line", "bar", "bar"],
             [
@@ -441,7 +442,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Contas Públicas",
+            "Contas Públicas 🅴",
             ["Dívida (% do PIB)", "Resultado Fiscal (% do PIB)"],
             ["line", "line"],
             [
@@ -451,7 +452,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Balança Comercial",
+            "Balança Comercial 🅴 🆂",
             ["Termos de Troca (Citi)", "Termos de Troca (MDIC)", "Exportações vs Importações", "Exportações vs Importações (YTD)", "Exportações vs Importações (LTM)", "Saldo da Balança Comercial (LTM)"],
             ["line_two_yaxis", "line_two_yaxis", "line", "bar", "line", "bar"],
             [
@@ -466,7 +467,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Serviços (PMS)",
+            "Serviços (PMS) 🅴",
             ["Volume de Serviços", "Volume de Serviços (12 meses)", "Volume de Serviços (% YoY)", "Volume de Serviços (% MoM)", "Evolução por Atividade"],
             ["line", "line", "bar", "bar", "line"],
             [
@@ -479,7 +480,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Varejo (PMC)",
+            "Varejo (PMC) 🅴",
             ["Volume de Vendas", "Volume de Vendas (% YoY)", "Evolução por Atividade"],
             ["line", "bar", "line"],
             [
@@ -490,7 +491,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Sentimento",
+            "Sentimento 🅴",
             ["Índice de Confiança do Consumidor", "Índice de Confiança Empresarial", "Índice de Confiança Industrial", "Índice de Incerteza Econômica"],
             ["line", "line", "line", "line"],
             [
@@ -502,7 +503,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Atividade Econômica",
+            "Atividade Econômica 🅴",
             ["IBC-Br", "IBC-Br (% YoY)", "IBC-Br (% QoQ)"],
             ["line", "bar", "bar"],
             [
@@ -513,7 +514,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Emprego",
+            "Emprego 🅴",
             ["Criação de Empregos Formais (MoM)", "Criação de Empregos Formais (LTM)", "Taxa de Desemprego"],
             ["bar", "bar", "line"],
             [
@@ -524,7 +525,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Crédito",
+            "Crédito 🅴",
             ["Saldo da Carteira de Crédito (Total)", "Saldo da Carteira de Crédito (Abertura)", "Saldo da Carteira de Crédito (Porte PJ)", "Taxa Média de Juros das Operações", "Inadimplência da Carteira de Crédito"],
             ["line", "line", "line", "line", "line"],
             [
@@ -539,7 +540,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Tráfego",
+            "Tráfego 🅴",
             ["Fluxo Pedagiado nas Estradas", "Fluxo Pedagiado nas Estradas (% YoY)"],
             ["line", "bar"],
             [
@@ -587,7 +588,7 @@ def show_chartbook():
 
     elif selected_category == "Commodities":
         display_table_with_expander(
-            "Performance",
+            "Performance 🆂",
             ["Energia", "Metais"],
             [
                 get_data(fields=["crude_oil_wti", "crude_oil_brent", "gasoline", "usda_diesel", "natural_gas", "thermal_coal"]).fillna(method="ffill", limit=2),
@@ -596,7 +597,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Commodity Research Bureau (CRB)",
+            "Commodity Research Bureau (CRB) 🆂",
             ["Índice CRB (2019 = 100)", "Índice CRB (% 12 meses)"],
             ["line", "line"],
             [
@@ -608,7 +609,7 @@ def show_chartbook():
         
         display_chart_with_expander(
             "Fretes",
-            ["Índices de Custo de Frete"],
+            ["Índices de Custo de Frete 🆂"],
             ["line"],
             [
                 get_data(fields=["baltic_dry_index", "shanghai_containerized_freight_index"])
@@ -617,7 +618,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Combustível",
+            "Combustível 🅴",
             ["Atacado (2019 = 100)", "Varejo (2019 = 100)"],
             ["line", "line"],
             [
@@ -630,7 +631,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Brasil",
+            "Brasil 🅴",
             ["Índice de Commodities Brasil (2019 = 100)", "Agrícolas (2019 = 100)", "Pecuárias (2019 = 100)"],
             ["line", "line", "line"],
             [
@@ -646,7 +647,7 @@ def show_chartbook():
 
     elif selected_category == "Moedas":
         display_table_with_expander(
-            "Performance",
+            "Performance 🆂",
             ["Desenvolvidos", "Emergentes"],
             [
                 get_data(
@@ -658,7 +659,7 @@ def show_chartbook():
 
     elif selected_category == "Mercados":
         display_chart_with_expander(
-            "EPS",
+            "EPS 🅼",
             ["S&P 500", "Ibovespa"],
             ["line", "line"],
             [
@@ -668,7 +669,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "P/E",
+            "P/E 🅼",
             ["Desenvolvidos", "Desenvolvidos (vs. S&P 500)", "Emergentes", "Emergentes (vs. S&P 500)"],
             ["line", "line", "line", "line"],
             [
@@ -693,7 +694,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Volatilidade Implícita",
+            "Volatilidade Implícita 🅼",
             ["S&P 500", "Ibovespa"],
             ["line_two_yaxis", "line_two_yaxis"],
             [
@@ -710,7 +711,7 @@ def show_chartbook():
 
     elif selected_category == "Posicionamento":
         display_chart_with_expander(
-            "Treasuries",
+            "Treasuries 🅼",
             ["Treasury 2Y", "Treasury 5Y", "Treasury 10Y", "Treasury Bonds"],
             ["bar", "bar", "bar", "bar"],
             [
@@ -722,7 +723,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Commodities",
+            "Commodities 🅼",
             ["Copper", "Gold", "Silver", "Crude Oil"],
             ["bar", "bar", "bar", "bar"],
             [
@@ -734,7 +735,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Moedas",
+            "Moedas 🅼",
             ["AUD", "BRL", "CAD", "CHF", "EUR", "GBP", "JPY", "MXN", "NZD", "RUB", "ZAR"],
             ["bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar"],
             [
@@ -753,7 +754,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Bolsas",
+            "Bolsas 🅼",
             ["S&P 500", "Nasdaq", "Nikkei", "Russell 2000"],
             ["bar", "bar", "bar", "bar"],
             [
@@ -766,7 +767,7 @@ def show_chartbook():
 
     elif selected_category == "Tendência":
         display_chart_with_expander(
-            "Média Móvel",
+            "Média Móvel 🅼",
             ["S&P 500", "Ibovespa"],
             ["line", "line"],
             [

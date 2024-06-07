@@ -84,6 +84,14 @@ def get_performance_table(df, start_date, end_date, relative=False):
         '6m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(6 * 21).iloc[-1],
         '12m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
         'custom': df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1,
+
+        'day_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change().iloc[-1].rank(ascending=False),
+        'mtd_rank': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1].rank(ascending=False),
+        'ytd_rank': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1].rank(ascending=False),
+        '3m_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(3 * 21).iloc[-1].rank(ascending=False),
+        '6m_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(6 * 21).iloc[-1].rank(ascending=False),
+        '12m_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1].rank(ascending=False),
+        'custom_rank': (df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1).rank(ascending=False),
     }
     df = pd.DataFrame(time_frames)
     if relative:
@@ -103,7 +111,14 @@ def format_table(df):
                             '3m': '{:,.2%}'.format,
                             '6m': '{:,.2%}'.format,
                             '12m': '{:,.2%}'.format,
-                            'custom': '{:,.2%}'.format}
+                            'custom': '{:,.2%}'.format,
+                            'day_rank': '{:,}'.format,
+                            'mtd_rank': '{:,}'.format,
+                            'ytd_rank': '{:,}'.format,
+                            '3m_rank': '{:,}'.format,
+                            '6m_rank': '{:,}'.format,
+                            '12m_rank': '{:,}'.format,
+                            'custom_rank': '{:,}'.format}
                            )
 
 
@@ -188,6 +203,7 @@ def show_fund_analysis():
                 selected_peers=selected_peers,
                 benchmark=de_para[selected_fund]["benchmark"]
             )
+            table_data = table_data.ffill(limit=3)
             df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
             st.dataframe(format_table(df), use_container_width=True)
 
@@ -217,6 +233,7 @@ def show_fund_analysis():
                 selected_peers=selected_peers,
                 benchmark=de_para[selected_fund]["benchmark"]
             )
+            table_data = table_data.ffill(limit=3)
             df = get_performance_table(table_data, start_date=start_date, end_date=end_date, relative=True)
             st.dataframe(format_table(df), use_container_width=True)
 
