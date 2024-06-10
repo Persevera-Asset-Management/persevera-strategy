@@ -248,7 +248,7 @@ def show_chartbook():
 
     if selected_category == "Estados Unidos":
         display_chart_with_expander(
-            "PIB 🅴 🆂 :regional_indicator_s:",
+            "PIB 🅴 🆂",
             ["PIB", "PIB (% QoQ)", "PIB (% YoY)"],
             ["line", "bar", "bar"],
             [
@@ -552,7 +552,7 @@ def show_chartbook():
 
     elif selected_category == "Juros":
         display_chart_with_expander(
-            "Desenvolvidos",
+            "Desenvolvidos 🆂",
             ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
             ["line", "line", "line", "line"],
             [
@@ -572,7 +572,7 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Emergentes",
+            "Emergentes 🆂",
             ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
             ["line", "line", "line", "line"],
             [

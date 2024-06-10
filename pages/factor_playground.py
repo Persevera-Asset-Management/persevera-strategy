@@ -220,7 +220,7 @@ def show_factor_playground():
                                               default=factor_list)
 
         st.subheader("Rentabilidade Acumulada")
-        tabs = st.tabs(["Top", "L/S"])
+        tabs = st.tabs(["Top", "L/S", "vs. Benchmark"])
 
         # Tab1: Retorno absoluto
         with tabs[0]:
