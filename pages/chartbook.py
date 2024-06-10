@@ -248,7 +248,7 @@ def show_chartbook():
 
     if selected_category == "Estados Unidos":
         display_chart_with_expander(
-            "PIB 🅴",
+            "PIB 🅴 🆂:smile:",
             ["PIB", "PIB (% QoQ)", "PIB (% YoY)"],
             ["line", "bar", "bar"],
             [
