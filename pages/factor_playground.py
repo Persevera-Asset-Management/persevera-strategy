@@ -221,7 +221,6 @@ def show_factor_playground():
 
         st.subheader("Rentabilidade Acumulada")
         tabs = st.tabs(["Top", "L/S", "vs. Benchmark"])
-        check_logy = st.checkbox("Log Scale")
 
         with tabs[0]:
             check_logy = st.checkbox("Log Scale")
