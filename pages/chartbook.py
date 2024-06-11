@@ -19,6 +19,14 @@ def get_data(fields: list):
     return df
 
 
+def code_to_name(df):
+    de_para = pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name="indicators")
+    de_para = de_para.dropna(subset='name')
+    de_para = de_para.set_index('code')['name'].to_dict()
+    df = df.rename(columns=de_para)
+    return df
+
+
 def get_cohort(assets: list, benchmark: str):
     individual_assets = get_data(fields=assets)
     individual_assets = individual_assets.filter(assets)
@@ -203,6 +211,7 @@ def show_chartbook():
                 for col, title, chart_type, dataset in zip(cols, chart_titles[start_index:end_index],
                                                            chart_types[start_index:end_index],
                                                            datasets[start_index:end_index]):
+                    dataset = code_to_name(dataset)
                     if chart_type == 'line':
                         col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
                     elif chart_type == 'line_two_yaxis':
@@ -592,7 +601,7 @@ def show_chartbook():
             "Performance 🆂",
             ["Energia", "Metais"],
             [
-                get_data(fields=["crude_oil_wti", "crude_oil_brent", "gasoline", "usda_diesel", "natural_gas", "thermal_coal"]).fillna(method="ffill", limit=2),
+                get_data(fields=["crude_oil_wti", "crude_oil_brent", "gasoline", "usda_diesel", "natural_gas", "thermal_coal"]).ffill(limit=2),
                 get_data(fields=["gold", "silver", "lme_aluminum", "lme_copper", "lme_nickel_cash", "sgx_iron_ore_62", "platinum", "palladium", "lme_zinc_spot", "coking_coal"]).fillna(method="ffill", limit=2),
             ]
         )
@@ -609,8 +618,8 @@ def show_chartbook():
         )
         
         display_chart_with_expander(
-            "Fretes",
-            ["Índices de Custo de Frete 🆂"],
+            "Fretes 🆂",
+            ["Índices de Custo de Frete"],
             ["line"],
             [
                 get_data(fields=["baltic_dry_index", "shanghai_containerized_freight_index"])

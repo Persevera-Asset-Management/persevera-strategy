@@ -5,3 +5,4 @@ from pages.trinity import show_trinity
 from pages.screener import show_screener
 from pages.tools import show_tools
 from pages.factor_playground import show_factor_playground
+from pages.fixed_income import show_fixed_income
