@@ -23,7 +23,11 @@ def code_to_name(df):
     de_para = pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name="indicators")
     de_para = de_para.dropna(subset='name')
     de_para = de_para.set_index('code')['name'].to_dict()
-    df = df.rename(columns=de_para)
+
+    if isinstance(df, pd.Series):
+        df = df.to_frame().rename(columns=de_para)
+    else:
+        df = df.rename(columns=de_para)
     return df
 
 
@@ -387,7 +391,7 @@ def show_chartbook():
                 get_data(fields=["us_jolts_hiring_rate", "us_jolts_job_openings_rate"]),
                 get_data(fields=["us_jolts_quits_rate"]),
                 get_data(fields=['us_unemployed_level_to_job_openings', 'us_job_openings_total_non_farm']).eval(
-                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna().rename('job_openings_to_unemployment_level')
+                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna().rename('job_openings_to_unemployment_level').to_frame()
             ],
             connect_gaps=True,
         )
