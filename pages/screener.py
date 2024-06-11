@@ -43,8 +43,7 @@ def show_screener():
                 selected_sectors = sectors_available
 
             liquidity_filter = st.number_input(label="Filtro de Liquidez",
-                                               min_value=0,
-                                               value=0)
+                                               min_value=0, value=0, step=100000)
 
         with cols[1]:
             selected_variables = cols[1].multiselect(label='Selecione as variáveis:',

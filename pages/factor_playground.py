@@ -221,8 +221,8 @@ def show_factor_playground():
 
         st.subheader("Rentabilidade Acumulada")
         tabs = st.tabs(["Top", "L/S", "vs. Benchmark"])
+        check_logy = st.checkbox("Log Scale")
 
-        # Tab1: Retorno absoluto
         with tabs[0]:
             col1, col2 = st.columns(2, gap='large')
 
@@ -234,7 +234,7 @@ def show_factor_playground():
 
                 data = data.sub(1)
                 data = data.ffill()
-                fig = px.line(data)
+                fig = px.line(data, log_y=check_logy)
                 st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
             with col2:
