@@ -224,6 +224,7 @@ def show_factor_playground():
         check_logy = st.checkbox("Log Scale")
 
         with tabs[0]:
+            check_logy = st.checkbox("Log Scale")
             col1, col2 = st.columns(2, gap='large')
 
             with col1:
@@ -247,6 +248,7 @@ def show_factor_playground():
                 st.dataframe(format_table(df), use_container_width=True)
 
         with tabs[1]:
+            check_logy = st.checkbox("Log Scale")
             col1, col2 = st.columns(2, gap='large')
 
             with col1:
@@ -257,7 +259,7 @@ def show_factor_playground():
 
                 data = data.sub(1)
                 data = data.ffill()
-                fig = px.line(data)
+                fig = px.line(data, log_y=check_logy)
                 st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
             with col2:
