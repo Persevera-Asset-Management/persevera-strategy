@@ -223,7 +223,7 @@ def show_factor_playground():
         tabs = st.tabs(["Top", "L/S", "vs. Benchmark"])
 
         with tabs[0]:
-            check_logy = st.checkbox("Log Scale")
+            check_logy = st.checkbox("Log Scale", key=0)
             col1, col2 = st.columns(2, gap='large')
 
             with col1:
@@ -247,7 +247,7 @@ def show_factor_playground():
                 st.dataframe(format_table(df), use_container_width=True)
 
         with tabs[1]:
-            check_logy = st.checkbox("Log Scale")
+            check_logy = st.checkbox("Log Scale", key=1)
             col1, col2 = st.columns(2, gap='large')
 
             with col1:
