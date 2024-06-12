@@ -44,7 +44,7 @@ def get_factor_performance(selected_factors, quantile, excess, start_date, end_d
 
         df = df.filter(cols)
         df = np.cumprod(1 + df.pct_change()).fillna(1)
-        df.columns = df.columns.str.rstrip(f'_{quantile}')
+        df.columns = df.columns.str.replace(f'_{quantile}', '')
     except Exception as e:
         st.error(f"Error loading data: {e}")
         return None
