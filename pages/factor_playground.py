@@ -8,7 +8,7 @@ from streamlit_option_menu import option_menu
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from factor_strategies import factor_screening
+from factor_strategies import factor_screening, performance
 import utils
 
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
@@ -43,7 +43,10 @@ def get_factor_performance(selected_factors, quantile, excess, start_date, end_d
         cols = [col for col in cols if 'excess' in col] if excess else [col for col in cols if 'excess' not in col]
 
         df = df.filter(cols)
-        df = np.cumprod(1 + df.pct_change()).fillna(1)
+        #df = np.cumprod(1 + df.pct_change()).fillna(1)
+        df = df.pct_change()
+        df.iloc[0] = 0
+        df = df.apply(performance.get_performance)
         df.columns = df.columns.str.replace(f'_{quantile}', '')
     except Exception as e:
         st.error(f"Error loading data: {e}")
