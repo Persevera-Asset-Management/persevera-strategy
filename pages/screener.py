@@ -72,7 +72,7 @@ def show_screener():
         # Single Name
         st.subheader("Setorial")
         variables_available = pd.read_parquet(os.path.join(DATA_PATH, "factors-factor_zoo.parquet")).columns
-        stocks_available = sorted(pd.read_parquet(os.path.join(DATA_PATH, "factors-factor_zoo.parquet")).index.get_level_values(0))
+        stocks_available = list(pd.read_parquet(os.path.join(DATA_PATH, "factors-factor_zoo.parquet")).sort_values(by='21d_median_dollar_volume_traded', ascending=False).index.get_level_values(0))
         sectors_available = sorted(pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name='equities')['sector_layer_1'].dropna().unique())
         sectors_available.insert(0, 'Todos')
 
@@ -101,8 +101,7 @@ def show_screener():
         st.subheader("Single Name")
 
         selected_stock = st.selectbox(label='Selecione a ação:',
-                                      options=stocks_available,
-                                      default="VALE3")
+                                      options=stocks_available)
 
         cols_single_names = st.columns(2, gap='large')
 
