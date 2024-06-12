@@ -108,33 +108,33 @@ def show_screener():
         data = data[data['21d_median_dollar_volume_traded'] >= liquidity_filter]
         st.dataframe(data)
 
-        # Single Name
-        st.subheader("Single Name")
-
-        cols_single_names = st.columns(2, gap='large')
-
-        with cols_single_names[0]:
-            selected_stock = st.selectbox(label='Selecione a ação:', options=stocks_available)
-            data_price = get_stock_data(code=selected_stock, fields=['price_close'])
-            data_multi_factor = get_multi_factor_data(selected_stock)
-
-            selected_factor = st.selectbox(label='Selecione o fator:', options=data_multi_factor.filter(like='quantile').columns)
-
-            data_price_scores = pd.get_dummies(data_multi_factor[selected_factor], dtype=int).merge(data_price, left_index=True, right_index=True, how='left')
-            data_price_scores = data_price_scores.apply(
-                lambda col: col * data_price_scores['price_close'] if col.name != 'price_close' else col)
-            data_price_scores = data_price_scores.replace(0, np.nan)
-
-            fig_line = px.line(data_frame=data_price_scores['price_close'], template='plotly_white', color_discrete_sequence=["black"])
-            fig_scatter = px.scatter(data_frame=data_price_scores.filter([1, 2, 3, 4, 5]),
-                                     color_discrete_sequence=[
-                                         "forestgreen",
-                                         "limegreen",
-                                         "lightgray",
-                                         "salmon",
-                                         "red"]
-                                     )
-            fig = go.Figure(data=fig_line.data + fig_scatter.data)
-            cols_single_names[0].plotly_chart(fig, theme='streamlit', use_container_width=True)
-
-            #cols_single_names[0].plotly_chart(create_line_chart(data_price, "Preço de Fechamento", connect_gaps=True), use_container_width=True)
+    ## Single Name
+    # st.subheader("Single Name")
+    #
+    # cols_single_names = st.columns(2, gap='large')
+    #
+    # with cols_single_names[0]:
+    #    selected_stock = st.selectbox(label='Selecione a ação:', options=stocks_available)
+    #    data_price = get_stock_data(code=selected_stock, fields=['price_close'])
+    #    data_multi_factor = get_multi_factor_data(selected_stock)
+    #
+    #    selected_factor = st.selectbox(label='Selecione o fator:', options=data_multi_factor.filter(like='quantile').columns)
+    #
+    #    data_price_scores = pd.get_dummies(data_multi_factor[selected_factor], dtype=int).merge(data_price, left_index=True, right_index=True, how='left')
+    #    data_price_scores = data_price_scores.apply(
+    #        lambda col: col * data_price_scores['price_close'] if col.name != 'price_close' else col)
+    #    data_price_scores = data_price_scores.replace(0, np.nan)
+    #
+    #    fig_line = px.line(data_frame=data_price_scores['price_close'], template='plotly_white', color_discrete_sequence=["black"])
+    #    fig_scatter = px.scatter(data_frame=data_price_scores.filter([1, 2, 3, 4, 5]),
+    #                             color_discrete_sequence=[
+    #                                 "forestgreen",
+    #                                 "limegreen",
+    #                                 "lightgray",
+    #                                 "salmon",
+    #                                 "red"]
+    #                             )
+    #    fig = go.Figure(data=fig_line.data + fig_scatter.data)
+    #    cols_single_names[0].plotly_chart(fig, theme='streamlit', use_container_width=True)
+    #
+    #    #cols_single_names[0].plotly_chart(create_line_chart(data_price, "Preço de Fechamento", connect_gaps=True), use_container_width=True)
