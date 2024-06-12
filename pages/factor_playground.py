@@ -40,7 +40,7 @@ def get_factor_performance(selected_factors, quantile, excess, start_date, end_d
                              filters=[('date', '>=', start_date), ('date', '<=', end_date)])
         cols = [col for col in df.columns for factor in selected_factors if factor in col]
         cols = [col for col in cols if quantile in col]
-        cols = [col for col in cols if 'excess' in col] if excess else cols
+        cols = [col for col in cols if 'excess' in col] if excess else [col for col in cols if 'excess' not in col]
 
         df = df.filter(cols)
         df = np.cumprod(1 + df.pct_change()).fillna(1)
