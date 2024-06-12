@@ -241,8 +241,8 @@ def show_factor_playground():
                                               start_date=start_date,
                                               end_date=end_date)
 
-                data = data.sub(1)
-                data = data.ffill()
+                #data = data.sub(1)
+                #data = data.ffill()
                 fig = px.line(data, log_y=check_logy)
                 st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
@@ -267,8 +267,8 @@ def show_factor_playground():
                                               start_date=start_date,
                                               end_date=end_date)
 
-                data = data.sub(1)
-                data = data.ffill()
+                #data = data.sub(1)
+                #data = data.ffill()
                 fig = px.line(data, log_y=check_logy)
                 st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
@@ -293,8 +293,8 @@ def show_factor_playground():
                                               start_date=start_date,
                                               end_date=end_date)
 
-                data = data.sub(1)
-                data = data.ffill()
+                #data = data.sub(1)
+                #data = data.ffill()
                 fig = px.line(data, log_y=check_logy)
                 st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
