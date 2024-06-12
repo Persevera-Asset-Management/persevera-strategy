@@ -34,14 +34,17 @@ def get_performance_table(df, start_date, end_date):
     return df
 
 
-def get_factor_performance(selected_factors, quantile, start_date, end_date=datetime.today()):
+def get_factor_performance(selected_factors, quantile, excess, start_date, end_date=datetime.today()):
     try:
         df = pd.read_parquet(os.path.join(DATA_PATH, "factors-quantile_performance.parquet"),
                              filters=[('date', '>=', start_date), ('date', '<=', end_date)])
         cols = [col for col in df.columns for factor in selected_factors if factor in col]
         cols = [col for col in cols if quantile in col]
+        cols = [col for col in cols if 'excess' in col] if excess else cols
+
         df = df.filter(cols)
         df = np.cumprod(1 + df.pct_change()).fillna(1)
+        df.columns = df.columns.str.rstrip(f'_{quantile}')
     except Exception as e:
         st.error(f"Error loading data: {e}")
         return None
@@ -154,7 +157,8 @@ def show_factor_playground():
     if selected_category == "Factor Radar":
         cols_header = st.columns(2, gap='large')
         with cols_header[0]:
-            stocks_info = pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name="equities").query('code_exchange == "BZ"')
+            stocks_info = pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name="equities").query(
+                'code_exchange == "BZ"')
             selected_stocks = st.multiselect(label='Selecione as ações:',
                                              options=sorted(stocks_info['code']),
                                              default=["VALE3"],
@@ -202,8 +206,8 @@ def show_factor_playground():
             nested_cols = st.columns(2)
             with nested_cols[0]:
                 start_date = st.date_input(label="Selecione a data inicial:",
-                                           value=datetime(2008,1,1),
-                                           min_value=datetime(2008,1,1),
+                                           value=datetime(2008, 1, 1),
+                                           min_value=datetime(2008, 1, 1),
                                            max_value=datetime.today(),
                                            format="YYYY-MM-DD")
             with nested_cols[1]:
@@ -214,7 +218,8 @@ def show_factor_playground():
                                          format="YYYY-MM-DD")
 
         with cols[1]:
-            factor_list = ['liquidity', 'momentum', 'quality', 'risk', 'short_interest', 'size', 'value', 'multi_factor']
+            factor_list = ['liquidity', 'momentum', 'quality', 'risk', 'short_interest', 'size', 'value',
+                           'multi_factor']
             selected_factors = st.multiselect(label='Selecione os fatores:',
                                               options=factor_list,
                                               default=factor_list)
@@ -229,6 +234,7 @@ def show_factor_playground():
             with col1:
                 data = get_factor_performance(selected_factors=selected_factors,
                                               quantile='rank_1',
+                                              excess=False,
                                               start_date=start_date,
                                               end_date=end_date)
 
@@ -240,8 +246,9 @@ def show_factor_playground():
             with col2:
                 st.write("Data mais recente:", data.index.max())
                 table_data = get_factor_performance(selected_factors=selected_factors,
-                                              quantile='rank_1',
-                                              start_date=start_date)
+                                                    quantile='rank_1',
+                                                    excess=False,
+                                                    start_date=start_date)
 
                 df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
                 st.dataframe(format_table(df), use_container_width=True)
@@ -253,6 +260,7 @@ def show_factor_playground():
             with col1:
                 data = get_factor_performance(selected_factors=selected_factors,
                                               quantile='long_short',
+                                              excess=False,
                                               start_date=start_date,
                                               end_date=end_date)
 
@@ -265,11 +273,37 @@ def show_factor_playground():
                 st.write("Data mais recente:", data.index.max())
                 table_data = get_factor_performance(selected_factors=selected_factors,
                                                     quantile='long_short',
+                                                    excess=False,
                                                     start_date=start_date)
 
                 df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
                 st.dataframe(format_table(df), use_container_width=True)
 
+        with tabs[2]:
+            check_logy = st.checkbox("Log Scale", key=0)
+            col1, col2 = st.columns(2, gap='large')
+
+            with col1:
+                data = get_factor_performance(selected_factors=selected_factors,
+                                              quantile='rank_1',
+                                              excess=True,
+                                              start_date=start_date,
+                                              end_date=end_date)
+
+                data = data.sub(1)
+                data = data.ffill()
+                fig = px.line(data, log_y=check_logy)
+                st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+
+            with col2:
+                st.write("Data mais recente:", data.index.max())
+                table_data = get_factor_performance(selected_factors=selected_factors,
+                                                    quantile='rank_1',
+                                                    excess=True,
+                                                    start_date=start_date)
+
+                df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
+                st.dataframe(format_table(df), use_container_width=True)
 
     elif selected_category == "Backtester":
         with st.form("factor_definition"):
