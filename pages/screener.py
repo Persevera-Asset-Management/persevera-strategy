@@ -1,8 +1,10 @@
 import pandas as pd
+import numpy as np
 import os
 import streamlit as st
 from streamlit_option_menu import option_menu
 import plotly.express as px
+import plotly.graph_objects as go
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 
@@ -22,8 +24,16 @@ def get_screen(fields: list, selected_sectors: list):
 
 def get_stock_data(code: str, fields: list):
     df = pd.read_parquet("https://persevera.s3.sa-east-1.amazonaws.com/factor_zoo.parquet",
-                         filters=[("code", "==", code)], columns=fields)
+                         filters=[("code", "==", code)], columns=fields, engine='pyarrow')
     df.index = df.index.droplevel(0)
+    return df
+
+
+def get_multi_factor_data(code: str):
+    df = pd.read_parquet("https://persevera.s3.sa-east-1.amazonaws.com/multi_factor_screening.parquet",
+                         filters=[("code", "==", code)])
+    df = df.drop(columns=['code'])
+    df = df.set_index('date')
     return df
 
 
@@ -106,4 +116,25 @@ def show_screener():
         with cols_single_names[0]:
             selected_stock = st.selectbox(label='Selecione a ação:', options=stocks_available)
             data_price = get_stock_data(code=selected_stock, fields=['price_close'])
-            cols_single_names[0].plotly_chart(create_line_chart(data_price, f"Preço de Fechamento: {selected_stock}", connect_gaps=True), use_container_width=True)
+            data_multi_factor = get_multi_factor_data(selected_stock)
+
+            selected_factor = st.selectbox(label='Selecione o fator:', options=data_multi_factor.filter(like='quantile').columns)
+
+            data_price_scores = pd.get_dummies(data_multi_factor[selected_factor], dtype=int).merge(data_price, left_index=True, right_index=True, how='left')
+            data_price_scores = data_price_scores.apply(
+                lambda col: col * data_price_scores['price_close'] if col.name != 'price_close' else col)
+            data_price_scores = data_price_scores.replace(0, np.nan)
+
+            fig_line = px.line(data_frame=data_price_scores['price_close'], template='plotly_white', color_discrete_sequence=["black"])
+            fig_scatter = px.scatter(data_frame=data_price_scores.filter([1, 2, 3, 4, 5]),
+                                     color_discrete_sequence=[
+                                         "forestgreen",
+                                         "limegreen",
+                                         "lightgray",
+                                         "salmon",
+                                         "red"]
+                                     )
+            fig = go.Figure(data=fig_line.data + fig_scatter.data)
+            cols_single_names[0].plotly_chart(fig, theme='streamlit', use_container_width=True)
+
+            #cols_single_names[0].plotly_chart(create_line_chart(data_price, "Preço de Fechamento", connect_gaps=True), use_container_width=True)
