@@ -280,7 +280,7 @@ def show_factor_playground():
                 st.dataframe(format_table(df), use_container_width=True)
 
         with tabs[2]:
-            check_logy = st.checkbox("Log Scale", key=0)
+            check_logy = st.checkbox("Log Scale", key=2)
             col1, col2 = st.columns(2, gap='large')
 
             with col1:
