@@ -68,6 +68,8 @@ def show_screener():
     )
 
     if selected_category == "Geral":
+
+        # Single Name
         st.subheader("Setorial")
         variables_available = pd.read_parquet(os.path.join(DATA_PATH, "factors-factor_zoo.parquet")).columns
         stocks_available = sorted(pd.read_parquet(os.path.join(DATA_PATH, "factors-factor_zoo.parquet")).index.get_level_values(0))
@@ -95,13 +97,15 @@ def show_screener():
         data = data[data['21d_median_dollar_volume_traded'] >= liquidity_filter]
         st.dataframe(data)
 
+        # Single Name
         st.subheader("Single Name")
+
+        selected_stock = st.selectbox(label='Selecione a ação:',
+                                      options=stocks_available,
+                                      default="VALE3")
+
         cols_single_names = st.columns(2, gap='large')
 
         with cols_single_names[0]:
-            selected_stock = st.selectbox(label='Selecione a ação:',
-                                          options=stocks_available,
-                                          default="VALE3")
-
             data_price = get_stock_data(code=selected_stock, fields=['price_close'])
             st.plotly_chart(create_line_chart(data_price, f"Preço de Fechamento: {selected_stock}", connect_gaps=True), use_container_width=True)
