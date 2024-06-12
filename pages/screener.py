@@ -100,11 +100,9 @@ def show_screener():
         # Single Name
         st.subheader("Single Name")
 
-        selected_stock = st.selectbox(label='Selecione a ação:',
-                                      options=stocks_available)
-
         cols_single_names = st.columns(2, gap='large')
 
         with cols_single_names[0]:
+            selected_stock = st.selectbox(label='Selecione a ação:', options=stocks_available)
             data_price = get_stock_data(code=selected_stock, fields=['price_close'])
-            st.plotly_chart(create_line_chart(data_price, f"Preço de Fechamento: {selected_stock}", connect_gaps=True), use_container_width=True)
+            cols_single_names[0].plotly_chart(create_line_chart(data_price, f"Preço de Fechamento: {selected_stock}", connect_gaps=True), use_container_width=True)
