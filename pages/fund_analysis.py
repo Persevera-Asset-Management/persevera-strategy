@@ -244,24 +244,24 @@ def show_fund_analysis():
             st.dataframe(format_table(df), use_container_width=True)
 
     # Outras estatísticas
+    data = get_fund_data(
+        fund_name=selected_fund,
+        start_date=de_para[selected_fund]["initial_date"],
+        selected_peers=selected_peers,
+        benchmark=de_para[selected_fund]["benchmark"]
+    )
     cols_stats = st.columns(2, gap='large')
-
     with cols_stats[0]:
         st.subheader("Drawdown")
-        data = get_fund_data(
-            fund_name=selected_fund,
-            start_date=start_date,
-            end_date=end_date,
-            selected_peers=selected_peers,
-            benchmark=de_para[selected_fund]["benchmark"]
-        )
         df_drawdown = data.apply(lambda col: calculate_drawdown(col))
         fig = px.line(df_drawdown)
         st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
     with cols_stats[1]:
         st.subheader("Volatilidade Realizada")
-
+        df_volatility = data.pct_change().rolling(21).std()
+        fig = px.line(df_volatility)
+        st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
     if selected_fund == "Trinity":
         pass
