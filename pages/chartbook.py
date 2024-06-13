@@ -378,11 +378,11 @@ def show_chartbook():
         display_chart_with_expander(
             "Emprego 🅴",
             ["Pedidos de Seguro-Desemprego", "Taxa de Desemprego", "Non-Farm Payroll (MoM)", "Non-Farm Payroll (% YoY)",
-             "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)", "Quits Rate (JOLTS)",
+             "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)", "Saídas Voluntárias (JOLTS)",
              "Número de vagas abertas por desempregado"],
             ["line", "line", "bar", "bar", "line", "line", "line", "line", "line"],
             [
-                get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma"]),
+                get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma", "us_continuing_jobless_claims"]),
                 get_data(fields=["us_unemployment_rate", "us_unemployment_rate_u6"]),
                 get_data(fields=["us_adp_nonfarm_employment"]).diff().merge(get_data(fields=["us_employees_nonfarm_payrolls_mom"]), left_index=True, right_index=True, how='outer'),
                 get_data(fields=["us_adp_nonfarm_employment_yoy", "us_employees_nonfarm_payrolls_yoy"]),
@@ -543,7 +543,7 @@ def show_chartbook():
             ["Saldo da Carteira de Crédito (Total)", "Saldo da Carteira de Crédito (Abertura)", "Saldo da Carteira de Crédito (Porte PJ)", "Taxa Média de Juros das Operações", "Inadimplência da Carteira de Crédito"],
             ["line", "line", "line", "line", "line"],
             [
-                get_data(fields=["br_bcb_credit_outstanding_pf", "br_bcb_credit_outstanding_pj"]),
+                get_data(fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_pf", "br_bcb_credit_outstanding_pj"]),
                 get_data(fields=["br_bcb_nonearmarked_credit_outstanding_pj", "br_bcb_earmarked_credit_outstanding_pj", "br_bcb_nonearmarked_credit_outstanding_pf", "br_bcb_earmarked_credit_outstanding_pf"]),
                 get_data(fields=["br_bcb_credit_outstanding_msme", "br_bcb_credit_outstanding_corporate", "br_bcb_credit_outstanding_total"]),
                 get_data(fields=["br_bcb_average_interest_rate_pf", "br_bcb_average_interest_rate_pj",
