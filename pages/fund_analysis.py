@@ -259,7 +259,7 @@ def show_fund_analysis():
 
     with cols_stats[1]:
         st.subheader("Volatilidade Realizada")
-        df_volatility = data.pct_change().rolling(21).std()
+        df_volatility = data.pct_change().rolling(21).std() * np.sqrt(252)
         fig = px.line(df_volatility)
         st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
