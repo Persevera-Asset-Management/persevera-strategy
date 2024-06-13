@@ -259,7 +259,7 @@ def show_fund_analysis():
 
     with cols_stats[1]:
         st.subheader("Volatilidade Realizada")
-        window = st.radio("Horizonte:", options=[21, 42, 63], horizontal=True)
+        window = st.radio("Janela (dias):", options=[21, 42, 63], horizontal=True)
         df_volatility = data.pct_change().rolling(window).std() * np.sqrt(252)
         fig = px.line(df_volatility)
         st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
