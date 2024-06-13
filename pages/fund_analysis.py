@@ -138,6 +138,12 @@ def format_chart(figure, connect_gaps=False):
     return figure
 
 
+def calculate_drawdown(cum_returns: pd.Series) -> pd.Series:
+    """Calculate drawdown from cumulative returns."""
+    drawdown = (cum_returns / cum_returns.cummax() - 1)
+    return drawdown
+
+
 def show_fund_analysis():
     st.header("Fund Analysis")
 
@@ -236,6 +242,15 @@ def show_fund_analysis():
             table_data = table_data.ffill(limit=3)
             df = get_performance_table(table_data, start_date=start_date, end_date=end_date, relative=True)
             st.dataframe(format_table(df), use_container_width=True)
+
+    st.subheader("Estatísticas")
+    cols_stats = st.columns(2, gap='large')
+
+    with cols_stats[0]:
+        df_drawdown = data.apply(lambda col: calculate_drawdown(col))
+        fig = px.area(df_drawdown)
+        st.plotly_chart(fig, use_container_width=True)
+
 
     if selected_fund == "Trinity":
         pass
