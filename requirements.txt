@@ -1,10 +1,12 @@
 streamlit~=1.33.0
+streamlit-navigation-bar
+streamlit_option_menu
+st-files-connection
 pandas~=2.2.2
+numpy~=1.26.4
 plotly~=5.9.0
 polars~=0.20.22
 pillow~=10.2.0
-streamlit-navigation-bar
 openpyxl
-streamlit_option_menu
-numpy~=1.26.4
 scipy~=1.11.4
+s3fs
