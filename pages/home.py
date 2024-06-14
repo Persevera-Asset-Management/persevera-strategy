@@ -9,5 +9,4 @@ def show_home():
     conn = st.connection('s3', type=FilesConnection)
     fs = conn.open("s3://persevera/factor_zoo.parquet", input_format='parquet')
     df = pd.read_parquet(fs, filters=[('code', '==', 'VALE3')], columns=['price_close', 'dividend_per_share'])
-    # df = df.query('code == "VALE3"').filter(['price_close', 'dividend_per_share'])
     st.dataframe(df)
