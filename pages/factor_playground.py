@@ -441,9 +441,9 @@ def show_factor_playground():
         cols = st.columns(2, gap='large')
 
         with cols[0]:
-            fig = px.line(df[0])
+            fig = px.line(df[1])
             st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 
         with cols[1]:
-            fig = px.line(df[1])
+            fig = px.line(df[2])
             st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
