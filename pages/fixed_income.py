@@ -68,7 +68,7 @@ def show_fixed_income():
 
         fig = px.scatter(df, x="maturity", y="yield_to_maturity", size='amount_issued',
                          hover_data=['security_name', 'issuer'], color="sector_layer_0", trendline="lowess")
-        fig.update_yaxes(autorange=True, autorangeoptions_clipmin=0)
+        fig.update_yaxes(autorangeoptions_clipmax=0)
         st.plotly_chart(format_chart(figure=fig), use_container_width=True)
 
         st.write(latest_date)
