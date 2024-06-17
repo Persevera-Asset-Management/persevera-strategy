@@ -5,6 +5,7 @@ import logging, os
 import plotly.express as px
 import streamlit as st
 from streamlit_option_menu import option_menu
+from st_files_connection import FilesConnection
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -15,8 +16,9 @@ DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'
 
 
 def get_stock_data(code: str, fields: list):
-    df = pd.read_parquet("https://persevera.s3.sa-east-1.amazonaws.com/factor_zoo.parquet",
-                         filters=[("code", "==", code)], columns=fields)
+    conn = st.connection('s3', type=FilesConnection)
+    fs = conn.open("s3://persevera/factor_zoo.parquet", input_format='parquet')
+    df = pd.read_parquet(fs, filters=[("code", "==", code)], columns=fields, engine='pyarrow')
     return df
 
 
@@ -154,8 +156,10 @@ def get_eligible_stocks(investment_universe):
     liquidity_lookback = investment_universe['liquidity_lookback']
 
     # Load required columns from parquet file
+    conn = st.connection('s3', type=FilesConnection)
+    fs = conn.open("s3://persevera/factor_zoo.parquet", input_format='parquet')
     df = pd.read_parquet(
-        os.path.join(DATA_PATH, "factor_zoo.parquet"),
+        fs, engine='pyarrow',
         columns=['price_close', 'volume_traded', '21d_median_dollar_volume_traded',
                  f'{liquidity_lookback}d_median_dollar_volume_traded', 'market_cap']
     )
