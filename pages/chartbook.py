@@ -137,6 +137,35 @@ def create_bar_chart(data, title):
     return fig
 
 
+def create_area_chart(data, title):
+    fig = px.area(data)
+    fig.update_layout(
+        title=title,
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1, label="1m", step="month", stepmode="backward"),
+                    dict(count=6, label="6m", step="month", stepmode="backward"),
+                    dict(count=1, label="YTD", step="year", stepmode="todate"),
+                    dict(count=1, label="1y", step="year", stepmode="backward"),
+                    dict(count=3, label="3y", step="year", stepmode="backward"),
+                    dict(count=5, label="5y", step="year", stepmode="backward"),
+                    dict(count=10, label="10y", step="year", stepmode="backward"),
+                    dict(step="all")
+                ])
+            ),
+            rangeslider=dict(visible=False),
+            type="date",
+        ),
+        yaxis_title=None,
+        xaxis_title=None,
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
+        legend=dict(title=None, yanchor="top", orientation="h"),
+        showlegend=True,
+    )
+    return fig
+
+
 def create_two_yaxis_line_chart(data, title, connect_gaps):
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Scatter(x=data.index, y=data.iloc[:, 0], name=data.iloc[:, 0].name), secondary_y=False)
@@ -225,7 +254,8 @@ def show_chartbook():
                                          use_container_width=True)
                     elif chart_type == 'bar':
                         col.plotly_chart(create_bar_chart(dataset, title), use_container_width=True)
-
+                    elif chart_type == 'area':
+                        col.plotly_chart(create_area_chart(dataset, title), use_container_width=True)
     def display_table_with_expander(expander_title, table_titles, datasets):
         with st.expander(expander_title, expanded=False):
             num_cols = 2
@@ -303,12 +333,16 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação 🅴 🆂",
-            ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)", "Projeção de Inflação (University of Michigan)"],
-            ["line", "line", "line"],
+            ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)",
+             "Projeção de Inflação (University of Michigan)", "Inflação de Alimentos", "Riscos de Inflação"],
+            ["line", "line", "line", "line", "area"],
             [
                 get_data(fields=["us_cpi_yoy", "us_core_cpi_yoy", "us_pce_yoy", "us_core_pce_yoy", "us_supercore_cpi_yoy"]),
                 get_data(fields=["us_ppi_yoy"]),
                 get_data(fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
+                get_data(fields=["us_cpi_food_at_home_index", "us_cpi_food_away_from_home_index"]).pct_change(12).dropna(),
+                get_data(fields=['us_pce_probability_deflation', 'us_pce_probability_above_25',
+                                 'us_pce_probability_between_15_25', 'us_pce_probability_between_0_15'])
             ]
         )
 
@@ -362,8 +396,8 @@ def show_chartbook():
         display_chart_with_expander(
             "Sentimento 🅴",
             ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor",
-             "Índice de Surpresas Econômicas"],
-            ["line", "line", "line", "line", "line_two_yaxis"],
+             "Índice de Surpresas Econômicas", "Índice de Sentimento de Pequenas Empresas (NFIB)"],
+            ["line", "line", "line", "line", "line_two_yaxis", "line"],
             [
                 get_data(fields=["us_ism_manufacting", "us_ism_services"]),
                 get_data(fields=["us_ism_manufacturing_new_orders", "us_ism_manufacturing_inventories",
@@ -373,8 +407,19 @@ def show_chartbook():
                 get_data(fields=["us_university_michigan_consumer_sentiment_index",
                                  "us_university_michigan_consumer_expectations_index"]),
                 get_data(fields=["us_citi_economic_surprise_index", "us_bloomberg_economic_surprise_index"]),
+                get_data(fields=["us_nfib_small_business_optimism_index"]),
             ],
             connect_gaps=True,
+        )
+
+        display_chart_with_expander(
+            "Atividade Econômica 🅴",
+            ["Índice de Condições Financeiras", "Índice de Stress Financeiro"],
+            ["line", "line"],
+            [
+                get_data(fields=["us_fed_national_fci", "us_fed_adjusted_national_fci"]),
+                get_data(fields=["us_fed_financial_stress_index"]),
+            ]
         )
 
         display_chart_with_expander(
