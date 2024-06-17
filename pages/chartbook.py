@@ -334,15 +334,15 @@ def show_chartbook():
         display_chart_with_expander(
             "Inflação 🅴 🆂",
             ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)",
-             "Projeção de Inflação (University of Michigan)", "Inflação de Alimentos", "Riscos de Inflação"],
+             "Projeção de Inflação (University of Michigan)", "Inflação de Alimentos", "Riscos de Inflação (Probabilidades)"],
             ["line", "line", "line", "line", "area"],
             [
                 get_data(fields=["us_cpi_yoy", "us_core_cpi_yoy", "us_pce_yoy", "us_core_pce_yoy", "us_supercore_cpi_yoy"]),
                 get_data(fields=["us_ppi_yoy"]),
                 get_data(fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
-                get_data(fields=["us_cpi_food_at_home_index", "us_cpi_food_away_from_home_index"]).pct_change(12).dropna(),
-                get_data(fields=['us_pce_probability_deflation', 'us_pce_probability_above_25',
-                                 'us_pce_probability_between_15_25', 'us_pce_probability_between_0_15'])
+                get_data(fields=["us_cpi_food_at_home_index", "us_cpi_food_away_from_home_index"]).pct_change(12).dropna() * 100,
+                get_data(fields=['us_pce_probability_deflation', 'us_pce_probability_between_0_15',
+                                 'us_pce_probability_between_15_25', 'us_pce_probability_above_25'])
             ]
         )
 
@@ -395,7 +395,7 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Sentimento 🅴",
-            ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor",
+            ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor (University of Michigan)",
              "Índice de Surpresas Econômicas", "Índice de Sentimento de Pequenas Empresas (NFIB)"],
             ["line", "line", "line", "line", "line_two_yaxis", "line"],
             [

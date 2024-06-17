@@ -8,5 +8,6 @@ plotly~=5.9.0
 polars~=0.20.22
 pillow~=10.2.0
 openpyxl
+statsmodels
 scipy~=1.11.4
 s3fs
