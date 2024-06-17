@@ -148,6 +148,58 @@ def create_polar_chart(df, selected_stocks, background_color, title="Factor Zoo"
     return fig
 
 
+def get_eligible_stocks(investment_universe):
+    # Unpack parameters
+    liquidity_thresh = investment_universe['liquidity_thresh']
+    liquidity_lookback = investment_universe['liquidity_lookback']
+
+    # Load required columns from parquet file
+    df = pd.read_parquet(
+        os.path.join(DATA_PATH, "factor_zoo.parquet"),
+        columns=['price_close', 'volume_traded', '21d_median_dollar_volume_traded',
+                 f'{liquidity_lookback}d_median_dollar_volume_traded', 'market_cap']
+    )
+
+    # Calculate liquidity threshold
+    turnover_threshold = df.groupby('date')[f'{liquidity_lookback}d_median_dollar_volume_traded'] \
+                           .quantile(q=liquidity_thresh).dropna()
+    turnover_threshold.name = 'liquidity_threshold'
+
+    # Merge with liquidity threshold
+    df = df.reset_index().merge(turnover_threshold, on='date', how='left')
+
+    # Drop duplicates and sort
+    df['radical'] = df['code'].str[:4]
+    df = df.dropna(subset=['21d_median_dollar_volume_traded'])
+    df = df.sort_values(by=['date', 'radical', '21d_median_dollar_volume_traded'])
+    df = df.drop_duplicates(subset=['radical', 'date'], keep='last')
+
+    # Check eligibility
+    df['eligible'] = df[f'{liquidity_lookback}d_median_dollar_volume_traded'] > df['liquidity_threshold']
+    df = df[df['eligible']]
+
+    # Forward fill market cap and calculate 21-day average
+    df['market_cap'] = df.groupby('code')['market_cap'].ffill(limit=5)
+    df['21d_average_market_cap'] = df.groupby('code')['market_cap'] \
+                                     .transform(lambda s: s.rolling(21, min_periods=1).mean())
+
+    # Filter and set index
+    df = df.dropna(subset=['21d_average_market_cap'])
+    df = df.sort_values(['date', '21d_average_market_cap']).set_index(['date', 'code'])
+
+    # Calculate market cap ranks and size segments
+    df['market_cap_rank'] = df.groupby('date')['21d_average_market_cap'].rank(pct=True)
+    df['size_segment'] = pd.cut(df['market_cap_rank'], bins=[0, 1/3, 2/3, 1], labels=['Small', 'Mid', 'Large'])
+
+    # Finalize dataframe
+    df = df['size_segment'].swaplevel().reset_index()
+
+    # Count eligible stocks
+    count_eligible_stocks = df.groupby('date')['code'].count()
+
+    return df, turnover_threshold, count_eligible_stocks
+
+
 def show_factor_playground():
     st.header("Factor Playground")
 
@@ -373,8 +425,21 @@ def show_factor_playground():
                 st.dataframe(screening_last)
 
     if selected_category == "Universo":
-        cols = st.columns(3, gap='large')
-        liquidity_thresh = cols[0].number_input("Percentil de liquidez", value=0.4, min_value=0.,
+        cols_definition = st.columns(3, gap='large')
+        liquidity_thresh = cols_definition[0].number_input("Percentil de liquidez", value=0.4, min_value=0.,
                                                            max_value=1., step=0.1)
-        liquidity_lookback = cols[1].selectbox("Janela de liquidez (em dias úteis)", options=["21", "63", "252"], index=0)
-        size_segment = cols[2].selectbox("Tamanho", options=["ALL", "Large", "Mid", "Small"], index=0)
+        liquidity_lookback = cols_definition[1].selectbox("Janela de liquidez (em dias úteis)", options=["21", "63", "252"], index=0)
+        size_segment = cols_definition[2].selectbox("Tamanho", options=["ALL", "Large", "Mid", "Small"], index=0)
+
+        investment_universe = {'liquidity_thresh': liquidity_thresh, 'liquidity_lookback': liquidity_lookback, 'size_segment': size_segment}
+        df = get_eligible_stocks(investment_universe)
+
+        cols = st.columns(2, gap='large')
+
+        with cols[0]:
+            fig = px.line(df[0])
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+
+        with cols[1]:
+            fig = px.line(df[1])
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
