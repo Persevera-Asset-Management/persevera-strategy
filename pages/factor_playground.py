@@ -372,7 +372,7 @@ def show_factor_playground():
                 screening_last = screening[screening['date'] == screening['date'].max()].set_index('code')
                 st.dataframe(screening_last)
 
-    if selected_category == "Universe":
+    if selected_category == "Universo":
         cols = st.columns(3, gap='large')
         liquidity_thresh = cols[0].number_input("Percentil de liquidez", value=0.4, min_value=0.,
                                                            max_value=1., step=0.1)
