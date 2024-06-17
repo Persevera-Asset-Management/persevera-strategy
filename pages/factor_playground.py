@@ -371,3 +371,10 @@ def show_factor_playground():
                 screening = f.raw_data
                 screening_last = screening[screening['date'] == screening['date'].max()].set_index('code')
                 st.dataframe(screening_last)
+
+    if selected_category == "Universe":
+        cols = st.columns(3, gap='large')
+        liquidity_thresh = cols[0].number_input("Percentil de liquidez", value=0.4, min_value=0.,
+                                                           max_value=1., step=0.1)
+        liquidity_lookback = cols[1].selectbox("Janela de liquidez (em dias úteis)", options=["21", "63", "252"], index=0)
+        size_segment = cols[2].selectbox("Tamanho", options=["ALL", "Large", "Mid", "Small"], index=0)
