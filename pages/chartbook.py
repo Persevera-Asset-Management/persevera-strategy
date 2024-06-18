@@ -25,12 +25,7 @@ def code_to_name(df):
     de_para = pd.read_excel(os.path.join(DATA_PATH, "cadastro-base.xlsx"), sheet_name="indicators")
     de_para = de_para.dropna(subset='name')
     de_para = de_para.set_index('code')['name'].to_dict()
-
-    if isinstance(df, pd.Series):
-        df = df.to_frame().rename(columns=de_para)
-    else:
-        df = df.rename(columns=de_para)
-    return df
+    return de_para
 
 
 def get_cohort(assets: list, benchmark: str):
@@ -69,9 +64,9 @@ def get_yield_curve(contract):
     min = df.iloc[:, -31:-1].min(axis=1)
     max = df.iloc[:, -31:-1].max(axis=1)
 
-    df['30d_median'] = median
-    df['30d_min'] = min
-    df['30d_max'] = max
+    df['Mediana (30D)'] = median
+    df['Mínima (30D)'] = min
+    df['Máxima (30D)'] = max
     df = df[df.columns[-4:]]
     return df
 
@@ -96,14 +91,15 @@ def create_line_chart(data, title, connect_gaps):
             rangeslider=dict(visible=False),
             type="date",
         ),
-        yaxis_title=None,
-        xaxis_title=None,
+        yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
-        legend=dict(title=None, yanchor="top", orientation="h"),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
         showlegend=True,
         hovermode="x unified",
     )
     fig.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
+    fig.add_annotation(showarrow=False, text="Source: FRED", font=dict(size=10), xref='x domain', x=0.5,
+                       yref='y domain', y=-0.5)
     return fig
 
 
@@ -127,10 +123,9 @@ def create_bar_chart(data, title):
             rangeslider=dict(visible=False),
             type="date",
         ),
-        yaxis_title=None,
-        xaxis_title=None,
+        yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
-        legend=dict(title=None, yanchor="top", orientation="h"),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
         showlegend=True,
         barmode="group"
     )
@@ -157,11 +152,11 @@ def create_area_chart(data, title):
             rangeslider=dict(visible=False),
             type="date",
         ),
-        yaxis_title=None,
-        xaxis_title=None,
+        yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
-        legend=dict(title=None, yanchor="top", orientation="h"),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
         showlegend=True,
+        hovermode="x unified",
     )
     return fig
 
@@ -190,7 +185,8 @@ def create_two_yaxis_line_chart(data, title, connect_gaps):
         ),
         yaxis_title=None, xaxis_title=None,
         yaxis=dict(autorange=True, fixedrange=False, showgrid=False),
-        legend=dict(title=None, yanchor="top", orientation="h"),
+        yaxis2=dict(autorange=True, fixedrange=False, showgrid=False),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
         showlegend=True,
         hovermode="x unified",
     )
@@ -200,28 +196,31 @@ def create_two_yaxis_line_chart(data, title, connect_gaps):
 
 def get_performance_table(df):
     time_frames = {
-        'last': df.iloc[-1],
-        'wtd': df.groupby(pd.Grouper(level='date', freq="1W-FRI")).last().pct_change().iloc[-1],
-        'mtd': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1],
-        '1m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(1 * 21).iloc[-1],
-        'ytd': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1],
-        '1y': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
-        '2y': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(2 * 12 * 21).iloc[-1],
+        'Last': df.iloc[-1],
+        'WTD': df.groupby(pd.Grouper(level='date', freq="1W-FRI")).last().pct_change().iloc[-1],
+        'MTD': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1],
+        '1M': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(1 * 21).iloc[-1],
+        'YTD': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1],
+        '1Y': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
+        '2Y': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(2 * 12 * 21).iloc[-1],
     }
     df = pd.DataFrame(time_frames)
     return df
 
 
 def format_table(df):
+    cols_format = list(df.columns)
+    cols_format.remove("Last")
+
     return df.style \
-        .format({'last': '{:,.2f}'.format,
-                 'wtd': '{:,.2%}'.format,
-                 'mtd': '{:,.2%}'.format,
-                 '1m': '{:,.2%}'.format,
-                 'ytd': '{:,.2%}'.format,
-                 '1y': '{:,.2%}'.format,
-                 '2y': '{:,.2%}'.format}) \
-        .bar(align='zero', color=['#FCC0CB', '#90EE90'])
+        .bar(align='zero', subset=cols_format, color=['#FCC0CB', '#90EE90']) \
+        .format({'Last': '{:,.2f}'.format,
+                 'WTD': '{:,.2%}'.format,
+                 'MTD': '{:,.2%}'.format,
+                 '1M': '{:,.2%}'.format,
+                 'YTD': '{:,.2%}'.format,
+                 '1Y': '{:,.2%}'.format,
+                 '2Y': '{:,.2%}'.format})
 
 
 def scale_to_100(date, df):
@@ -246,7 +245,13 @@ def show_chartbook():
                 for col, title, chart_type, dataset in zip(cols, chart_titles[start_index:end_index],
                                                            chart_types[start_index:end_index],
                                                            datasets[start_index:end_index]):
-                    dataset = code_to_name(dataset)
+                    # Converte código para nome
+                    de_para = code_to_name(dataset)
+                    if isinstance(dataset, pd.Series):
+                        dataset = dataset.to_frame().rename(columns=de_para)
+                    else:
+                        dataset = dataset.rename(columns=de_para)
+
                     if chart_type == 'line':
                         col.plotly_chart(create_line_chart(dataset, title, connect_gaps), use_container_width=True)
                     elif chart_type == 'line_two_yaxis':
@@ -256,6 +261,7 @@ def show_chartbook():
                         col.plotly_chart(create_bar_chart(dataset, title), use_container_width=True)
                     elif chart_type == 'area':
                         col.plotly_chart(create_area_chart(dataset, title), use_container_width=True)
+
     def display_table_with_expander(expander_title, table_titles, datasets):
         with st.expander(expander_title, expanded=False):
             num_cols = 2
@@ -271,7 +277,13 @@ def show_chartbook():
                                                datasets[start_index:end_index]):
                     col.markdown(f"**{title}**")
                     table = get_performance_table(dataset)
+
+                    # Converte código para nome
+                    de_para = code_to_name(dataset)
+                    table = table.rename(de_para)
+
                     col.dataframe(format_table(table), use_container_width=True)
+                    # col.write(format_table(table).to_html(escape=True), unsafe_allow_html=True)
 
     menu_options = {
         "Estados Unidos": "globe",
@@ -294,7 +306,7 @@ def show_chartbook():
     if selected_category == "Estados Unidos":
         display_chart_with_expander(
             "PIB 🅴 🆂",
-            ["PIB", "PIB (% QoQ)", "PIB (% YoY)"],
+            ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             ["line", "bar", "bar"],
             [
                 get_data(fields=["us_gdp_index"]),
@@ -305,7 +317,8 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Taxas Referenciais 🆂",
-            ["Curva Pré (Treasuries)", "Curva Inflação (TIPS)", "Curva Implícita (Breakeven)", "Curva de Juros", "Inclinações"],
+            ["Curva Pré (Treasuries)", "Curva Inflação (TIPS)", "Curva Implícita (Breakeven)", "Curva de Juros",
+             "Inclinações"],
             ["line", "line", "line", "line", "line"],
             [
                 get_data(fields=["us_generic_2y", "us_generic_5y", "us_generic_10y", "us_generic_30y"]),
@@ -334,15 +347,18 @@ def show_chartbook():
         display_chart_with_expander(
             "Inflação 🅴 🆂",
             ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)",
-             "Projeção de Inflação (University of Michigan)", "Inflação de Alimentos", "Riscos de Inflação (Probabilidades)"],
-            ["line", "line", "line", "line", "area"],
+             "Projeção de Inflação (University of Michigan)", "Riscos de Inflação (Probabilidades)",
+             "Inflação de Alimentos"],
+            ["line", "line", "line", "area", "line"],
             [
-                get_data(fields=["us_cpi_yoy", "us_core_cpi_yoy", "us_pce_yoy", "us_core_pce_yoy", "us_supercore_cpi_yoy"]),
+                get_data(
+                    fields=["us_cpi_yoy", "us_core_cpi_yoy", "us_pce_yoy", "us_core_pce_yoy", "us_supercore_cpi_yoy"]),
                 get_data(fields=["us_ppi_yoy"]),
                 get_data(fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
-                get_data(fields=["us_cpi_food_at_home_index", "us_cpi_food_away_from_home_index"]).pct_change(12).dropna() * 100,
                 get_data(fields=['us_pce_probability_deflation', 'us_pce_probability_between_0_15',
-                                 'us_pce_probability_between_15_25', 'us_pce_probability_above_25'])
+                                 'us_pce_probability_between_15_25', 'us_pce_probability_above_25']),
+                get_data(fields=["us_cpi_food_at_home_index", "us_cpi_food_away_from_home_index"]).pct_change(
+                    12).dropna() * 100,
             ]
         )
 
@@ -358,14 +374,15 @@ def show_chartbook():
         )
 
         display_chart_with_expander(
-            "Vendas no Varejo 🅴",
-            ["Advance Retail Sales", "Advance Retail Sales (% LTM)", "Advance Retail Sales (% YoY)", "Advance Retail Sales (% MoM)"],
+            "Varejo 🅴",
+            ["Advance Retail Sales", "Advance Retail Sales (% LTM)", "Advance Retail Sales (% MoM)",
+             "Advance Retail Sales (% YoY)"],
             ["line", "line", "bar", "bar"],
             [
                 get_data(fields=["us_advance_retail_sales_total"]),
                 get_data(fields=["us_advance_retail_sales_total"]).rolling(12).sum().pct_change(12).dropna(),
-                get_data(fields=["us_advance_retail_sales_total_yoy"]),
                 get_data(fields=["us_advance_retail_sales_total_mom"]),
+                get_data(fields=["us_advance_retail_sales_total_yoy"]),
             ]
         )
 
@@ -395,7 +412,8 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Sentimento 🅴",
-            ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor (University of Michigan)",
+            ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services",
+             "Sentimento do Consumidor (University of Michigan)",
              "Índice de Surpresas Econômicas", "Índice de Sentimento de Pequenas Empresas (NFIB)"],
             ["line", "line", "line", "line", "line_two_yaxis", "line"],
             [
@@ -425,27 +443,32 @@ def show_chartbook():
         display_chart_with_expander(
             "Emprego 🅴",
             ["Pedidos de Seguro-Desemprego", "Taxa de Desemprego", "Non-Farm Payroll (MoM)", "Non-Farm Payroll (% YoY)",
-             "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)", "Saídas Voluntárias (JOLTS)",
+             "Ganho Médio por Hora", "Ganho Médio por Hora (% YoY)", "Abertura de Vagas (JOLTS)",
+             "Saídas Voluntárias (JOLTS)",
              "Número de vagas abertas por desempregado"],
             ["line", "line", "bar", "bar", "line", "line", "line", "line", "line"],
             [
-                get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma", "us_continuing_jobless_claims"]),
+                get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma",
+                                 "us_continuing_jobless_claims"]),
                 get_data(fields=["us_unemployment_rate", "us_unemployment_rate_u6"]),
-                get_data(fields=["us_adp_nonfarm_employment"]).diff().merge(get_data(fields=["us_employees_nonfarm_payrolls_mom"]), left_index=True, right_index=True, how='outer'),
+                get_data(fields=["us_adp_nonfarm_employment"]).diff().merge(
+                    get_data(fields=["us_employees_nonfarm_payrolls_mom"]), left_index=True, right_index=True,
+                    how='outer'),
                 get_data(fields=["us_adp_nonfarm_employment_yoy", "us_employees_nonfarm_payrolls_yoy"]),
                 get_data(fields=["us_average_hourly_earnings"]),
                 get_data(fields=["us_average_hourly_earnings_yoy"]),
                 get_data(fields=["us_jolts_hiring_rate", "us_jolts_job_openings_rate"]),
                 get_data(fields=["us_jolts_quits_rate"]),
                 get_data(fields=['us_unemployed_level_to_job_openings', 'us_job_openings_total_non_farm']).eval(
-                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna().rename('job_openings_to_unemployment_level').to_frame()
+                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna().rename(
+                    'job_openings_to_unemployment_level').to_frame()
             ],
             connect_gaps=True,
         )
 
     elif selected_category == "Brasil":
         display_chart_with_expander(
-            "PIB 🅴",
+            "PIB 🅴 🆂",
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             ["line", "bar", "bar"],
             [
@@ -471,17 +494,20 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação 🅴 🆂",
-            ["IPCA (% YoY)", "Expectativa de Inflação (Focus)", "IPCA Grupos (% YoY)", "IPCA Grupos (% YoY)", "IPCA Grupos (% YoY)", "Outros Índices (% YoY)"],
+            ["IPCA (% YoY)", "Expectativa de Inflação (Focus)", "IPCA Grupos (% YoY)", "IPCA Grupos (% YoY)",
+             "IPCA Grupos (% YoY)", "Outros Índices (% YoY)"],
             ["line", "line", "line", "line", "line", "line"],
             [
                 get_data(fields=["br_ipca_yoy"]).merge(
                     get_data(fields=["br_ipca_yoy", "br_ipca_target_inflation_rate"]).ffill().drop(
                         columns="br_ipca_yoy"), left_index=True, right_index=True, how='left').assign(
-                    upper_bound=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
-                    lower_bound=lambda x: x["br_ipca_target_inflation_rate"] - 1.5),
+                    LimiteSuperior=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
+                    LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5),
                 get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy"]),
                 get_data(fields=["br_ipca_yoy", "br_ipca_non_regulated_yoy", "br_ipca_regulated_yoy"]),
-                get_data(fields=["br_ipca_yoy", "br_ipca_services_yoy", "br_ipca_durable_yoy", "br_ipca_semi_durable_yoy", "br_ipca_non_durable_yoy"]),
+                get_data(
+                    fields=["br_ipca_yoy", "br_ipca_services_yoy", "br_ipca_durable_yoy", "br_ipca_semi_durable_yoy",
+                            "br_ipca_non_durable_yoy"]),
                 get_data(fields=["br_ipca_yoy", "br_ipca_food_beverages_yoy", "br_ipca_housing_yoy",
                                  "br_ipca_household_goods_yoy", "br_ipca_clothing_yoy", "br_ipca_transport_yoy",
                                  "br_ipca_health_yoy", "br_ipca_personal_expenses_yoy", "br_ipca_education_yoy",
@@ -492,7 +518,8 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Produção Industrial 🅴",
-            ["Produção Industrial", "Produção Industrial (% LTM)", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
+            ["Produção Industrial", "Produção Industrial (% LTM)", "Produção Industrial (% YoY)",
+             "Produção Industrial (% MoM)"],
             ["line", "line", "bar", "bar"],
             [
                 get_data(fields=["br_industrial_production"]),
@@ -507,21 +534,25 @@ def show_chartbook():
             ["Dívida (% do PIB)", "Resultado Fiscal (% do PIB)"],
             ["line", "line"],
             [
-                get_data(fields=["br_bcb_gross_gov_debt_to_gdp", "br_bcb_net_gov_debt_to_gdp", "br_bcb_net_public_sector_debt_to_gdp"]),
+                get_data(fields=["br_bcb_gross_gov_debt_to_gdp", "br_bcb_net_gov_debt_to_gdp",
+                                 "br_bcb_net_public_sector_debt_to_gdp"]),
                 get_data(fields=["br_bcb_primary_result_12m_to_gdp", "br_bcb_nominal_result_12m_to_gdp"]),
             ]
         )
 
         display_chart_with_expander(
             "Balança Comercial 🅴 🆂",
-            ["Termos de Troca (Citi)", "Termos de Troca (MDIC)", "Exportações vs Importações", "Exportações vs Importações (YTD)", "Exportações vs Importações (LTM)", "Saldo da Balança Comercial (LTM)"],
+            ["Termos de Troca (Citi)", "Termos de Troca (MDIC)", "Exportações vs Importações",
+             "Exportações vs Importações (YTD)", "Exportações vs Importações (LTM)",
+             "Saldo da Balança Comercial (LTM)"],
             ["line_two_yaxis", "line_two_yaxis", "line", "bar", "line", "bar"],
             [
                 get_data(fields=["br_citi_terms_of_trade_index", "br_current_account_to_gdp"]),
                 get_data(fields=["br_mdic_terms_of_trade_index", "br_current_account_to_gdp"]),
                 get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]),
                 get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).resample("Y").sum(),
-                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).rolling(12).sum().dropna(),
+                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).rolling(
+                    12).sum().dropna(),
                 get_data(fields=["br_trade_balance_fob_t12"]),
             ],
             connect_gaps=True
@@ -529,14 +560,19 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Serviços (PMS) 🅴",
-            ["Volume de Serviços", "Volume de Serviços (12 meses)", "Volume de Serviços (% YoY)", "Volume de Serviços (% MoM)", "Evolução por Atividade"],
+            ["Volume de Serviços", "Volume de Serviços (12 meses)", "Volume de Serviços (% YoY)",
+             "Volume de Serviços (% MoM)", "Evolução por Atividade"],
             ["line", "line", "bar", "bar", "line"],
             [
                 get_data(fields=["br_pms_services_volume_total_index"]),
                 get_data(fields=["br_pms_services_volume_total_index"]),
                 get_data(fields=["br_pms_services_volume_total_yoy"]),
                 get_data(fields=["br_pms_services_volume_total_mom"]),
-                get_data(fields=["br_pms_services_volume_total_index", "br_pms_services_volume_administrative_index", "br_pms_services_volume_transport_index", "br_pms_services_volume_individual_and_family_index", "br_pms_services_volume_information_communication_index", "br_pms_services_volume_others_index"]),
+                get_data(fields=["br_pms_services_volume_total_index", "br_pms_services_volume_administrative_index",
+                                 "br_pms_services_volume_transport_index",
+                                 "br_pms_services_volume_individual_and_family_index",
+                                 "br_pms_services_volume_information_communication_index",
+                                 "br_pms_services_volume_others_index"]),
             ]
         )
 
@@ -545,20 +581,36 @@ def show_chartbook():
             ["Volume de Vendas", "Volume de Vendas (% YoY)", "Evolução por Atividade"],
             ["line", "bar", "line"],
             [
-                get_data(fields=["br_pmc_retail_sales_volume_total_index", "br_pmc_retail_sales_volume_total_amplified_index"]),
-                get_data(fields=["br_pmc_retail_sales_volume_total_yoy", "br_pmc_retail_sales_volume_total_amplified_yoy"]),
-                get_data(fields=["br_pmc_retail_sales_volume_total_index", "br_pmc_retail_sales_volume_fuels_lubrificants_index", "br_pmc_retail_sales_volume_food_beverage_index", "br_pmc_retail_sales_volume_supermarkets_index", "br_pmc_retail_sales_volume_textiles_clothing_index", "br_pmc_retail_sales_volume_furniture_index", "br_pmc_retail_sales_volume_pharma_cosmetics_index", "br_pmc_retail_sales_volume_books_magazines_index", "br_pmc_retail_sales_volume_office_materials_index", "br_pmc_retail_sales_volume_others_index"]),
+                get_data(fields=["br_pmc_retail_sales_volume_total_index",
+                                 "br_pmc_retail_sales_volume_total_amplified_index"]),
+                get_data(
+                    fields=["br_pmc_retail_sales_volume_total_yoy", "br_pmc_retail_sales_volume_total_amplified_yoy"]),
+                get_data(fields=["br_pmc_retail_sales_volume_total_index",
+                                 "br_pmc_retail_sales_volume_fuels_lubrificants_index",
+                                 "br_pmc_retail_sales_volume_food_beverage_index",
+                                 "br_pmc_retail_sales_volume_supermarkets_index",
+                                 "br_pmc_retail_sales_volume_textiles_clothing_index",
+                                 "br_pmc_retail_sales_volume_furniture_index",
+                                 "br_pmc_retail_sales_volume_pharma_cosmetics_index",
+                                 "br_pmc_retail_sales_volume_books_magazines_index",
+                                 "br_pmc_retail_sales_volume_office_materials_index",
+                                 "br_pmc_retail_sales_volume_others_index"]),
             ]
         )
 
         display_chart_with_expander(
             "Sentimento 🅴",
-            ["Índice de Confiança do Consumidor", "Índice de Confiança Empresarial", "Índice de Confiança Industrial", "Índice de Incerteza Econômica"],
+            ["Índice de Confiança do Consumidor", "Índice de Confiança Empresarial", "Índice de Confiança Industrial",
+             "Índice de Incerteza Econômica"],
             ["line", "line", "line", "line"],
             [
-                get_data(fields=["br_fgv_consumer_confidence_current_situation_index", "br_fgv_consumer_confidence_expectations_index", "br_fgv_consumer_confidence_index"]),
-                get_data(fields=["br_fgv_business_confidence_current_situation_index", "br_fgv_business_confidence_expectations_index", "br_fgv_business_confidence_index"]),
-                get_data(fields=["br_fgv_industrial_confidence_current_situation_index", "br_fgv_industrial_confidence_expectations_index", "br_fgv_industrial_confidence_index"]),
+                get_data(fields=["br_fgv_consumer_confidence_current_situation_index",
+                                 "br_fgv_consumer_confidence_expectations_index", "br_fgv_consumer_confidence_index"]),
+                get_data(fields=["br_fgv_business_confidence_current_situation_index",
+                                 "br_fgv_business_confidence_expectations_index", "br_fgv_business_confidence_index"]),
+                get_data(fields=["br_fgv_industrial_confidence_current_situation_index",
+                                 "br_fgv_industrial_confidence_expectations_index",
+                                 "br_fgv_industrial_confidence_index"]),
                 get_data(fields=["br_fgv_economic_uncertainty_index"]),
             ]
         )
@@ -587,12 +639,18 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Crédito 🅴",
-            ["Saldo da Carteira de Crédito (Total)", "Saldo da Carteira de Crédito (Abertura)", "Saldo da Carteira de Crédito (Porte PJ)", "Taxa Média de Juros das Operações", "Inadimplência da Carteira de Crédito"],
+            ["Saldo da Carteira de Crédito (Total)", "Saldo da Carteira de Crédito (Abertura)",
+             "Saldo da Carteira de Crédito (Porte PJ)", "Taxa Média de Juros das Operações",
+             "Inadimplência da Carteira de Crédito"],
             ["line", "line", "line", "line", "line"],
             [
-                get_data(fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_pf", "br_bcb_credit_outstanding_pj"]),
-                get_data(fields=["br_bcb_nonearmarked_credit_outstanding_pj", "br_bcb_earmarked_credit_outstanding_pj", "br_bcb_nonearmarked_credit_outstanding_pf", "br_bcb_earmarked_credit_outstanding_pf"]),
-                get_data(fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_msme", "br_bcb_credit_outstanding_corporate"]),
+                get_data(fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_pf",
+                                 "br_bcb_credit_outstanding_pj"]),
+                get_data(fields=["br_bcb_nonearmarked_credit_outstanding_pj", "br_bcb_earmarked_credit_outstanding_pj",
+                                 "br_bcb_nonearmarked_credit_outstanding_pf",
+                                 "br_bcb_earmarked_credit_outstanding_pf"]),
+                get_data(fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_msme",
+                                 "br_bcb_credit_outstanding_corporate"]),
                 get_data(fields=["br_bcb_average_interest_rate_total", "br_bcb_average_interest_rate_pf",
                                  "br_bcb_average_interest_rate_pj", "br_selic_target"]),
                 get_data(fields=["br_bcb_past_due_loans_pf", "br_bcb_past_due_loans_pj"]),
@@ -652,8 +710,11 @@ def show_chartbook():
             "Performance 🆂",
             ["Energia", "Metais"],
             [
-                get_data(fields=["crude_oil_wti", "crude_oil_brent", "gasoline", "usda_diesel", "natural_gas", "thermal_coal"]).ffill(limit=2),
-                get_data(fields=["gold", "silver", "lme_aluminum", "lme_copper", "lme_nickel_cash", "sgx_iron_ore_62", "platinum", "palladium", "lme_zinc_spot", "coking_coal"]).fillna(method="ffill", limit=2),
+                get_data(fields=["crude_oil_wti", "crude_oil_brent", "gasoline", "usda_diesel", "natural_gas",
+                                 "thermal_coal"]).ffill(limit=2),
+                get_data(fields=["gold", "silver", "lme_aluminum", "lme_copper", "lme_nickel_cash", "sgx_iron_ore_62",
+                                 "platinum", "palladium", "lme_zinc_spot", "coking_coal"]).fillna(method="ffill",
+                                                                                                  limit=2),
             ]
         )
 
@@ -662,12 +723,14 @@ def show_chartbook():
             ["Índice CRB (2019 = 100)", "Índice CRB (% 12 meses)"],
             ["line", "line"],
             [
-                scale_to_100(date="2019", df=get_data(fields=["crb_index", "crb_fats_oils_index", "crb_food_index", "crb_livestock_index", "crb_metals_index", "crb_raw_industrials_index", "crb_textiles_index"])),
+                scale_to_100(date="2019", df=get_data(
+                    fields=["crb_index", "crb_fats_oils_index", "crb_food_index", "crb_livestock_index",
+                            "crb_metals_index", "crb_raw_industrials_index", "crb_textiles_index"])),
                 get_data(fields=["crb_index"]).pct_change(252).dropna(),
             ],
             connect_gaps=True
         )
-        
+
         display_chart_with_expander(
             "Fretes 🆂",
             ["Índices de Custo de Frete"],
@@ -699,9 +762,13 @@ def show_chartbook():
                 scale_to_100(date="2019", df=get_data(
                     fields=["br_icb_composite", "br_icb_agriculture", "br_icb_energy", "br_icb_metal"])),
                 scale_to_100(date="2019", df=get_data(
-                    fields=["br_cepea_paddy_rice", "br_cepea_soft_wheat", "br_cepea_corn_wholesale", "br_cepea_soybean_wholesale", "br_cepea_sugar", "br_cepea_cotton_feather", "br_cepea_arabica_coffee"]).ffill(limit=63)),
+                    fields=["br_cepea_paddy_rice", "br_cepea_soft_wheat", "br_cepea_corn_wholesale",
+                            "br_cepea_soybean_wholesale", "br_cepea_sugar", "br_cepea_cotton_feather",
+                            "br_cepea_arabica_coffee"]).ffill(limit=63)),
                 scale_to_100(date="2019", df=get_data(
-                    fields=["br_cepea_chilled_whole_broiler", "br_cepea_pork", "br_cepea_beef_carcass", "br_cepea_beef_forequarter", "br_cepea_beef_hindquarter", "br_cepea_beef_thin_flank", "br_cepea_fed_cattle"])),
+                    fields=["br_cepea_chilled_whole_broiler", "br_cepea_pork", "br_cepea_beef_carcass",
+                            "br_cepea_beef_forequarter", "br_cepea_beef_hindquarter", "br_cepea_beef_thin_flank",
+                            "br_cepea_fed_cattle"])),
             ],
             connect_gaps=True
         )
@@ -712,9 +779,11 @@ def show_chartbook():
             ["Desenvolvidos", "Emergentes"],
             [
                 get_data(
-                    fields=["twd_usd", "bloomberg_dollar_index", "eur_usd", "jpy_usd", "gbp_usd", "chf_usd", "cad_usd", "aud_usd", "nok_usd", "sek_usd"]).fillna(method="ffill", limit=2),
+                    fields=["twd_usd", "dxy_index", "eur_usd", "jpy_usd", "gbp_usd", "chf_usd", "cad_usd",
+                            "aud_usd", "nok_usd", "sek_usd"]).fillna(method="ffill", limit=2),
                 get_data(
-                    fields=["brl_usd", "mxn_usd", "clp_usd", "zar_usd", "try_usd", "cnh_usd"]).fillna(method="ffill", limit=2),
+                    fields=["brl_usd", "mxn_usd", "clp_usd", "zar_usd", "try_usd", "cnh_usd"]).fillna(method="ffill",
+                                                                                                      limit=2),
             ]
         )
 
@@ -744,12 +813,15 @@ def show_chartbook():
                     field="price_to_earnings_fwd").apply(lambda x: x / x["us_sp500"], axis=1).drop(columns="us_sp500"),
                 get_index_data(
                     category='valuation',
-                    codes=["br_ibovespa", "china_csi300", "south_africa_top40", "mexico_bmv", "chile_ipsa", "india_nifty50", "indonesia_jci"],
+                    codes=["br_ibovespa", "china_csi300", "south_africa_top40", "mexico_bmv", "chile_ipsa",
+                           "india_nifty50", "indonesia_jci"],
                     field="price_to_earnings_fwd"),
                 get_index_data(
                     category='valuation',
-                    codes=["us_sp500", "br_ibovespa", "china_csi300", "south_africa_top40", "mexico_bmv", "chile_ipsa", "india_nifty50", "indonesia_jci"],
-                    field="price_to_earnings_fwd").apply(lambda x: x / x["us_sp500"], axis=1).drop(columns="us_sp500").dropna(how="all"),
+                    codes=["us_sp500", "br_ibovespa", "china_csi300", "south_africa_top40", "mexico_bmv", "chile_ipsa",
+                           "india_nifty50", "indonesia_jci"],
+                    field="price_to_earnings_fwd").apply(lambda x: x / x["us_sp500"], axis=1).drop(
+                    columns="us_sp500").dropna(how="all"),
             ],
             connect_gaps=True
         )
@@ -833,7 +905,7 @@ def show_chartbook():
             ["line", "line"],
             [
                 get_data(fields=["us_sp500"]).assign(ma_200=lambda x: x['us_sp500'].rolling(200).mean(),
-                                                        ma_50=lambda x: x['us_sp500'].rolling(50).mean()),
+                                                     ma_50=lambda x: x['us_sp500'].rolling(50).mean()),
                 get_data(fields=["br_ibovespa"]).assign(ma_200=lambda x: x['br_ibovespa'].rolling(200).mean(),
                                                         ma_50=lambda x: x['br_ibovespa'].rolling(50).mean())
             ]
@@ -842,7 +914,8 @@ def show_chartbook():
     elif selected_category == "Cohorts":
         display_chart_with_expander(
             "Estados Unidos",
-            ["SOXX vs SPY", "Discretionary vs Staples", "VIX3M vs VIX", "High Beta vs Low Volatility", "Utilities vs SPY"],
+            ["SOXX vs SPY", "Discretionary vs Staples", "VIX3M vs VIX", "High Beta vs Low Volatility",
+             "Utilities vs SPY"],
             ["line_two_yaxis", "line_two_yaxis", "line_two_yaxis", "line_two_yaxis", "line_two_yaxis"],
             [
                 get_cohort(assets=["us_semiconductor_soxx", "us_sp500"], benchmark="us_sp500"),
