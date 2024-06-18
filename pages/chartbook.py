@@ -503,7 +503,12 @@ def show_chartbook():
                         columns="br_ipca_yoy"), left_index=True, right_index=True, how='left').assign(
                     LimiteSuperior=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
                     LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5),
-                get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy", "br_ipca_target_inflation_rate"]).ffill().dropna(subset='br_focus_ipca_median_fwd_12m_yoy').assign(Meta=lambda x: x["br_ipca_target_inflation_rate"].shift(-252)).drop(columns="br_ipca_target_inflation_rate").ffill(),
+                get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy", "br_ipca_target_inflation_rate"]).ffill().dropna(
+                    subset='br_focus_ipca_median_fwd_12m_yoy').assign(
+                    Meta=lambda x: x["br_ipca_target_inflation_rate"].shift(-252)).ffill().assign(
+                    LimiteSuperior=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
+                    LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5).drop(
+                    columns="br_ipca_target_inflation_rate"),
                 get_data(fields=["br_ipca_yoy", "br_ipca_non_regulated_yoy", "br_ipca_regulated_yoy"]),
                 get_data(
                     fields=["br_ipca_yoy", "br_ipca_services_yoy", "br_ipca_durable_yoy", "br_ipca_semi_durable_yoy",
