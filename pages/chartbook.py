@@ -379,10 +379,10 @@ def show_chartbook():
              "Advance Retail Sales (% YoY)"],
             ["line", "line", "bar", "bar"],
             [
-                get_data(fields=["us_advance_retail_sales_total"]),
-                get_data(fields=["us_advance_retail_sales_total"]).rolling(12).sum().pct_change(12).dropna(),
-                get_data(fields=["us_advance_retail_sales_total_mom"]),
-                get_data(fields=["us_advance_retail_sales_total_yoy"]),
+                get_data(fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]),
+                get_data(fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]).rolling(12).sum().pct_change(12).dropna(),
+                get_data(fields=["us_advance_retail_sales_total_mom", "us_advance_retail_sales_ex_auto_mom"]),
+                get_data(fields=["us_advance_retail_sales_total_yoy", "us_advance_retail_sales_ex_auto_yoy"]),
             ]
         )
 
