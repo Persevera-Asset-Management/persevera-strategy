@@ -706,7 +706,7 @@ def show_chartbook():
                 get_data(fields=["south_africa_generic_1y", "russia_generic_1y", "br_generic_1y", "mexico_generic_1y",
                                  "india_generic_1y", "indonesia_generic_1y", "turkey_generic_1y"]),
                 get_data(fields=["south_africa_generic_5y", "russia_generic_5y", "br_generic_5y", "mexico_generic_5y",
-                                 "india_generic_5y", "indonesia_generic_5y", "turkey_generic_1y"]),
+                                 "india_generic_5y", "indonesia_generic_5y", "turkey_generic_5y"]),
             ]
         )
 
