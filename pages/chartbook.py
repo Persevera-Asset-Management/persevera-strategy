@@ -351,7 +351,7 @@ def show_chartbook():
             ["line", "line", "line", "area", "line"],
             [
                 get_data(
-                    fields=["us_cpi_yoy", "us_core_cpi_yoy", "us_pce_yoy", "us_core_pce_yoy", "us_supercore_cpi_yoy"]),
+                    fields=["us_cpi_yoy", "us_cpi_core_yoy", "us_pce_yoy", "us_pce_core_yoy", "us_supercore_cpi_yoy"]),
                 get_data(fields=["us_ppi_yoy"]),
                 get_data(fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
                 get_data(fields=['us_pce_probability_deflation', 'us_pce_probability_between_0_15',
