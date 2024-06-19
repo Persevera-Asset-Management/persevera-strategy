@@ -98,8 +98,6 @@ def create_line_chart(data, title, connect_gaps):
         hovermode="x unified",
     )
     fig.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
-    fig.add_annotation(showarrow=False, text="Source: FRED", font=dict(size=10), xref='x domain', x=0.5,
-                       yref='y domain', y=-0.5)
     return fig
 
 
@@ -158,6 +156,7 @@ def create_area_chart(data, title):
         showlegend=True,
         hovermode="x unified",
     )
+    fig.update_traces(hovertemplate="%{y}")
     return fig
 
 
@@ -347,8 +346,8 @@ def show_chartbook():
         display_chart_with_expander(
             "Inflação 🅴 🆂",
             ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)",
-             "Projeção de Inflação (University of Michigan)", "Riscos de Inflação (Probabilidades)",
-             "Inflação de Alimentos"],
+             "Projeção de Inflação (University of Michigan)", "PCE: Riscos de Inflação (Probabilidades)",
+             "CPI Grupos"],
             ["line", "line", "line", "area", "line"],
             [
                 get_data(
@@ -357,8 +356,9 @@ def show_chartbook():
                 get_data(fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
                 get_data(fields=['us_pce_probability_deflation', 'us_pce_probability_between_0_15',
                                  'us_pce_probability_between_15_25', 'us_pce_probability_above_25']),
-                get_data(fields=["us_cpi_food_at_home_index", "us_cpi_food_away_from_home_index"]).pct_change(
-                    12).dropna() * 100,
+                get_data(fields=["us_cpi_apparel_index", "us_cpi_education_and_communication_index", "us_cpi_food_index",
+                                 "us_cpi_housing_index", "us_cpi_medical_care_index","us_cpi_other_goods_and_services_index",
+                                 "us_cpi_recreation_index", "us_cpi_transportation_index"]).pct_change(12).dropna() * 100,
             ]
         )
 
