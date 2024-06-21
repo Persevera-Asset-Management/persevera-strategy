@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import logging, os
+from functools import reduce
+import pyarrow.parquet as pq
 import plotly.express as px
 import streamlit as st
 from streamlit_option_menu import option_menu
@@ -19,6 +21,25 @@ def get_stock_data(code: str, fields: list):
     conn = st.connection('s3', type=FilesConnection)
     fs = conn.open("s3://persevera/factor_zoo.parquet", input_format='parquet')
     df = pd.read_parquet(fs, filters=[("code", "==", code)], columns=fields, engine='pyarrow')
+    return df
+
+
+def get_table_features(file_path):
+    schema = pq.read_schema(file_path)
+    return schema.names
+
+
+def get_key_statistics(returns):
+    cum_returns = performance.get_performance(returns)
+    data_frames = [
+        performance.calculate_annualized_returns(cum_returns).to_frame('ann_returns'),
+        (returns.std() * np.sqrt(252)).to_frame('ann_std'),
+        performance.calculate_information_ratios(returns, excess_returns=True).to_frame('information_ratios'),
+        performance.calculate_drawdown(cum_returns).min().to_frame('max_dd'),
+        performance.calculate_hit_ratios(cum_returns).to_frame('hit_ratios'),
+    ]
+
+    df = reduce(lambda left, right: pd.merge(left, right, left_index=True, right_index=True, how='outer'), data_frames)
     return df
 
 
@@ -45,7 +66,6 @@ def get_factor_performance(selected_factors, quantile, excess, start_date, end_d
         cols = [col for col in cols if 'excess' in col] if excess else [col for col in cols if 'excess' not in col]
 
         df = df.filter(cols)
-        #df = np.cumprod(1 + df.pct_change()).fillna(1)
         df = df.pct_change()
         df.iloc[0] = 0
         df = df.apply(performance.get_performance)
@@ -63,8 +83,12 @@ def format_table(df):
                             '3m': '{:,.2%}'.format,
                             '6m': '{:,.2%}'.format,
                             '12m': '{:,.2%}'.format,
-                            'custom': '{:,.2%}'.format}
-                           )
+                            'custom': '{:,.2%}'.format,
+                            'ann_returns': '{:,.2%}'.format,
+                            'ann_std': '{:,.2%}'.format,
+                            'information_ratios': '{:,.2}'.format,
+                            'max_dd': '{:,.2%}'.format,
+                            'hit_ratios': '{:,.1%}'.format})
 
 
 def format_chart(figure, yaxis_range=None, showlegend=True, connect_gaps=False):
@@ -209,7 +233,7 @@ def show_factor_playground():
 
     selected_category = option_menu(
         menu_title=None,
-        options=["Factor Radar", "Performance", "Backtester", "Universo"],
+        options=["Factor Radar", "Performance", "Tearsheet", "Backtester", "Universo"],
         orientation="horizontal"
     )
 
@@ -363,6 +387,63 @@ def show_factor_playground():
 
                 df = get_performance_table(table_data, start_date=start_date, end_date=end_date)
                 st.dataframe(format_table(df), use_container_width=True)
+
+    elif selected_category == "Tearsheet":
+        header = st.columns(2, gap='large')
+        selected_factor = header[0].selectbox(label='Selecione o fator:',
+                                              options=['value', 'quality', 'momentum', 'liquidity', 'risk', 'size',
+                                                       'short_interest', 'multi_factor'])
+        de_para = {'Long Only': 'rank_1', 'Long & Short': 'long_short_gross', 'Excess Returns': 'rank_1_excess'}
+        selected_strategy = header[1].radio(label='Selecione a estratégia:', options=[*de_para], horizontal=True)
+        selected_strategy = de_para[selected_strategy]
+        selected_holding_period = header[1].radio(label='Selecione o horizonte:', options=['1W', '2W', '1M', '2M', '3M', '6M'], horizontal=True)
+
+        all_factors = get_table_features(os.path.join(DATA_PATH, "factors-returns.parquet"))
+        filtered_factors = [feature for feature in all_factors if (feature.endswith(selected_strategy) and feature.startswith(selected_factor) and selected_holding_period in feature)]
+
+        returns = pd.read_parquet(os.path.join(DATA_PATH, "factors-returns.parquet"), columns=filtered_factors)
+        returns.columns = [col.split('-')[1] for col in filtered_factors]
+        returns = returns.dropna(how='all')
+
+        cols_1 = st.columns(2, gap='large')
+        with cols_1[0]:
+            # Retorno acumulado
+            st.markdown("**Retorno Acumulado**")
+            cum_returns = performance.get_performance(returns)
+            fig = px.line(cum_returns)
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+
+        with cols_1[1]:
+            # Estatísticas
+            st.markdown("**Principais Estatísticas**")
+            table_data = get_key_statistics(returns.fillna(0))
+            st.dataframe(format_table(table_data), use_container_width=True)
+
+        cols_2 = st.columns(2, gap='large')
+        with cols_2[0]:
+            # Drawdown
+            st.markdown("**Drawdown**")
+            fig = px.line(performance.calculate_drawdown(cum_returns))
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+
+        with cols_2[1]:
+            # Persitência
+            st.markdown("**Persitência**")
+            filtered_factors = [feature for feature in all_factors if (
+                        feature.endswith(selected_strategy) and feature.startswith(
+                    selected_factor) and '-composite-' in feature)]
+            returns = pd.read_parquet(os.path.join(DATA_PATH, "factors-returns.parquet"), columns=filtered_factors)
+            returns.columns = [col.split('-')[2] for col in filtered_factors]
+            table_data = get_key_statistics(returns)
+            data = table_data[['ann_returns', 'information_ratios']].T[['1W', '2W', '1M', '2M', '3M', '6M']].T
+
+            fig = go.Figure(data=go.Bar(x=data.index, y=data['ann_returns'], name="Ann. Returns", marker=dict(color="lightgray")))
+            fig.add_trace(go.Scatter(x=data.index, y=data['information_ratios'], yaxis="y2", name="Information Ratio", marker=dict(color="crimson"), mode="markers"))
+            fig.update_layout(
+                legend=dict(orientation="h"),
+                yaxis=dict(title=dict(text="Ann. Returns"), side="left"),
+                yaxis2=dict(title=dict(text="Information Ratio"), side="right", overlaying="y", tickmode="sync"))
+            st.plotly_chart(fig, use_container_width=True)
 
     elif selected_category == "Backtester":
         with st.form("factor_definition"):
