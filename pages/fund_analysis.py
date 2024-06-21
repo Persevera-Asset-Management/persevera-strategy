@@ -254,7 +254,7 @@ def show_fund_analysis():
     cols_stats = st.columns(2, gap='large')
     with cols_stats[0]:
         st.subheader("Drawdown")
-        df_drawdown = data.apply(lambda col: calculate_drawdown(col))
+        df_drawdown = data.apply(calculate_drawdown)
         fig = px.line(df_drawdown)
         st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 

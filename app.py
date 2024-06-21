@@ -1,29 +1,37 @@
-import os, logging
+import os
+import logging
+import warnings
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-import warnings
 import pages as pg
 
+# Ignore future warnings
 warnings.simplefilter("ignore", category=FutureWarning)
 
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s.%(msecs)03d: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
-pages = ["Chartbook", "Fixed Income", "Fund Analysis", "Tools", "Factor Playground", "Screener"]
+# Define the pages
+PAGES = ["Chartbook", "Fixed Income", "Fund Analysis", "Tools", "Factor Playground", "Screener"]
+
+# Define paths
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(parent_dir, "logo.svg")
 page_icon_logo_path = os.path.join(parent_dir, "assets/persevera_logo_page_icon.png")
 
+# Streamlit configuration
 st.set_page_config(
     page_title="Persevera",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-styles = {
+# Define navigation styles
+NAV_STYLES = {
     "nav": {
         "background-color": "lightgrey",
         "justify-content": "left",
@@ -48,19 +56,22 @@ styles = {
         "padding": "14px",
     }
 }
-options = {
+
+NAV_OPTIONS = {
     "show_menu": True,
     "show_sidebar": False,
 }
 
-page = st_navbar(
-    pages=pages,
+# Display the navigation bar
+selected_page = st_navbar(
+    pages=PAGES,
     logo_path=logo_path,
-    styles=styles,
-    options=options,
+    styles=NAV_STYLES,
+    options=NAV_OPTIONS,
 )
 
-functions = {
+# Page functions mapping
+PAGE_FUNCTIONS = {
     "Home": pg.show_home,
     "Chartbook": pg.show_chartbook,
     "Fixed Income": pg.show_fixed_income,
@@ -69,6 +80,16 @@ functions = {
     "Screener": pg.show_screener,
     "Tools": pg.show_tools,
 }
-go_to = functions.get(page)
-if go_to:
-    go_to()
+
+
+# Navigate to the selected page
+def navigate_to_page(page_name):
+    """Navigate to the selected page."""
+    page_function = PAGE_FUNCTIONS.get(page_name)
+    if page_function:
+        page_function()
+    else:
+        st.error("Page not found")
+
+
+navigate_to_page(selected_page)

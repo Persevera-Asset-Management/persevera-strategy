@@ -24,6 +24,12 @@ def get_stock_data(code: str, fields: list):
     return df
 
 
+def get_fs_connection(file_name: str):
+    conn = st.connection('s3', type=FilesConnection)
+    fs = conn.open(f"s3://persevera/{file_name}", input_format='parquet')
+    return fs
+
+
 def get_table_features(file_path):
     schema = pq.read_schema(file_path)
     return schema.names
@@ -392,16 +398,20 @@ def show_factor_playground():
         header = st.columns(2, gap='large')
         selected_factor = header[0].selectbox(label='Selecione o fator:',
                                               options=['value', 'quality', 'momentum', 'liquidity', 'risk', 'size',
-                                                       'short_interest', 'multi_factor'])
+                                                       'short_interest', 'technical','multi_factor'])
         de_para = {'Long Only': 'rank_1', 'Long & Short': 'long_short_gross', 'Excess Returns': 'rank_1_excess'}
         selected_strategy = header[1].radio(label='Selecione a estratégia:', options=[*de_para], horizontal=True)
         selected_strategy = de_para[selected_strategy]
         selected_holding_period = header[1].radio(label='Selecione o horizonte:', options=['1W', '2W', '1M', '2M', '3M', '6M'], horizontal=True)
 
-        all_factors = get_table_features(os.path.join(DATA_PATH, "factors-returns.parquet"))
+        fs = get_fs_connection("factors-returns.parquet")
+
+        # all_factors = get_table_features(os.path.join(DATA_PATH, "factors-returns.parquet"))
+        all_factors = get_table_features(fs)
         filtered_factors = [feature for feature in all_factors if (feature.endswith(selected_strategy) and feature.startswith(selected_factor) and selected_holding_period in feature)]
 
-        returns = pd.read_parquet(os.path.join(DATA_PATH, "factors-returns.parquet"), columns=filtered_factors)
+        returns = pd.read_parquet(fs, columns=filtered_factors, engine='pyarrow')
+        # returns = pd.read_parquet(os.path.join(DATA_PATH, "factors-returns.parquet"), columns=filtered_factors)
         returns.columns = [col.split('-')[1] for col in filtered_factors]
         returns = returns.dropna(how='all')
 
@@ -432,8 +442,9 @@ def show_factor_playground():
             filtered_factors = [feature for feature in all_factors if (
                         feature.endswith(selected_strategy) and feature.startswith(
                     selected_factor) and '-composite-' in feature)]
-            returns = pd.read_parquet(os.path.join(DATA_PATH, "factors-returns.parquet"), columns=filtered_factors)
+            returns = pd.read_parquet(fs, columns=filtered_factors, engine='pyarrow')
             returns.columns = [col.split('-')[2] for col in filtered_factors]
+            returns = returns.dropna(how='all')
             table_data = get_key_statistics(returns)
             data = table_data[['ann_returns', 'information_ratios']].T[['1W', '2W', '1M', '2M', '3M', '6M']].T
 

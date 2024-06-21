@@ -13,6 +13,7 @@ import utils
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 
+@st.cache_data
 def get_data(fields: list):
     df = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
                          filters=[('code', 'in', fields)])
@@ -40,6 +41,7 @@ def get_cohort(assets: list, benchmark: str):
     return df
 
 
+@st.cache_data
 def get_index_data(category: str, codes: list, field: str):
     df = pd.read_parquet(os.path.join(DATA_PATH, f"indicators-index_{category}.parquet"))
     df = df.query('code == @codes')
@@ -48,6 +50,7 @@ def get_index_data(category: str, codes: list, field: str):
     return df
 
 
+@st.cache_data
 def get_yield_curve(contract):
     df = pd.read_parquet(DATA_PATH + "/indicators-futures_curve.parquet",
                          filters=[('contract', '==', contract)])
