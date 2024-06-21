@@ -37,12 +37,12 @@ def code_to_name(df):
 
 
 def get_cohort(assets: list, benchmark: str):
-    individual_assets = get_data(fields=assets)
+    individual_assets = get_data(fs, fields=assets)
     individual_assets = individual_assets.filter(assets)
     cohort = individual_assets.iloc[:, 0] / individual_assets.iloc[:, 1]
     cohort.name = ' / '.join(individual_assets.columns)
 
-    df_benchmark = get_data(fields=[benchmark])
+    df_benchmark = get_data(fs, fields=[benchmark])
     df = cohort.to_frame().merge(df_benchmark, left_index=True, right_index=True, how='left')
     df = df.dropna()
     return df
@@ -319,9 +319,9 @@ def show_chartbook():
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             ["line", "bar", "bar"],
             [
-                get_data(fields=["us_gdp_index"]),
-                get_data(fields=["us_gdp_yoy"]),
-                get_data(fields=["us_gdp_qoq"]),
+                get_data(fs, fields=["us_gdp_index"]),
+                get_data(fs, fields=["us_gdp_yoy"]),
+                get_data(fs, fields=["us_gdp_qoq"]),
             ]
         )
 
@@ -331,13 +331,13 @@ def show_chartbook():
              "Inclinações"],
             ["line", "line", "line", "line", "line"],
             [
-                get_data(fields=["us_generic_2y", "us_generic_5y", "us_generic_10y", "us_generic_30y"]),
-                get_data(fields=["us_generic_inflation_5y", "us_generic_inflation_10y", "us_generic_inflation_20y",
+                get_data(fs, fields=["us_generic_2y", "us_generic_5y", "us_generic_10y", "us_generic_30y"]),
+                get_data(fs, fields=["us_generic_inflation_5y", "us_generic_inflation_10y", "us_generic_inflation_20y",
                                  "us_generic_inflation_30y"]),
-                get_data(
+                get_data(fs, 
                     fields=["us_breakeven_2y", "us_breakeven_5y", "us_breakeven_10y", "usd_inflation_swap_fwd_5y5y"]),
                 get_yield_curve(contract="us_fed_funds_curve"),
-                get_data(fields=["us_2y10y_steepness", "us_5y10y_steepness", "us_5y30y_steepness"]),
+                get_data(fs, fields=["us_2y10y_steepness", "us_5y10y_steepness", "us_5y30y_steepness"]),
             ],
             connect_gaps=True
         )
@@ -347,10 +347,10 @@ def show_chartbook():
             ["IG Spreads", "IG Taxas", "HY Spreads", "HY Taxas"],
             ["line", "line", "line", "line"],
             [
-                get_data(fields=["us_corporate_ig_5y_spread", "us_corporate_ig_10y_spread"]),
-                get_data(fields=["us_corporate_ig_5y_yield", "us_corporate_ig_10y_yield"]),
-                get_data(fields=["us_corporate_hy_5y_spread", "us_corporate_hy_10y_spread"]),
-                get_data(fields=["us_corporate_hy_5y_yield", "us_corporate_hy_10y_yield"])
+                get_data(fs, fields=["us_corporate_ig_5y_spread", "us_corporate_ig_10y_spread"]),
+                get_data(fs, fields=["us_corporate_ig_5y_yield", "us_corporate_ig_10y_yield"]),
+                get_data(fs, fields=["us_corporate_hy_5y_spread", "us_corporate_hy_10y_spread"]),
+                get_data(fs, fields=["us_corporate_hy_5y_yield", "us_corporate_hy_10y_yield"])
             ]
         )
 
@@ -361,13 +361,13 @@ def show_chartbook():
              "CPI Grupos"],
             ["line", "line", "line", "area", "line"],
             [
-                get_data(
+                get_data(fs, 
                     fields=["us_cpi_yoy", "us_cpi_core_yoy", "us_pce_yoy", "us_pce_core_yoy", "us_supercore_cpi_yoy"]),
-                get_data(fields=["us_ppi_yoy"]),
-                get_data(fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
-                get_data(fields=['us_pce_probability_deflation', 'us_pce_probability_between_0_15',
+                get_data(fs, fields=["us_ppi_yoy"]),
+                get_data(fs, fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
+                get_data(fs, fields=['us_pce_probability_deflation', 'us_pce_probability_between_0_15',
                                  'us_pce_probability_between_15_25', 'us_pce_probability_above_25']),
-                get_data(fields=["us_cpi_apparel_index", "us_cpi_education_and_communication_index", "us_cpi_food_index",
+                get_data(fs, fields=["us_cpi_apparel_index", "us_cpi_education_and_communication_index", "us_cpi_food_index",
                                  "us_cpi_housing_index", "us_cpi_medical_care_index","us_cpi_other_goods_and_services_index",
                                  "us_cpi_recreation_index", "us_cpi_transportation_index"]).pct_change(12).dropna() * 100,
             ]
@@ -378,9 +378,9 @@ def show_chartbook():
             ["Produção Industrial", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
             ["line", "bar", "bar"],
             [
-                get_data(fields=["us_industrial_production_index"]),
-                get_data(fields=["us_industrial_production_yoy"]),
-                get_data(fields=["us_industrial_production_mom"]),
+                get_data(fs, fields=["us_industrial_production_index"]),
+                get_data(fs, fields=["us_industrial_production_yoy"]),
+                get_data(fs, fields=["us_industrial_production_mom"]),
             ]
         )
 
@@ -390,10 +390,10 @@ def show_chartbook():
              "Advance Retail Sales (% YoY)"],
             ["line", "line", "bar", "bar"],
             [
-                get_data(fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]),
-                get_data(fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]).rolling(12).sum().pct_change(12).dropna() * 100,
-                get_data(fields=["us_advance_retail_sales_total_mom", "us_advance_retail_sales_ex_auto_mom"]),
-                get_data(fields=["us_advance_retail_sales_total_yoy", "us_advance_retail_sales_ex_auto_yoy"]),
+                get_data(fs, fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]),
+                get_data(fs, fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]).rolling(12).sum().pct_change(12).dropna() * 100,
+                get_data(fs, fields=["us_advance_retail_sales_total_mom", "us_advance_retail_sales_ex_auto_mom"]),
+                get_data(fs, fields=["us_advance_retail_sales_total_yoy", "us_advance_retail_sales_ex_auto_yoy"]),
             ]
         )
 
@@ -402,12 +402,12 @@ def show_chartbook():
             ["Habitação", "Habitação (% YoY)", "Preços de Imóveis", "Preços de Imóveis (% YoY)"],
             ["line", "bar", "line", "bar"],
             [
-                get_data(fields=["us_new_home_sales_index", "us_housing_starts_index",
+                get_data(fs, fields=["us_new_home_sales_index", "us_housing_starts_index",
                                  "us_building_permits_index"]),
-                get_data(fields=["us_new_home_sales_yoy", "us_housing_starts_yoy",
+                get_data(fs, fields=["us_new_home_sales_yoy", "us_housing_starts_yoy",
                                  "us_building_permits_yoy"]),
-                get_data(fields=["us_case_shiller_home_price_national", "us_case_shiller_home_price_20_city_index"]),
-                get_data(fields=["us_case_shiller_home_price_national_yoy", "us_case_shiller_home_price_20_city_yoy"]),
+                get_data(fs, fields=["us_case_shiller_home_price_national", "us_case_shiller_home_price_20_city_index"]),
+                get_data(fs, fields=["us_case_shiller_home_price_national_yoy", "us_case_shiller_home_price_20_city_yoy"]),
             ]
         )
 
@@ -416,7 +416,7 @@ def show_chartbook():
             ["Inadimplência"],
             ["line"],
             [
-                get_data(fields=["us_delinquency_rates_consumer_loans", "us_delinquency_rates_credit_cards",
+                get_data(fs, fields=["us_delinquency_rates_consumer_loans", "us_delinquency_rates_credit_cards",
                                  "us_delinquency_rates_business_loans"]),
             ]
         )
@@ -428,15 +428,15 @@ def show_chartbook():
              "Índice de Surpresas Econômicas", "Índice de Sentimento de Pequenas Empresas (NFIB)"],
             ["line", "line", "line", "line", "line_two_yaxis", "line"],
             [
-                get_data(fields=["us_ism_manufacting", "us_ism_services"]),
-                get_data(fields=["us_ism_manufacturing_new_orders", "us_ism_manufacturing_inventories",
+                get_data(fs, fields=["us_ism_manufacting", "us_ism_services"]),
+                get_data(fs, fields=["us_ism_manufacturing_new_orders", "us_ism_manufacturing_inventories",
                                  "us_ism_manufacturing_prices_paid", "us_ism_manufacturing_employment"]),
-                get_data(fields=["us_ism_services_new_orders", "us_ism_services_prices_paid",
+                get_data(fs, fields=["us_ism_services_new_orders", "us_ism_services_prices_paid",
                                  "us_ism_services_employment"]),
-                get_data(fields=["us_university_michigan_consumer_sentiment_index",
+                get_data(fs, fields=["us_university_michigan_consumer_sentiment_index",
                                  "us_university_michigan_consumer_expectations_index"]),
-                get_data(fields=["us_citi_economic_surprise_index", "us_bloomberg_economic_surprise_index"]),
-                get_data(fields=["us_nfib_small_business_optimism_index"]),
+                get_data(fs, fields=["us_citi_economic_surprise_index", "us_bloomberg_economic_surprise_index"]),
+                get_data(fs, fields=["us_nfib_small_business_optimism_index"]),
             ],
             connect_gaps=True,
         )
@@ -446,8 +446,8 @@ def show_chartbook():
             ["Índice de Condições Financeiras", "Índice de Stress Financeiro"],
             ["line", "line"],
             [
-                get_data(fields=["us_fed_national_fci", "us_fed_adjusted_national_fci"]),
-                get_data(fields=["us_fed_financial_stress_index"]),
+                get_data(fs, fields=["us_fed_national_fci", "us_fed_adjusted_national_fci"]),
+                get_data(fs, fields=["us_fed_financial_stress_index"]),
             ]
         )
 
@@ -459,18 +459,18 @@ def show_chartbook():
              "Número de vagas abertas por desempregado"],
             ["line", "line", "bar", "bar", "line", "line", "line", "line", "line"],
             [
-                get_data(fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma",
+                get_data(fs, fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma",
                                  "us_continuing_jobless_claims"]),
-                get_data(fields=["us_unemployment_rate", "us_unemployment_rate_u6"]),
-                get_data(fields=["us_adp_nonfarm_employment"]).diff().merge(
-                    get_data(fields=["us_employees_nonfarm_payrolls_mom"]), left_index=True, right_index=True,
+                get_data(fs, fields=["us_unemployment_rate", "us_unemployment_rate_u6"]),
+                get_data(fs, fields=["us_adp_nonfarm_employment"]).diff().merge(
+                    get_data(fs, fields=["us_employees_nonfarm_payrolls_mom"]), left_index=True, right_index=True,
                     how='outer'),
-                get_data(fields=["us_adp_nonfarm_employment_yoy", "us_employees_nonfarm_payrolls_yoy"]),
-                get_data(fields=["us_average_hourly_earnings"]),
-                get_data(fields=["us_average_hourly_earnings_yoy"]),
-                get_data(fields=["us_jolts_hiring_rate", "us_jolts_job_openings_rate"]),
-                get_data(fields=["us_jolts_quits_rate"]),
-                get_data(fields=['us_unemployed_level_to_job_openings', 'us_job_openings_total_non_farm']).eval(
+                get_data(fs, fields=["us_adp_nonfarm_employment_yoy", "us_employees_nonfarm_payrolls_yoy"]),
+                get_data(fs, fields=["us_average_hourly_earnings"]),
+                get_data(fs, fields=["us_average_hourly_earnings_yoy"]),
+                get_data(fs, fields=["us_jolts_hiring_rate", "us_jolts_job_openings_rate"]),
+                get_data(fs, fields=["us_jolts_quits_rate"]),
+                get_data(fs, fields=['us_unemployed_level_to_job_openings', 'us_job_openings_total_non_farm']).eval(
                     'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna().rename(
                     'job_openings_to_unemployment_level').to_frame()
             ],
@@ -483,9 +483,9 @@ def show_chartbook():
             ["PIB", "PIB (% YoY)", "PIB (% QoQ)"],
             ["line", "bar", "bar"],
             [
-                get_data(fields=["br_gdp_index"]),
-                get_data(fields=["br_gdp_yoy"]),
-                get_data(fields=["br_gdp_qoq"]),
+                get_data(fs, fields=["br_gdp_index"]),
+                get_data(fs, fields=["br_gdp_yoy"]),
+                get_data(fs, fields=["br_gdp_qoq"]),
             ]
         )
 
@@ -494,9 +494,9 @@ def show_chartbook():
             ["Curva Pré", "Curva IPCA", "Curva Implícita", "Curva de Juros"],
             ["line", "line", "line", "line"],
             [
-                get_data(fields=["br_pre_1y", "br_pre_2y", "br_pre_3y", "br_pre_5y", "br_pre_10y"]),
-                get_data(fields=["br_ipca_1y", "br_ipca_2y", "br_ipca_3y", "br_ipca_5y", "br_ipca_10y", "br_ipca_35y"]),
-                get_data(fields=["br_breakeven_1y", "br_breakeven_2y", "br_breakeven_3y", "br_breakeven_5y",
+                get_data(fs, fields=["br_pre_1y", "br_pre_2y", "br_pre_3y", "br_pre_5y", "br_pre_10y"]),
+                get_data(fs, fields=["br_ipca_1y", "br_ipca_2y", "br_ipca_3y", "br_ipca_5y", "br_ipca_10y", "br_ipca_35y"]),
+                get_data(fs, fields=["br_breakeven_1y", "br_breakeven_2y", "br_breakeven_3y", "br_breakeven_5y",
                                  "br_breakeven_10y"]),
                 get_yield_curve("br_di_curve")
             ],
@@ -509,26 +509,26 @@ def show_chartbook():
              "IPCA Grupos (% YoY)", "Outros Índices (% YoY)"],
             ["line", "line", "line", "line", "line", "line"],
             [
-                get_data(fields=["br_ipca_yoy"]).merge(
-                    get_data(fields=["br_ipca_yoy", "br_ipca_target_inflation_rate"]).ffill().drop(
+                get_data(fs, fields=["br_ipca_yoy"]).merge(
+                    get_data(fs, fields=["br_ipca_yoy", "br_ipca_target_inflation_rate"]).ffill().drop(
                         columns="br_ipca_yoy"), left_index=True, right_index=True, how='left').assign(
                     LimiteSuperior=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
                     LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5),
-                get_data(fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy", "br_ipca_target_inflation_rate"]).ffill().dropna(
+                get_data(fs, fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy", "br_ipca_target_inflation_rate"]).ffill().dropna(
                     subset='br_focus_ipca_median_fwd_12m_yoy').assign(
                     Meta=lambda x: x["br_ipca_target_inflation_rate"].shift(-252)).ffill().assign(
                     LimiteSuperior=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
                     LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5).drop(
                     columns="br_ipca_target_inflation_rate"),
-                get_data(fields=["br_ipca_yoy", "br_ipca_non_regulated_yoy", "br_ipca_regulated_yoy"]),
-                get_data(
+                get_data(fs, fields=["br_ipca_yoy", "br_ipca_non_regulated_yoy", "br_ipca_regulated_yoy"]),
+                get_data(fs, 
                     fields=["br_ipca_yoy", "br_ipca_services_yoy", "br_ipca_durable_yoy", "br_ipca_semi_durable_yoy",
                             "br_ipca_non_durable_yoy"]),
-                get_data(fields=["br_ipca_yoy", "br_ipca_food_beverages_yoy", "br_ipca_housing_yoy",
+                get_data(fs, fields=["br_ipca_yoy", "br_ipca_food_beverages_yoy", "br_ipca_housing_yoy",
                                  "br_ipca_household_goods_yoy", "br_ipca_clothing_yoy", "br_ipca_transport_yoy",
                                  "br_ipca_health_yoy", "br_ipca_personal_expenses_yoy", "br_ipca_education_yoy",
                                  "br_ipca_communications_yoy"]),
-                get_data(fields=["br_ipca_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_igpm_yoy", "br_cpi_fipe_yoy"]),
+                get_data(fs, fields=["br_ipca_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_igpm_yoy", "br_cpi_fipe_yoy"]),
             ]
         )
 
@@ -538,10 +538,10 @@ def show_chartbook():
              "Produção Industrial (% MoM)"],
             ["line", "line", "bar", "bar"],
             [
-                get_data(fields=["br_industrial_production"]),
-                get_data(fields=["br_industrial_production_12m_yoy"]),
-                get_data(fields=["br_industrial_production_yoy"]),
-                get_data(fields=["br_industrial_production_mom"]),
+                get_data(fs, fields=["br_industrial_production"]),
+                get_data(fs, fields=["br_industrial_production_12m_yoy"]),
+                get_data(fs, fields=["br_industrial_production_yoy"]),
+                get_data(fs, fields=["br_industrial_production_mom"]),
             ]
         )
 
@@ -550,9 +550,9 @@ def show_chartbook():
             ["Dívida (% do PIB)", "Resultado Fiscal (% do PIB)"],
             ["line", "line"],
             [
-                get_data(fields=["br_bcb_gross_gov_debt_to_gdp", "br_bcb_net_gov_debt_to_gdp",
+                get_data(fs, fields=["br_bcb_gross_gov_debt_to_gdp", "br_bcb_net_gov_debt_to_gdp",
                                  "br_bcb_net_public_sector_debt_to_gdp"]),
-                get_data(fields=["br_bcb_primary_result_12m_to_gdp", "br_bcb_nominal_result_12m_to_gdp"]),
+                get_data(fs, fields=["br_bcb_primary_result_12m_to_gdp", "br_bcb_nominal_result_12m_to_gdp"]),
             ]
         )
 
@@ -563,13 +563,13 @@ def show_chartbook():
              "Saldo da Balança Comercial (LTM)"],
             ["line_two_yaxis", "line_two_yaxis", "line", "bar", "line", "bar"],
             [
-                get_data(fields=["br_citi_terms_of_trade_index", "br_current_account_to_gdp"]),
-                get_data(fields=["br_mdic_terms_of_trade_index", "br_current_account_to_gdp"]),
-                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]),
-                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).resample("Y").sum(),
-                get_data(fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).rolling(
+                get_data(fs, fields=["br_citi_terms_of_trade_index", "br_current_account_to_gdp"]),
+                get_data(fs, fields=["br_mdic_terms_of_trade_index", "br_current_account_to_gdp"]),
+                get_data(fs, fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]),
+                get_data(fs, fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).resample("Y").sum(),
+                get_data(fs, fields=["br_trade_balance_fob_exports", "br_trade_balance_fob_imports"]).rolling(
                     12).sum().dropna(),
-                get_data(fields=["br_trade_balance_fob_t12"]),
+                get_data(fs, fields=["br_trade_balance_fob_t12"]),
             ],
             connect_gaps=True
         )
@@ -580,11 +580,11 @@ def show_chartbook():
              "Volume de Serviços (% MoM)", "Evolução por Atividade"],
             ["line", "line", "bar", "bar", "line"],
             [
-                get_data(fields=["br_pms_services_volume_total_index"]),
-                get_data(fields=["br_pms_services_volume_total_index"]),
-                get_data(fields=["br_pms_services_volume_total_yoy"]),
-                get_data(fields=["br_pms_services_volume_total_mom"]),
-                get_data(fields=["br_pms_services_volume_total_index", "br_pms_services_volume_administrative_index",
+                get_data(fs, fields=["br_pms_services_volume_total_index"]),
+                get_data(fs, fields=["br_pms_services_volume_total_index"]),
+                get_data(fs, fields=["br_pms_services_volume_total_yoy"]),
+                get_data(fs, fields=["br_pms_services_volume_total_mom"]),
+                get_data(fs, fields=["br_pms_services_volume_total_index", "br_pms_services_volume_administrative_index",
                                  "br_pms_services_volume_transport_index",
                                  "br_pms_services_volume_individual_and_family_index",
                                  "br_pms_services_volume_information_communication_index",
@@ -597,11 +597,11 @@ def show_chartbook():
             ["Volume de Vendas", "Volume de Vendas (% YoY)", "Evolução por Atividade"],
             ["line", "bar", "line"],
             [
-                get_data(fields=["br_pmc_retail_sales_volume_total_index",
+                get_data(fs, fields=["br_pmc_retail_sales_volume_total_index",
                                  "br_pmc_retail_sales_volume_total_amplified_index"]),
-                get_data(
+                get_data(fs, 
                     fields=["br_pmc_retail_sales_volume_total_yoy", "br_pmc_retail_sales_volume_total_amplified_yoy"]),
-                get_data(fields=["br_pmc_retail_sales_volume_total_index",
+                get_data(fs, fields=["br_pmc_retail_sales_volume_total_index",
                                  "br_pmc_retail_sales_volume_fuels_lubrificants_index",
                                  "br_pmc_retail_sales_volume_food_beverage_index",
                                  "br_pmc_retail_sales_volume_supermarkets_index",
@@ -620,14 +620,14 @@ def show_chartbook():
              "Índice de Incerteza Econômica"],
             ["line", "line", "line", "line"],
             [
-                get_data(fields=["br_fgv_consumer_confidence_current_situation_index",
+                get_data(fs, fields=["br_fgv_consumer_confidence_current_situation_index",
                                  "br_fgv_consumer_confidence_expectations_index", "br_fgv_consumer_confidence_index"]),
-                get_data(fields=["br_fgv_business_confidence_current_situation_index",
+                get_data(fs, fields=["br_fgv_business_confidence_current_situation_index",
                                  "br_fgv_business_confidence_expectations_index", "br_fgv_business_confidence_index"]),
-                get_data(fields=["br_fgv_industrial_confidence_current_situation_index",
+                get_data(fs, fields=["br_fgv_industrial_confidence_current_situation_index",
                                  "br_fgv_industrial_confidence_expectations_index",
                                  "br_fgv_industrial_confidence_index"]),
-                get_data(fields=["br_fgv_economic_uncertainty_index"]),
+                get_data(fs, fields=["br_fgv_economic_uncertainty_index"]),
             ]
         )
 
@@ -636,9 +636,9 @@ def show_chartbook():
             ["IBC-Br", "IBC-Br (% YoY)", "IBC-Br (% QoQ)"],
             ["line", "bar", "bar"],
             [
-                get_data(fields=["br_ibcbr_index"]),
-                get_data(fields=["br_ibcbr_yoy"]),
-                get_data(fields=["br_ibcbr_qoq"]),
+                get_data(fs, fields=["br_ibcbr_index"]),
+                get_data(fs, fields=["br_ibcbr_yoy"]),
+                get_data(fs, fields=["br_ibcbr_qoq"]),
             ]
         )
 
@@ -647,9 +647,9 @@ def show_chartbook():
             ["Criação de Empregos Formais (MoM)", "Criação de Empregos Formais (LTM)", "Taxa de Desemprego"],
             ["bar", "bar", "line"],
             [
-                get_data(fields=["br_caged_registered_employess_total"]).diff(),
-                get_data(fields=["br_caged_registered_employess_total"]).diff().rolling(12).sum(),
-                get_data(fields=["br_pnad_unemployment_rate"]),
+                get_data(fs, fields=["br_caged_registered_employess_total"]).diff(),
+                get_data(fs, fields=["br_caged_registered_employess_total"]).diff().rolling(12).sum(),
+                get_data(fs, fields=["br_pnad_unemployment_rate"]),
             ]
         )
 
@@ -660,16 +660,16 @@ def show_chartbook():
              "Inadimplência da Carteira de Crédito"],
             ["line", "line", "line", "line", "line"],
             [
-                get_data(fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_pf",
+                get_data(fs, fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_pf",
                                  "br_bcb_credit_outstanding_pj"]),
-                get_data(fields=["br_bcb_nonearmarked_credit_outstanding_pj", "br_bcb_earmarked_credit_outstanding_pj",
+                get_data(fs, fields=["br_bcb_nonearmarked_credit_outstanding_pj", "br_bcb_earmarked_credit_outstanding_pj",
                                  "br_bcb_nonearmarked_credit_outstanding_pf",
                                  "br_bcb_earmarked_credit_outstanding_pf"]),
-                get_data(fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_msme",
+                get_data(fs, fields=["br_bcb_credit_outstanding_total", "br_bcb_credit_outstanding_msme",
                                  "br_bcb_credit_outstanding_corporate"]),
-                get_data(fields=["br_bcb_average_interest_rate_total", "br_bcb_average_interest_rate_pf",
+                get_data(fs, fields=["br_bcb_average_interest_rate_total", "br_bcb_average_interest_rate_pf",
                                  "br_bcb_average_interest_rate_pj", "br_selic_target"]),
-                get_data(fields=["br_bcb_past_due_loans_pf", "br_bcb_past_due_loans_pj"]),
+                get_data(fs, fields=["br_bcb_past_due_loans_pf", "br_bcb_past_due_loans_pj"]),
             ],
             connect_gaps=True
         )
@@ -679,8 +679,8 @@ def show_chartbook():
             ["Fluxo Pedagiado nas Estradas", "Fluxo Pedagiado nas Estradas (% YoY)"],
             ["line", "bar"],
             [
-                get_data(fields=["br_abcr_traffic_heavy_vehicles", "br_abcr_traffic_light_vehicles"]),
-                get_data(fields=["br_abcr_traffic_heavy_vehicles_yoy", "br_abcr_traffic_light_vehicles_yoy"]),
+                get_data(fs, fields=["br_abcr_traffic_heavy_vehicles", "br_abcr_traffic_light_vehicles"]),
+                get_data(fs, fields=["br_abcr_traffic_heavy_vehicles_yoy", "br_abcr_traffic_light_vehicles_yoy"]),
             ]
         )
 
@@ -690,16 +690,16 @@ def show_chartbook():
             ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
             ["line", "line", "line", "line"],
             [
-                get_data(fields=["germany_generic_1y", "spain_generic_1y", "france_generic_1y", "italy_generic_1y",
+                get_data(fs, fields=["germany_generic_1y", "spain_generic_1y", "france_generic_1y", "italy_generic_1y",
                                  "japan_generic_1y",
                                  "switzerland_generic_1y", "sweden_generic_1y"]),
-                get_data(fields=["germany_generic_5y", "spain_generic_5y", "france_generic_5y", "italy_generic_5y",
+                get_data(fs, fields=["germany_generic_5y", "spain_generic_5y", "france_generic_5y", "italy_generic_5y",
                                  "japan_generic_5y",
                                  "switzerland_generic_5y", "sweden_generic_5y"]),
-                get_data(fields=["new_zealand_generic_1y", "australia_generic_1y", "canada_generic_1y",
+                get_data(fs, fields=["new_zealand_generic_1y", "australia_generic_1y", "canada_generic_1y",
                                  "norway_generic_1y",
                                  "us_generic_1y", "uk_generic_1y"]),
-                get_data(fields=["new_zealand_generic_5y", "australia_generic_5y", "canada_generic_5y",
+                get_data(fs, fields=["new_zealand_generic_5y", "australia_generic_5y", "canada_generic_5y",
                                  "norway_generic_5y",
                                  "us_generic_5y", "uk_generic_5y"]),
             ]
@@ -710,13 +710,13 @@ def show_chartbook():
             ["Taxa de 1 ano", "Taxa de 5 anos", "Taxa de 1 ano", "Taxa de 5 anos"],
             ["line", "line", "line", "line"],
             [
-                get_data(fields=["china_generic_1y", "chile_generic_1y", "colombia_generic_1y", "hungary_generic_1y",
+                get_data(fs, fields=["china_generic_1y", "chile_generic_1y", "colombia_generic_1y", "hungary_generic_1y",
                                  "poland_generic_1y", "peru_generic_1y"]),
-                get_data(fields=["china_generic_5y", "chile_generic_5y", "colombia_generic_5y", "hungary_generic_5y",
+                get_data(fs, fields=["china_generic_5y", "chile_generic_5y", "colombia_generic_5y", "hungary_generic_5y",
                                  "poland_generic_5y", "peru_generic_5y"]),
-                get_data(fields=["south_africa_generic_1y", "russia_generic_1y", "br_generic_1y", "mexico_generic_1y",
+                get_data(fs, fields=["south_africa_generic_1y", "russia_generic_1y", "br_generic_1y", "mexico_generic_1y",
                                  "india_generic_1y", "indonesia_generic_1y", "turkey_generic_1y"]),
-                get_data(fields=["south_africa_generic_5y", "russia_generic_5y", "br_generic_5y", "mexico_generic_5y",
+                get_data(fs, fields=["south_africa_generic_5y", "russia_generic_5y", "br_generic_5y", "mexico_generic_5y",
                                  "india_generic_5y", "indonesia_generic_5y", "turkey_generic_5y"]),
             ]
         )
@@ -726,9 +726,9 @@ def show_chartbook():
             "Performance 🆂",
             ["Energia", "Metais"],
             [
-                get_data(fields=["crude_oil_wti", "crude_oil_brent", "gasoline", "usda_diesel", "natural_gas",
+                get_data(fs, fields=["crude_oil_wti", "crude_oil_brent", "gasoline", "usda_diesel", "natural_gas",
                                  "thermal_coal"]).ffill(limit=2),
-                get_data(fields=["gold", "silver", "lme_aluminum", "lme_copper", "lme_nickel_cash", "sgx_iron_ore_62",
+                get_data(fs, fields=["gold", "silver", "lme_aluminum", "lme_copper", "lme_nickel_cash", "sgx_iron_ore_62",
                                  "platinum", "palladium", "lme_zinc_spot", "coking_coal"]).fillna(method="ffill",
                                                                                                   limit=2),
             ]
@@ -739,10 +739,10 @@ def show_chartbook():
             ["Índice CRB (2019 = 100)", "Índice CRB (% 12 meses)"],
             ["line", "line"],
             [
-                scale_to_100(date="2019", df=get_data(
+                scale_to_100(date="2019", df=get_data(fs, 
                     fields=["crb_index", "crb_fats_oils_index", "crb_food_index", "crb_livestock_index",
                             "crb_metals_index", "crb_raw_industrials_index", "crb_textiles_index"])),
-                get_data(fields=["crb_index"]).pct_change(252).dropna(),
+                get_data(fs, fields=["crb_index"]).pct_change(252).dropna(),
             ],
             connect_gaps=True
         )
@@ -752,7 +752,7 @@ def show_chartbook():
             ["Índices de Custo de Frete"],
             ["line"],
             [
-                get_data(fields=["baltic_dry_index", "shanghai_containerized_freight_index"])
+                get_data(fs, fields=["baltic_dry_index", "shanghai_containerized_freight_index"])
             ],
             connect_gaps=True
         )
@@ -762,9 +762,9 @@ def show_chartbook():
             ["Atacado (2019 = 100)", "Varejo (2019 = 100)"],
             ["line", "line"],
             [
-                scale_to_100(date="2019", df=get_data(fields=["crude_oil_brent", "crude_oil_wti", "gasoline",
+                scale_to_100(date="2019", df=get_data(fs, fields=["crude_oil_brent", "crude_oil_wti", "gasoline",
                                                               "usda_diesel"])),
-                scale_to_100(date="2019", df=get_data(fields=["br_anp_gasoline_retail", "br_anp_diesel_retail",
+                scale_to_100(date="2019", df=get_data(fs, fields=["br_anp_gasoline_retail", "br_anp_diesel_retail",
                                                               "br_anp_hydrated_ethanol_retail", "br_anp_lpg_retail"])),
             ],
             connect_gaps=True
@@ -775,13 +775,13 @@ def show_chartbook():
             ["Índice de Commodities Brasil (2019 = 100)", "Agrícolas (2019 = 100)", "Pecuárias (2019 = 100)"],
             ["line", "line", "line"],
             [
-                scale_to_100(date="2019", df=get_data(
+                scale_to_100(date="2019", df=get_data(fs, 
                     fields=["br_icb_composite", "br_icb_agriculture", "br_icb_energy", "br_icb_metal"])),
-                scale_to_100(date="2019", df=get_data(
+                scale_to_100(date="2019", df=get_data(fs, 
                     fields=["br_cepea_paddy_rice", "br_cepea_soft_wheat", "br_cepea_corn_wholesale",
                             "br_cepea_soybean_wholesale", "br_cepea_sugar", "br_cepea_cotton_feather",
                             "br_cepea_arabica_coffee"]).ffill(limit=63)),
-                scale_to_100(date="2019", df=get_data(
+                scale_to_100(date="2019", df=get_data(fs, 
                     fields=["br_cepea_chilled_whole_broiler", "br_cepea_pork", "br_cepea_beef_carcass",
                             "br_cepea_beef_forequarter", "br_cepea_beef_hindquarter", "br_cepea_beef_thin_flank",
                             "br_cepea_fed_cattle"])),
@@ -794,10 +794,10 @@ def show_chartbook():
             "Performance 🆂",
             ["Desenvolvidos", "Emergentes"],
             [
-                get_data(
+                get_data(fs, 
                     fields=["twd_usd", "dxy_index", "eur_usd", "jpy_usd", "gbp_usd", "chf_usd", "cad_usd",
                             "aud_usd", "nok_usd", "sek_usd"]).fillna(method="ffill", limit=2),
-                get_data(
+                get_data(fs, 
                     fields=["brl_usd", "mxn_usd", "clp_usd", "zar_usd", "try_usd", "cnh_usd"]).fillna(method="ffill",
                                                                                                       limit=2),
             ]
@@ -864,10 +864,10 @@ def show_chartbook():
             ["Treasury 2Y", "Treasury 5Y", "Treasury 10Y", "Treasury Bonds"],
             ["bar", "bar", "bar", "bar"],
             [
-                get_data(fields=["cftc_cbt_treasury_2y"]),
-                get_data(fields=["cftc_cbt_treasury_5y"]),
-                get_data(fields=["cftc_cbt_treasury_10y"]),
-                get_data(fields=["cftc_cbt_treasury_bonds"]),
+                get_data(fs, fields=["cftc_cbt_treasury_2y"]),
+                get_data(fs, fields=["cftc_cbt_treasury_5y"]),
+                get_data(fs, fields=["cftc_cbt_treasury_10y"]),
+                get_data(fs, fields=["cftc_cbt_treasury_bonds"]),
             ]
         )
 
@@ -876,10 +876,10 @@ def show_chartbook():
             ["Copper", "Gold", "Silver", "Crude Oil"],
             ["bar", "bar", "bar", "bar"],
             [
-                get_data(fields=["cftc_cmx_copper"]),
-                get_data(fields=["cftc_cmx_gold"]),
-                get_data(fields=["cftc_cmx_silver"]),
-                get_data(fields=["cftc_nyme_crude_oil"]),
+                get_data(fs, fields=["cftc_cmx_copper"]),
+                get_data(fs, fields=["cftc_cmx_gold"]),
+                get_data(fs, fields=["cftc_cmx_silver"]),
+                get_data(fs, fields=["cftc_nyme_crude_oil"]),
             ]
         )
 
@@ -888,17 +888,17 @@ def show_chartbook():
             ["AUD", "BRL", "CAD", "CHF", "EUR", "GBP", "JPY", "MXN", "NZD", "RUB", "ZAR"],
             ["bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar", "bar"],
             [
-                get_data(fields=["cftc_cme_aud"]),
-                get_data(fields=["cftc_cme_brl"]),
-                get_data(fields=["cftc_cme_cad"]),
-                get_data(fields=["cftc_cme_chf"]),
-                get_data(fields=["cftc_cme_eur"]),
-                get_data(fields=["cftc_cme_gbp"]),
-                get_data(fields=["cftc_cme_jpy"]),
-                get_data(fields=["cftc_cme_mxn"]),
-                get_data(fields=["cftc_cme_nzd"]),
-                get_data(fields=["cftc_cme_rub"]),
-                get_data(fields=["cftc_cme_zar"]),
+                get_data(fs, fields=["cftc_cme_aud"]),
+                get_data(fs, fields=["cftc_cme_brl"]),
+                get_data(fs, fields=["cftc_cme_cad"]),
+                get_data(fs, fields=["cftc_cme_chf"]),
+                get_data(fs, fields=["cftc_cme_eur"]),
+                get_data(fs, fields=["cftc_cme_gbp"]),
+                get_data(fs, fields=["cftc_cme_jpy"]),
+                get_data(fs, fields=["cftc_cme_mxn"]),
+                get_data(fs, fields=["cftc_cme_nzd"]),
+                get_data(fs, fields=["cftc_cme_rub"]),
+                get_data(fs, fields=["cftc_cme_zar"]),
             ]
         )
 
@@ -907,10 +907,10 @@ def show_chartbook():
             ["S&P 500", "Nasdaq", "Nikkei", "Russell 2000"],
             ["bar", "bar", "bar", "bar"],
             [
-                get_data(fields=["cftc_cme_sp500"]),
-                get_data(fields=["cftc_cme_nasdaq"]),
-                get_data(fields=["cftc_cme_nikkei"]),
-                get_data(fields=["cftc_cme_russell2000"]),
+                get_data(fs, fields=["cftc_cme_sp500"]),
+                get_data(fs, fields=["cftc_cme_nasdaq"]),
+                get_data(fs, fields=["cftc_cme_nikkei"]),
+                get_data(fs, fields=["cftc_cme_russell2000"]),
             ]
         )
 
@@ -920,9 +920,9 @@ def show_chartbook():
             ["S&P 500", "Ibovespa"],
             ["line", "line"],
             [
-                get_data(fields=["us_sp500"]).assign(ma_200=lambda x: x['us_sp500'].rolling(200).mean(),
+                get_data(fs, fields=["us_sp500"]).assign(ma_200=lambda x: x['us_sp500'].rolling(200).mean(),
                                                      ma_50=lambda x: x['us_sp500'].rolling(50).mean()),
-                get_data(fields=["br_ibovespa"]).assign(ma_200=lambda x: x['br_ibovespa'].rolling(200).mean(),
+                get_data(fs, fields=["br_ibovespa"]).assign(ma_200=lambda x: x['br_ibovespa'].rolling(200).mean(),
                                                         ma_50=lambda x: x['br_ibovespa'].rolling(50).mean())
             ]
         )
