@@ -14,8 +14,7 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 # fs = utils.get_fs_connection("consolidado-indicators.parquet")
 
 
-def get_data(fields: list):
-    fs = utils.get_fs_connection("consolidado-indicators.parquet")
+def get_data(fs, fields: list):
     df = pd.read_parquet(fs, filters=[('code', 'in', fields)])
     df = df.pivot_table(index='date', columns='code', values='value')
     df = df.filter(fields)
@@ -240,6 +239,7 @@ def scale_to_100(date, df):
 
 def show_chartbook():
     st.header("Chartbook")
+    fs = utils.get_fs_connection("consolidado-indicators.parquet")
 
     def display_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False):
         with st.expander(expander_title, expanded=False):
