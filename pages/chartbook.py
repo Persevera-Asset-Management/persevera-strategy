@@ -11,10 +11,17 @@ from st_files_connection import FilesConnection
 import utils
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
-
+fs = utils.get_fs_connection("consolidado-indicators.parquet")
 
 @st.cache_data
 def get_data(fields: list):
+    df = pd.read_parquet(fs, filters=[('code', 'in', fields)])
+    df = df.pivot_table(index='date', columns='code', values='value')
+    df = df.filter(fields)
+    return df
+
+
+def get_data_old(fields: list):
     df = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
                          filters=[('code', 'in', fields)])
     df = df.pivot_table(index='date', columns='code', values='value')
