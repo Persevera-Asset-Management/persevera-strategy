@@ -399,7 +399,7 @@ def show_factor_playground():
         selected_factor = header[0].selectbox(label='Selecione o fator:',
                                               options=['value', 'quality', 'momentum', 'liquidity', 'risk', 'size',
                                                        'short_interest', 'technical','multi_factor'])
-        de_para = {'Long Only': 'rank_1', 'Long & Short': 'long_short_gross', 'Excess Returns': 'rank_1_excess'}
+        de_para = {'Long Only': 'rank_1', 'Long & Short': 'long_short_net', 'Excess Returns': 'rank_1_excess'}
         selected_strategy = header[1].radio(label='Selecione a estratégia:', options=[*de_para], horizontal=True)
         selected_strategy = de_para[selected_strategy]
         selected_holding_period = header[1].radio(label='Selecione o horizonte:', options=['1W', '2W', '1M', '2M', '3M', '6M'], horizontal=True)
