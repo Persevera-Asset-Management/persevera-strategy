@@ -398,7 +398,7 @@ def show_factor_playground():
         header = st.columns(2, gap='large')
         selected_factor = header[0].selectbox(label='Selecione o fator:',
                                               options=['value', 'quality', 'momentum', 'liquidity', 'risk', 'size',
-                                                       'short_interest', 'technical','multi_factor'])
+                                                       'short_interest', 'technical', 'multi_factor'])
         de_para = {'Long Only': 'rank_1', 'Long & Short (Gross)': 'long_short_gross', 'Long & Short (Net)': 'long_short_net', 'Excess Returns': 'rank_1_excess'}
         selected_strategy = header[1].radio(label='Selecione a estratégia:', options=[*de_para], horizontal=True)
         selected_strategy = de_para[selected_strategy]
@@ -432,6 +432,11 @@ def show_factor_playground():
         with cols_2[0]:
             # Drawdown
             st.markdown("**Drawdown**")
+            fig = px.line(performance.calculate_drawdown(cum_returns))
+            st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
+
+            # Volatilidade
+            st.markdown("**Volatilidade**")
             fig = px.line(performance.calculate_drawdown(cum_returns))
             st.plotly_chart(format_chart(figure=fig, connect_gaps=True), use_container_width=True)
 

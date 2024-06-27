@@ -806,11 +806,11 @@ def show_chartbook():
     elif selected_category == "Mercados":
         display_chart_with_expander(
             "EPS :knife:",
-            ["S&P 500", "Ibovespa"],
+            ["Estados Unidos", "Brasil"],
             ["line", "line"],
             [
                 get_index_data(category='valuation', codes=["us_sp500"], field="earnings_per_share_fwd"),
-                get_index_data(category='valuation', codes=["br_ibovespa"], field="earnings_per_share_fwd"),
+                get_index_data(category='valuation', codes=["br_ibovespa", "br_ifnc", "br_iee", "br_imat", "br_indx", "br_imob", "br_util", "br_mlcx", "br_smll"], field="earnings_per_share_fwd"),
             ]
         )
 
