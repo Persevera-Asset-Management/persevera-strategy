@@ -236,10 +236,11 @@ def get_eligible_stocks(investment_universe):
 
 def show_factor_playground():
     st.header("Factor Playground")
+    fs = get_fs_connection("factors-returns.parquet")
 
     selected_category = option_menu(
         menu_title=None,
-        options=["Factor Radar", "Performance", "Tearsheet", "Backtester", "Universo"],
+        options=["Factor Radar", "Performance", "Tearsheet", "Factsheet", "Backtester", "Universo"],
         orientation="horizontal"
     )
 
@@ -404,8 +405,6 @@ def show_factor_playground():
         selected_strategy = de_para[selected_strategy]
         selected_holding_period = header[1].radio(label='Selecione o horizonte:', options=['1W', '2W', '1M', '2M', '3M', '6M'], horizontal=True)
 
-        fs = get_fs_connection("factors-returns.parquet")
-
         all_factors = get_table_features(fs)
         filtered_factors = [feature for feature in all_factors if (feature.endswith(selected_strategy) and feature.startswith(selected_factor) and selected_holding_period in feature)]
 
@@ -459,6 +458,14 @@ def show_factor_playground():
                 yaxis=dict(title=dict(text="Ann. Returns"), side="left"),
                 yaxis2=dict(title=dict(text="Information Ratio"), side="right", overlaying="y", tickmode="sync"))
             st.plotly_chart(fig, use_container_width=True)
+
+    elif selected_category == "Factsheet":
+        header = st.columns(2, gap='large')
+        all_factors = get_table_features(fs)
+        selected_factor = header[0].selectbox(label='Selecione a estratégia:',
+                                              options=all_factors)
+        # selected_holding_period = header[1].radio(label='Selecione o horizonte:', options=['1W', '2W', '1M', '2M', '3M', '6M'], horizontal=True)
+
 
     elif selected_category == "Backtester":
         with st.form("factor_definition"):
