@@ -11,22 +11,30 @@ from st_files_connection import FilesConnection
 import utils
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
-# fs = utils.get_fs_connection("consolidado-indicators.parquet")
+fs = utils.get_fs_connection("consolidado-indicators.parquet")
+indicators = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"), engine='pyarrow')
 
 
 def get_data(fs, fields: list):
-    df = pd.read_parquet(fs, filters=[('code', 'in', fields)], engine='pyarrow')
+    df = indicators.query('code == @fields')
     df = df.pivot_table(index='date', columns='code', values='value')
     df = df.filter(fields)
     return df
 
 
-def get_data_old(fields: list):
-    df = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
-                         filters=[('code', 'in', fields)])
-    df = df.pivot_table(index='date', columns='code', values='value')
-    df = df.filter(fields)
-    return df
+# def get_data(fs, fields: list):
+#     df = pd.read_parquet(fs, filters=[('code', 'in', fields)], engine='pyarrow')
+#     df = df.pivot_table(index='date', columns='code', values='value')
+#     df = df.filter(fields)
+#     return df
+#
+#
+# def get_data_old(fields: list):
+#     df = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"),
+#                          filters=[('code', 'in', fields)])
+#     df = df.pivot_table(index='date', columns='code', values='value')
+#     df = df.filter(fields)
+#     return df
 
 
 def code_to_name(df):
