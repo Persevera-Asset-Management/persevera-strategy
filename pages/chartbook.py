@@ -12,7 +12,6 @@ import utils
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
 fs = utils.get_fs_connection("consolidado-indicators.parquet")
-indicators = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"), engine='pyarrow')
 
 
 def get_data(fs, fields: list):
@@ -248,6 +247,7 @@ def scale_to_100(date, df):
 def show_chartbook():
     st.header("Chartbook")
     fs = utils.get_fs_connection("consolidado-indicators.parquet")
+    indicators = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"), engine='pyarrow')
 
     def display_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False):
         with st.expander(expander_title, expanded=False):
