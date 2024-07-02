@@ -478,9 +478,9 @@ def show_chartbook():
                 get_data(indicators, fields=["us_average_hourly_earnings_yoy"]),
                 get_data(indicators, fields=["us_jolts_hiring_rate", "us_jolts_job_openings_rate"]),
                 get_data(indicators, fields=["us_jolts_quits_rate"]),
-                get_data(indicators, fields=['us_unemployed_level_to_job_openings', 'us_job_openings_total_non_farm']).eval(
-                    'us_job_openings_total_non_farm / us_unemployed_level_to_job_openings').dropna().rename(
-                    'job_openings_to_unemployment_level').to_frame()
+                get_data(indicators, fields=['us_unemployed_level', 'us_job_openings_total_non_farm']).eval(
+                    'us_job_openings_total_non_farm / us_unemployed_level').dropna().rename(
+                    'Job Openings to Unemployment Level').to_frame()
             ],
             connect_gaps=True,
         )
