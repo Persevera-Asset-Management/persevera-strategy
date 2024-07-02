@@ -73,7 +73,7 @@ def get_fund_data(fund_name, selected_peers, benchmark, start_date, end_date=dat
         df.iloc[0] = 1
         df = df.ffill()
 
-    df = df.rename(columns={"br_cdi_index": "CDI", "br_ibovespa": "IBOV", "br_smll": "SMLL"})
+    df = df.rename(columns={"br_cdi_index": "CDI", "br_ibovespa": "Ibovespa", "br_smll": "SMLL"})
     return df
 
 
@@ -97,9 +97,9 @@ def get_performance_table(df, start_date, end_date, relative=False):
     }
     df = pd.DataFrame(time_frames)
     if relative:
-        if 'IBOV' in df.index:
-            df = df.sub(df.loc['IBOV'])
-            df = df.drop(index=['CDI', 'IBOV'])
+        if 'Ibovespa' in df.index:
+            df = df.sub(df.loc['Ibovespa'])
+            df = df.drop(index=['CDI', 'Ibovespa'])
         else:
             df = df.div(df.loc['CDI'])
             df = df.drop(index='CDI')
