@@ -85,6 +85,7 @@ def get_performance_table(df, start_date, end_date, relative=False):
         '3m': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=3):end_date].iloc[0] - 1),
         '6m': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=6):end_date].iloc[0] - 1),
         '12m': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=12):end_date].iloc[0] - 1),
+        '24m': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=24):end_date].iloc[0] - 1),
         'custom': df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1,
 
         'day_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change().iloc[-1].rank(ascending=False),
@@ -93,6 +94,7 @@ def get_performance_table(df, start_date, end_date, relative=False):
         '3m_rank': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=3):end_date].iloc[0] - 1).rank(ascending=False),
         '6m_rank': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=6):end_date].iloc[0] - 1).rank(ascending=False),
         '12m_rank': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=12):end_date].iloc[0] - 1).rank(ascending=False),
+        '24m_rank': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=24):end_date].iloc[0] - 1).rank(ascending=False),
         'custom_rank': (df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1).rank(ascending=False),
     }
     df = pd.DataFrame(time_frames)
@@ -113,6 +115,7 @@ def format_table(df):
                             '3m': '{:,.2%}'.format,
                             '6m': '{:,.2%}'.format,
                             '12m': '{:,.2%}'.format,
+                            '24m': '{:,.2%}'.format,
                             'custom': '{:,.2%}'.format,
                             'day_rank': '{:.0f}'.format,
                             'mtd_rank': '{:.0f}'.format,
@@ -120,6 +123,7 @@ def format_table(df):
                             '3m_rank': '{:.0f}'.format,
                             '6m_rank': '{:.0f}'.format,
                             '12m_rank': '{:.0f}'.format,
+                            '24m_rank': '{:.0f}'.format,
                             'custom_rank': '{:.0f}'.format}
                            )
 
