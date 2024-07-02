@@ -521,22 +521,22 @@ def show_chartbook():
                     get_data(indicators, fields=["br_ipca_yoy", "br_ipca_target_inflation_rate"]).ffill().drop(
                         columns="br_ipca_yoy"), left_index=True, right_index=True, how='left').assign(
                     LimiteSuperior=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
-                    LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5),
+                    LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5).loc['2000':],
                 get_data(indicators, fields=["br_focus_ipca_median_fwd_12m_yoy", "br_focus_ipca_median_smooth_fwd_12m_yoy", "br_ipca_target_inflation_rate"]).ffill().dropna(
                     subset='br_focus_ipca_median_fwd_12m_yoy').assign(
                     Meta=lambda x: x["br_ipca_target_inflation_rate"].shift(-252)).ffill().assign(
                     LimiteSuperior=lambda x: x["br_ipca_target_inflation_rate"] + 1.5,
                     LimiteInferior=lambda x: x["br_ipca_target_inflation_rate"] - 1.5).drop(
-                    columns="br_ipca_target_inflation_rate"),
-                get_data(indicators, fields=["br_ipca_yoy", "br_ipca_non_regulated_yoy", "br_ipca_regulated_yoy"]),
+                    columns="br_ipca_target_inflation_rate").loc['2000':],
+                get_data(indicators, fields=["br_ipca_yoy", "br_ipca_non_regulated_yoy", "br_ipca_regulated_yoy"]).loc['2000':],
                 get_data(indicators, 
                     fields=["br_ipca_yoy", "br_ipca_services_yoy", "br_ipca_durable_yoy", "br_ipca_semi_durable_yoy",
-                            "br_ipca_non_durable_yoy"]),
+                            "br_ipca_non_durable_yoy"]).loc['2000':],
                 get_data(indicators, fields=["br_ipca_yoy", "br_ipca_food_beverages_yoy", "br_ipca_housing_yoy",
                                  "br_ipca_household_goods_yoy", "br_ipca_clothing_yoy", "br_ipca_transport_yoy",
                                  "br_ipca_health_yoy", "br_ipca_personal_expenses_yoy", "br_ipca_education_yoy",
-                                 "br_ipca_communications_yoy"]),
-                get_data(indicators, fields=["br_ipca_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_igpm_yoy", "br_cpi_fipe_yoy"]),
+                                 "br_ipca_communications_yoy"]).loc['2000':],
+                get_data(indicators, fields=["br_ipca_yoy", "br_ipa10_yoy", "br_incc10_yoy", "br_igpm_yoy", "br_cpi_fipe_yoy"]).loc['2000':],
             ]
         )
 
