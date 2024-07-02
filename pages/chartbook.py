@@ -107,11 +107,11 @@ def create_line_chart(data, title, connect_gaps):
             ),
             rangeslider=dict(visible=False),
             type="date",
-            font=dict(size=14),
+            tickfont=dict(size=18),
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash", font=dict(size=14)),
-        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash", tickfont=dict(size=18)),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=18)),
         showlegend=True,
         hovermode="x unified",
     )
@@ -138,13 +138,13 @@ def create_bar_chart(data, title):
             ),
             rangeslider=dict(visible=False),
             type="date",
-            font=dict(size=14),
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash", font=dict(size=14)),
-        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
+        legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
-        barmode="group"
+        barmode="group",
+        font=dict(size=16),
     )
     return fig
 
@@ -168,13 +168,13 @@ def create_area_chart(data, title):
             ),
             rangeslider=dict(visible=False),
             type="date",
-            font=dict(size=14),
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash", font=dict(size=14)),
-        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
+        legend=dict(title=None, yanchor="top", orientation="h"),
         showlegend=True,
         hovermode="x unified",
+        font=dict(size=16),
     )
     fig.update_traces(hovertemplate="%{y}")
     return fig
@@ -208,6 +208,7 @@ def create_two_yaxis_line_chart(data, title, connect_gaps):
         legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
         showlegend=True,
         hovermode="x unified",
+        font=dict(size=16),
     )
     fig.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
     return fig
@@ -249,7 +250,7 @@ def scale_to_100(date, df):
 
 def show_chartbook():
     st.header("Chartbook")
-    fs = utils.get_fs_connection("consolidado-indicators.parquet")
+    # fs = utils.get_fs_connection("consolidado-indicators.parquet")
     indicators = pd.read_parquet(os.path.join(DATA_PATH, "consolidado-indicators.parquet"), engine='pyarrow')
 
     def display_chart_with_expander(expander_title, chart_titles, chart_types, datasets, connect_gaps=False):

@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import logging, os
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import streamlit as st
 from streamlit_option_menu import option_menu
 from st_files_connection import FilesConnection
@@ -81,17 +82,17 @@ def get_performance_table(df, start_date, end_date, relative=False):
         'day': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change().iloc[-1],
         'mtd': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1],
         'ytd': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1],
-        '3m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(3 * 21).iloc[-1],
-        '6m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(6 * 21).iloc[-1],
-        '12m': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1],
+        '3m': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=3):end_date].iloc[0] - 1),
+        '6m': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=6):end_date].iloc[0] - 1),
+        '12m': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=12):end_date].iloc[0] - 1),
         'custom': df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1,
 
         'day_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change().iloc[-1].rank(ascending=False),
         'mtd_rank': df.groupby(pd.Grouper(level='date', freq="1M")).last().pct_change().iloc[-1].rank(ascending=False),
         'ytd_rank': df.groupby(pd.Grouper(level='date', freq="Y")).last().pct_change().iloc[-1].rank(ascending=False),
-        '3m_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(3 * 21).iloc[-1].rank(ascending=False),
-        '6m_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(6 * 21).iloc[-1].rank(ascending=False),
-        '12m_rank': df.groupby(pd.Grouper(level='date', freq="1D")).last().pct_change(12 * 21).iloc[-1].rank(ascending=False),
+        '3m_rank': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=3):end_date].iloc[0] - 1).rank(ascending=False),
+        '6m_rank': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=6):end_date].iloc[0] - 1).rank(ascending=False),
+        '12m_rank': (df[start_date:end_date].iloc[-1] / df[df[start_date:end_date].iloc[-1].name - relativedelta(months=12):end_date].iloc[0] - 1).rank(ascending=False),
         'custom_rank': (df[start_date:end_date].iloc[-1] / df[start_date:end_date].iloc[0] - 1).rank(ascending=False),
     }
     df = pd.DataFrame(time_frames)
