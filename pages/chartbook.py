@@ -138,13 +138,13 @@ def create_bar_chart(data, title):
             ),
             rangeslider=dict(visible=False),
             type="date",
+            tickfont=dict(size=18),
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
-        legend=dict(title=None, yanchor="top", orientation="h"),
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash", tickfont=dict(size=18)),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=18)),
         showlegend=True,
         barmode="group",
-        font=dict(size=16),
     )
     return fig
 
@@ -168,13 +168,13 @@ def create_area_chart(data, title):
             ),
             rangeslider=dict(visible=False),
             type="date",
+            tickfont=dict(size=18),
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, griddash="dash"),
-        legend=dict(title=None, yanchor="top", orientation="h"),
+        yaxis=dict(autorange=True, fixedrange=False, griddash="dash", tickfont=dict(size=18)),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=18)),
         showlegend=True,
         hovermode="x unified",
-        font=dict(size=16),
     )
     fig.update_traces(hovertemplate="%{y}")
     return fig
@@ -201,14 +201,14 @@ def create_two_yaxis_line_chart(data, title, connect_gaps):
             ),
             rangeslider=dict(visible=False),
             type="date",
+            tickfont=dict(size=18),
         ),
         yaxis_title=None, xaxis_title=None,
-        yaxis=dict(autorange=True, fixedrange=False, showgrid=False),
-        yaxis2=dict(autorange=True, fixedrange=False, showgrid=False),
-        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=14)),
+        yaxis=dict(autorange=True, fixedrange=False, showgrid=False, tickfont=dict(size=18)),
+        yaxis2=dict(autorange=True, fixedrange=False, showgrid=False, tickfont=dict(size=18)),
+        legend=dict(title=None, yanchor="top", orientation="h", font=dict(size=18)),
         showlegend=True,
         hovermode="x unified",
-        font=dict(size=16),
     )
     fig.update_traces(connectgaps=connect_gaps, hovertemplate="%{y}")
     return fig
@@ -368,17 +368,18 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Inflação :heavy_dollar_sign: :chart:",
-            ["Índices de Inflação (Consumidor)", "Índices de Inflação (Produtor)",
+            ["Índices de Inflação (Consumidor)", "Índice de Surpresas", "Índices de Inflação (Produtor)",
              "Projeção de Inflação (University of Michigan)", "PCE: Riscos de Inflação (Probabilidades)",
              "CPI Grupos"],
-            ["line", "line", "line", "area", "line"],
+            ["line", "area", "line", "line", "area", "line"],
             [
                 get_data(indicators, 
                     fields=["us_cpi_yoy", "us_cpi_core_yoy", "us_pce_yoy", "us_pce_core_yoy", "us_supercore_cpi_yoy"]),
+                get_data(indicators, fields=["us_bloomberg_inflation_surprise_index"]),
                 get_data(indicators, fields=["us_ppi_yoy"]),
                 get_data(indicators, fields=["us_university_michigan_expected_inflation_fwd_12m_yoy"]),
                 get_data(indicators, fields=['us_pce_probability_deflation', 'us_pce_probability_between_0_15',
-                                 'us_pce_probability_between_15_25', 'us_pce_probability_above_25']),
+                                             'us_pce_probability_between_15_25', 'us_pce_probability_above_25']),
                 get_data(indicators, fields=["us_cpi_apparel_index", "us_cpi_education_and_communication_index", "us_cpi_food_index",
                                  "us_cpi_housing_index", "us_cpi_medical_care_index","us_cpi_other_goods_and_services_index",
                                  "us_cpi_recreation_index", "us_cpi_transportation_index"]).pct_change(12).dropna() * 100,
@@ -387,9 +388,10 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Produção Industrial :heavy_dollar_sign:",
-            ["Produção Industrial", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
-            ["line", "bar", "bar"],
+            ["Índice de Surpresas", "Produção Industrial", "Produção Industrial (% YoY)", "Produção Industrial (% MoM)"],
+            ["area", "line", "bar", "bar"],
             [
+                get_data(indicators, fields=["us_bloomberg_industry_surprise_index"]),
                 get_data(indicators, fields=["us_industrial_production_index"]),
                 get_data(indicators, fields=["us_industrial_production_yoy"]),
                 get_data(indicators, fields=["us_industrial_production_mom"]),
@@ -398,10 +400,11 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Varejo :heavy_dollar_sign:",
-            ["Advance Retail Sales", "Advance Retail Sales (% LTM)", "Advance Retail Sales (% MoM)",
+            ["Índice de Surpresas", "Advance Retail Sales", "Advance Retail Sales (% LTM)", "Advance Retail Sales (% MoM)",
              "Advance Retail Sales (% YoY)"],
-            ["line", "line", "bar", "bar"],
+            ["area", "line", "line", "bar", "bar"],
             [
+                get_data(indicators, fields=["us_bloomberg_retail_surprise_index"]),
                 get_data(indicators, fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]),
                 get_data(indicators, fields=["us_advance_retail_sales_total", "us_advance_retail_sales_ex_auto_total"]).rolling(12).sum().pct_change(12).dropna() * 100,
                 get_data(indicators, fields=["us_advance_retail_sales_total_mom", "us_advance_retail_sales_ex_auto_mom"]),
@@ -411,13 +414,14 @@ def show_chartbook():
 
         display_chart_with_expander(
             "Habitação :heavy_dollar_sign:",
-            ["Habitação", "Habitação (% YoY)", "Preços de Imóveis", "Preços de Imóveis (% YoY)"],
-            ["line", "bar", "line", "bar"],
+            ["Índice de Surpresas", "Habitação", "Habitação (% YoY)", "Preços de Imóveis", "Preços de Imóveis (% YoY)"],
+            ["area", "line", "bar", "line", "bar"],
             [
+                get_data(indicators, fields=["us_bloomberg_housing_surprise_index"]),
                 get_data(indicators, fields=["us_new_home_sales_index", "us_housing_starts_index",
-                                 "us_building_permits_index"]),
+                                             "us_building_permits_index"]),
                 get_data(indicators, fields=["us_new_home_sales_yoy", "us_housing_starts_yoy",
-                                 "us_building_permits_yoy"]),
+                                             "us_building_permits_yoy"]),
                 get_data(indicators, fields=["us_case_shiller_home_price_national", "us_case_shiller_home_price_20_city_index"]),
                 get_data(indicators, fields=["us_case_shiller_home_price_national_yoy", "us_case_shiller_home_price_20_city_yoy"]),
             ]
@@ -429,25 +433,25 @@ def show_chartbook():
             ["line"],
             [
                 get_data(indicators, fields=["us_delinquency_rates_consumer_loans", "us_delinquency_rates_credit_cards",
-                                 "us_delinquency_rates_business_loans"]),
+                                             "us_delinquency_rates_business_loans"]),
             ]
         )
 
         display_chart_with_expander(
             "Sentimento :heavy_dollar_sign:",
-            ["Institute for Supply Management (ISM)", "ISM Manufacturing", "ISM Services",
-             "Sentimento do Consumidor (University of Michigan)",
-             "Índice de Surpresas Econômicas", "Índice de Sentimento de Pequenas Empresas (NFIB)"],
-            ["line", "line", "line", "line", "line_two_yaxis", "line"],
+            ["Índice de Surpresas Econômicas", "Institute for Supply Management (ISM)",
+             "ISM Manufacturing", "ISM Services", "Sentimento do Consumidor (University of Michigan)",
+             "Índice de Sentimento de Pequenas Empresas (NFIB)"],
+            ["area", "line", "line", "line", "line", "line"],
             [
+                get_data(indicators, fields=["us_bloomberg_economic_surprise_index"]),
                 get_data(indicators, fields=["us_ism_manufacting", "us_ism_services"]),
                 get_data(indicators, fields=["us_ism_manufacturing_new_orders", "us_ism_manufacturing_inventories",
-                                 "us_ism_manufacturing_prices_paid", "us_ism_manufacturing_employment"]),
+                                             "us_ism_manufacturing_prices_paid", "us_ism_manufacturing_employment"]),
                 get_data(indicators, fields=["us_ism_services_new_orders", "us_ism_services_prices_paid",
-                                 "us_ism_services_employment"]),
+                                             "us_ism_services_employment"]),
                 get_data(indicators, fields=["us_university_michigan_consumer_sentiment_index",
-                                 "us_university_michigan_consumer_expectations_index"]),
-                get_data(indicators, fields=["us_citi_economic_surprise_index", "us_bloomberg_economic_surprise_index"]),
+                                             "us_university_michigan_consumer_expectations_index"]),
                 get_data(indicators, fields=["us_nfib_small_business_optimism_index"]),
             ],
             connect_gaps=True,
@@ -472,7 +476,7 @@ def show_chartbook():
             ["line", "line", "bar", "bar", "line", "line", "line", "line", "line"],
             [
                 get_data(indicators, fields=["us_initial_jobless_claims", "us_initial_jobless_claims_4wma",
-                                 "us_continuing_jobless_claims"]),
+                                             "us_continuing_jobless_claims"]),
                 get_data(indicators, fields=["us_unemployment_rate", "us_unemployment_rate_u6"]),
                 get_data(indicators, fields=["us_adp_nonfarm_employment"]).diff().merge(
                     get_data(indicators, fields=["us_employees_nonfarm_payrolls_mom"]), left_index=True, right_index=True,
