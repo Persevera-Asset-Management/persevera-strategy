@@ -825,7 +825,7 @@ def show_chartbook():
             ["Estados Unidos", "Brasil"],
             ["line", "line"],
             [
-                get_index_data(category='valuation', codes=["us_sp500"], field="earnings_per_share_fwd"),
+                get_index_data(category='valuation', codes=["us_sp500", "us_magnificent_7", "us_sp500_ew", "us_sp500_ex_mag7"], field="earnings_per_share_fwd"),
                 get_index_data(category='valuation', codes=["br_ibovespa", "br_ifnc", "br_iee", "br_imat", "br_indx", "br_imob", "br_util", "br_mlcx", "br_smll"], field="earnings_per_share_fwd"),
             ]
         )
